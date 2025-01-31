@@ -1,6 +1,7 @@
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
+from models.categories import Categories
 
 class ProductModel(BaseModel):
     id:Optional[int] = None
@@ -14,4 +15,5 @@ class Products(SQLModel, table=True):
     name:str
     stock:int
     price:float
-    categories:Optional[int] = Field(default=None, foreign_key="products.id")
+    categories:Optional[int] = Field(default=None, foreign_key="categories.id")
+    

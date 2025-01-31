@@ -18,7 +18,7 @@ function ProductsCreatePage() {
   const [name, setName] = useState("")
   const [price, setPrice] = useState(0)
   const [stock, setStock] = useState(0)
-  const [categorie, setCategorie] = useState(0)
+  const [categorie, setCategorie] = useState(1)
 
   function saveData(){
     fetch("http://localhost:8000/products/create",{
@@ -26,6 +26,10 @@ function ProductsCreatePage() {
       headers: {"Content-Type" : "application/json"},
       body: JSON.stringify({name:name, price:price, stock:stock, categories:categorie})
     })
+    setName("")
+    setPrice(0)
+    setStock(0)
+    
   }
 
   useEffect(()=>{

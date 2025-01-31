@@ -24,6 +24,29 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Este producto ya esta agregado"
         )
+
+@router.get("/getAllProducts+categories")
+async def get_all_products_categories(session:Session = Depends(get_session)):
+    result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
+    print(result)
+    # result = session.execute(select(Products, Categories)).all()
+    products_with_categories = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "stock": product.stock,
+                "price": product.price,
+                "categorie": {
+                    "id": category.id,
+                    "name": category.name
+                }
+            }
+            for product, category in result
+        ]
+    return products_with_categories
+
+
+    
     
 def search_value(value:ProductModel ,session:Session):
     result = session.exec(select(Products)).all()

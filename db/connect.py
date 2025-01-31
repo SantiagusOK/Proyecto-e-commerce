@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel, Session, create_engine
 from models.categories import Categories
 from models.products import Products
+from models.users import Users
 
 database_file = "database.db"
 database_connection_string = f"sqlite:///{database_file}"
