@@ -28,8 +28,6 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
 @router.get("/getAllProducts+categories")
 async def get_all_products_categories(session:Session = Depends(get_session)):
     result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
-    print(result)
-    # result = session.execute(select(Products, Categories)).all()
     products_with_categories = [
             {
                 "id": product.id,
@@ -45,8 +43,30 @@ async def get_all_products_categories(session:Session = Depends(get_session)):
         ]
     return products_with_categories
 
-
     
+
+@router.get("/{id}")
+async def getAnProduct(id:int, session:Session=Depends(get_session)):
+    print(f"-----------------------{id}-----------------------------")
+    result = session.exec(select(Products, Categories).join(Categories, Products.categories==Categories.id).where(Products.id == id))
+    
+    # result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
+    products_with_categories = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "stock": product.stock,
+                "price": product.price,
+                "categorie": {
+                    "id": category.id,
+                    "name": category.name
+                }
+            }
+            for product, category in result
+        ]
+    print(products_with_categories)
+    return products_with_categories
+
     
 def search_value(value:ProductModel ,session:Session):
     result = session.exec(select(Products)).all()

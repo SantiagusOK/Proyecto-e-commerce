@@ -6,6 +6,8 @@ import Layout from "../pages/layout";
 import CategorieCreatePage from "../pages/categories";
 import UserCreatePage from "../pages/userCreate";
 import TableProducts from "../pages/tableProducts";
+import Inicio from "../pages/inicio";
+import ItemBuy from "../pages/itemEdit";
 
 
 const router = createBrowserRouter([
@@ -29,6 +31,14 @@ const router = createBrowserRouter([
             {
                 path:"/productsCategoriePage",
                 element: <TableProducts/>
+            },
+            {
+                path:"/inicio",
+                element: <Inicio/>
+            },
+            {
+                path:"/itemBuy/:id",
+                element: <ItemBuy/>
             }
         ]
     }

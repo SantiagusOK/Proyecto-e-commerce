@@ -21,6 +21,8 @@ export default function MyNavBar(){
         <div className="bg-neutral-800  text-white flex justify-between p-5">
             <h1>BUY-PRODUCT.COM</h1>
             <nav className="space-x-6">
+                {/* pagina inicio */}
+                <MyNavLink router={"/inicio"} tittle={"Inicio"} />
                 {/* //crear productos */}
                 <MyNavLink router={"/"} tittle={"Agregar Productos"}/>
                 {/* //crear categorias */}
@@ -29,10 +31,8 @@ export default function MyNavBar(){
                 <MyNavLink router={"/userCreatePage"} tittle={"Agregar Usuarios"}/>
                 {/* obtener productos + categoria */}
                 <MyNavLink router={"/productsCategoriePage"} tittle={"Obtener Lista Productos"}/>
-
-
+                
             </nav>
-
         </div>
     )
 }
