@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from db.connect import conn
-from routers import productRouter, categorieRouter
+from routers import productRouter, categorieRouter, userRouter
 from fastapi.middleware.cors import CORSMiddleware
+
 
 import uvicorn
 
@@ -9,6 +10,8 @@ app = FastAPI()
 
 app.include_router(productRouter.router)
 app.include_router(categorieRouter.router)
+app.include_router(userRouter.router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],  # Permitir tu frontend local

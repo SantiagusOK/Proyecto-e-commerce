@@ -2,53 +2,84 @@ import { useEffect, useState } from 'react'
 
 
 
-function UserCreatePage() {
+const UserCreatePage = () =>{
 
-  function saveData(){
-    fetch("http://localhost:8000/categories/create",{
-      method: "POST",
-      headers: {"Content-Type" : "application/json"},
-      body: JSON.stringify({name:categorie})
-    })
-    setCategorie("")
+  const[name,setName] = useState<string>("")
+  const[lastname,setLastname] = useState<string>("")
+  const[birthdate,setbirthdate] = useState<string>("")
+  const[email,setEmail] = useState<string>("")
+  const[password,setPassword] = useState<string>("")
+  const[passwordSecond,setPasswordSecond] = useState<string>("")
+  const[username,setUsername] = useState<string>("")
+
+  const saveData = () =>{
+    console.log(birthdate)
+    if(password==passwordSecond){
+      fetch("http://localhost:8000/users/create",{
+            method: "POST",
+            headers: {"Content-Type" : "application/json"},
+            body: JSON.stringify({fullname:name, lastname:lastname, username:username, birthdate:birthdate, email:email, password:password})
+          })
+      
+    } else {
+      setPassword("")
+      setUsername("")
+    }
   }
+
+  const resetAllData=()=>{
+    setName("")
+    setLastname("")
+    setbirthdate("")
+    setEmail("")
+    setPassword("")
+    setUsername("")
+    setPasswordSecond("")
+  }
+
+
 
   return (
     <div className='flex flex-col  items-center justify-center h-screen space-y-1'>
-      // NOMBRE 
+      {/* NOMBRE  */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Nombre</label>
-        <input className='bg-white w-50' type="text"/>
+        <label className='' htmlFor="">Nombre</label>
+        <input className='w-50 border-2' type="text" value={name} onChange={(e)=>setName(e.target.value)}/>
       </div>
 
-      // APELLIDO 
+       {/* APELLIDO  */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Apellido</label>
-        <input className='bg-white w-50' type="text"/>
+        <label className='' htmlFor="">Apellido</label>
+        <input className='w-50 border-2' type="text" value={lastname} onChange={(e)=>setLastname(e.target.value)}/>
       </div>
 
-      // FECHA DE NACIMIENTO 
+      {/* USERNAME  */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Apellido</label>
-        <input className='bg-white w-50' type="date" />
+        <label className='' htmlFor="">Nombre de usuario</label>
+        <input className='w-50 border-2' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>
       </div>
 
-      // Email 
+       {/* FECHA DE NACIMIENTO  */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Correo Electronico</label>
-        <input className='bg-white w-50' type="email" />
+        <label className='' htmlFor="">Fecha de nacimiento</label>
+        <input className='w-50 border-2' type="date" value={birthdate} onChange={(e)=>setbirthdate(e.target.value)}/>
+      </div>
+       {/* Email  */}
+      <div className='flex flex-col items-center'>
+        <label className='' htmlFor="">Correo Electronico</label>
+        <input className='w-50 border-2' type="email" value={email} onChange={(e)=>setEmail(e.target.value)}/>
       </div>
 
-      // Contraseña 
+       {/* Contraseña  */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Contraseña</label>
-        <input className='bg-white w-50' type="password"/>
+        <label className='' htmlFor="">Contraseña</label>
+        <input className='w-50 border-2' type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>
       </div>
 
-      // Contraseña 2do
+       {/* Contraseña 2do */}
       <div className='flex flex-col items-center'>
-        <label className='text-white' htmlFor="">Inserte de nuevo la Contraseña</label>
-        <input className='bg-white w-50' type="password"/>
+        <label className='' htmlFor="">Inserte de nuevo la Contraseña</label>
+        <input className='w-50 border-2' type="password" value={passwordSecond} onChange={(e)=>setPasswordSecond(e.target.value)}/>
       </div>
       
       <input type="button" value="AGREGAR" className='bg-red-500 w-50' onClick={saveData}/>

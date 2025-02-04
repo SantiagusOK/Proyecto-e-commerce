@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { NavLink, useParams } from "react-router-dom"
 
-const ItemBuy = () =>{
+const ItemCartEdit = () =>{
 
     const [name, setName] = useState<string>("")
     const [categorie, setCategorie] = useState<string>("")
@@ -9,6 +9,8 @@ const ItemBuy = () =>{
     
     const [price, setPrice] = useState<number>(0)
     const [total, setTotal] = useState<number>(0)
+    const [idProduct, setIdProduct] = useState<number>(0)
+
     const {id} = useParams()
 
     const limitAmout = 15
@@ -16,13 +18,20 @@ const ItemBuy = () =>{
 
 
     useEffect(()=>{
-        fetch("http://localhost:8000/products/"+id)
+        fetch("http://localhost:8000/users/getItemCarrito/"+id)
         .then((value)=>value.json())
         .then((data)=>{
-            setCategorie(data[0].categorie.name)
-            setName(data[0].name)
-            setPrice(data[0].price)
-            setTotal(data[0].price)
+            setTotal(data.total)
+            setAmount(data.amount)
+            setIdProduct(data.id_product)
+            fetch("http://localhost:8000/products/"+data.id_product)
+                .then((value)=>value.json())
+                .then((data)=>{
+                    console.log(data[0].name)
+                    setCategorie(data[0].categorie.name)
+                    setName(data[0].name)
+                    setPrice(data[0].price)
+                })  
         })
     },[])
 
@@ -45,14 +54,13 @@ const ItemBuy = () =>{
     }
 
 
-    const AddToCart = () =>{
-        fetch("http://localhost:8000/users/setCarrito",{
+    const ModifyAnItemCart = () =>{
+        fetch("http://localhost:8000/users/modifyAnItemCart/"+id,{
             method:"PUT",
             headers:{"Content-Type" : "application/json"},
-            body: JSON.stringify({id_product : id, total:total, amount:amount})
+            body: JSON.stringify({id_product : idProduct, total:total, amount:amount})
         })
     }
-
 
     return(
         <div className="basis-full flex items-center justify-center">
@@ -85,18 +93,17 @@ const ItemBuy = () =>{
 
                 {/* BOTONES DE COMPRA O CARRITO */}
                 <div className="space-y-4">
-                    <NavLink to={"/carritoPage"} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={AddToCart} >
-                        AGREGAR AL CARRITO
+                    <NavLink to={"/carritoPage"} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={ModifyAnItemCart} >
+                        GUARDAR CAMBIOS
                     </NavLink>
-                    <NavLink to={""} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >
-                        COMPRAR PRODUCTO
+                    <NavLink to={"/carritoPage"} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >
+                        CANCELAR
                     </NavLink>
                 </div>
-
             </div>
-            
         </div>
     )
+
 }
 
-export default ItemBuy
+export default ItemCartEdit

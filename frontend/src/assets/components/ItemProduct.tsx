@@ -7,7 +7,7 @@ interface productData{
 }
 const ItemProducts=({id,name,price}:productData)=>{
     return(
-        <NavLink to={"/itemBuy/"+String(id)} className="w-215 bg-white p-3 rounded-2xl flex items-center transition duration-300  hover:bg-blue-200 hover:scale-104 cursor-pointer border-2 ">
+        <NavLink to={"/itemBuy/"+String(id)} className="w-215 p-3 shadow bg-white rounded-2xl border border-neutral-300 flex items-center transition duration-300  hover:bg-blue-200 hover:scale-104 cursor-pointer">
             <div className="flex items-center space-x-4 ">
                <div className="bg-neutral-400 rounded-full w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">
                 {name[0]}

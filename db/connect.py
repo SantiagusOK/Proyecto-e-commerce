@@ -3,6 +3,7 @@ from models.categories import Categories
 from models.products import Products
 from models.users import Users
 
+
 database_file = "database.db"
 database_connection_string = f"sqlite:///{database_file}"
 connect_args = {"check_same_thread": False}

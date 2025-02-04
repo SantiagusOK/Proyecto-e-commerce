@@ -47,7 +47,7 @@ async def get_all_products_categories(session:Session = Depends(get_session)):
 
 @router.get("/{id}")
 async def getAnProduct(id:int, session:Session=Depends(get_session)):
-    print(f"-----------------------{id}-----------------------------")
+    
     result = session.exec(select(Products, Categories).join(Categories, Products.categories==Categories.id).where(Products.id == id))
     
     # result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
@@ -66,6 +66,8 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
         ]
     print(products_with_categories)
     return products_with_categories
+
+
 
     
 def search_value(value:ProductModel ,session:Session):

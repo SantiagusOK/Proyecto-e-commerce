@@ -1,7 +1,10 @@
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
-from typing import Optional
+from sqlalchemy import JSON, Column
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
 from datetime import datetime
+from models.itemCarrito import ItemCarritoModel
+from models.itemCompra import ItemCompraModel
 
 
 class Users(SQLModel, table=True):
@@ -12,7 +15,10 @@ class Users(SQLModel, table=True):
     password:str
     email:str
     birthdate:str
-    
+    carrito_items: Optional[list[ItemCarritoModel]] = Field(default=None,sa_column=Column(JSON))
+    compras_lista: Optional[list[ItemCompraModel]] = Field(default=None,sa_column=Column(JSON))
+
+
 class UsersModel(BaseModel):
     id:Optional[int] = None
     fullname:str
@@ -21,3 +27,5 @@ class UsersModel(BaseModel):
     password:str
     email:str
     birthdate:str
+    carrito_items: Optional[list[ItemCarritoModel]] = []
+    compras_lista: Optional[list[ItemCompraModel]] = []
