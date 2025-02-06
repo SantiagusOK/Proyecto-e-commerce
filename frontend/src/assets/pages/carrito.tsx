@@ -52,7 +52,8 @@ const CarritoPage = () =>{
             body: JSON.stringify({
                 id_user:1, 
                 comprasList:productsItem, 
-                fechaDeCompra:fechaStr})
+                fechaDeCompra:fechaStr,
+                totalCompra:Number(totalCart),})
         })
     }
 

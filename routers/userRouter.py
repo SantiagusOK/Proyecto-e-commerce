@@ -109,7 +109,7 @@ async def get_all_carrito(id:int, session:Session = Depends(get_session)):
 
 @router.put("/realizeABuy/{idUser}")
 async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Session = Depends(get_session)):
-    
+    print(comprasModel)
     userBD = session.get(Users, idUser)
     
     newCompra = ItemCompras(**comprasModel.model_dump()) 
@@ -147,6 +147,13 @@ async def get_Cart(idUser:int, session:Session = Depends(get_session)):
         status_code=status.HTTP_201_CREATED,
         detail="COMPRA REALIZADA"
     )
+
+
+@router.get("/getAllCart/{idUser}")
+async def get_all_cart(idUser:int,session:Session=Depends(get_session)):
+    UsersDB = session.get(Users,idUser)
+    
+    return UsersDB.compras_lista
             
     
 
