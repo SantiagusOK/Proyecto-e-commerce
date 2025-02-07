@@ -50,8 +50,8 @@ const ItemProductsCart = ({id,id_product, total, amount}:ProductsCartData) =>{
                     </div>
 
                     <div className=" items-end flex space-x-5 w-fit">
-                        <NavLink to={"/itemCartEdit/"+String(id)}>MODIFICAR</NavLink>
-                        <NavLink to={"/carritoPage"} onClick={deleteAItem}>ELIMINAR</NavLink>
+                        <NavLink to={"/inicioPage/itemCartEdit/"+String(id)}>MODIFICAR</NavLink>
+                        <NavLink to={"/inicioPage/carritoPage"} onClick={deleteAItem}>ELIMINAR</NavLink>
                         
                     </div>
                 </div>

@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
 from models.products import ProductModel, Products
 from models.categories import CategorieModel, Categories
-from models.users import Users, UsersModel
+from models.users import Users, UsersModel, UsersLoginModel
 from models.itemCarrito import ItemCarritoModel
 from models.itemCompra import ItemCompraModel, ItemCompras
 from sqlalchemy.orm.attributes import flag_modified
@@ -14,21 +15,15 @@ router = APIRouter(prefix="/users", tags=["User"])
 async def get_all_categories(session:Session = Depends(get_session)):
     return session.exec(select(Users)).all()
 
-@router.post("/create")
+@router.post("/registerUser")
 async def create_categories(anNewUser:UsersModel, session:Session = Depends(get_session)):
     user = Users(**anNewUser.model_dump())
     
-    if type(search_value(user, session)) != Users:
-        newUser = Users(**user.model_dump())
-        session.add(newUser)
-        session.commit()
-        session.refresh(newUser)
-        return newUser
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Este usuario ya esta registrado"
-        )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
     
 @router.put("/setCarrito")
 async def add_product_cart(anProduct:ItemCarritoModel, session:Session = Depends(get_session)):
@@ -113,19 +108,28 @@ async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Sessio
     userBD = session.get(Users, idUser)
     
     newCompra = ItemCompras(**comprasModel.model_dump()) 
-    session.add(newCompra)
-    session.commit()
-    session.refresh(newCompra)
+    try:
+        
+        session.add(newCompra)
+        session.commit()
+        session.refresh(newCompra)
+
+        userBD.compras_lista.append(newCompra.model_dump())
+        userBD.carrito_items = []
+
+        flag_modified(userBD, "compras_lista")
+        print(userBD)
+
+        session.add(userBD)
+        session.commit()
+        session.refresh(userBD)
+        
+        return {"state":True}
     
-    userBD.compras_lista.append(newCompra.model_dump())
-    userBD.carrito_items = []
+    except:
+        return {"state":False}
+        
     
-    flag_modified(userBD, "compras_lista")
-    print(userBD)
-    
-    session.add(userBD)
-    session.commit()
-    session.refresh(userBD)
     
     
     
@@ -155,6 +159,37 @@ async def get_all_cart(idUser:int,session:Session=Depends(get_session)):
     
     return UsersDB.compras_lista
             
+@router.get("/verifyUsers")
+async def verify_users(usernameData:UsersModel, session:Session=Depends(get_session)):
+   
+    # if not usernameData.fullname or not usernameData.lastname or not usernameData.username or not usernameData.password or not usernameData.email or not usernameData.birthdate:
+    #     return "error: las casillas estan vacias"
+    
+    result =  session.exec(select(Users.username).where(func.lower(Users.username)==usernameData.lower())).all()
+    if result:
+        return "error: username ya esta en uso"
+
+
+@router.post("/verifyLogin")
+async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_session)):
+    
+    statement = select(Users.username, Users.password).where(
+        func.lower(Users.username == userLogin.username.lower()), 
+        func.lower(Users.password == userLogin.password.lower()))
+    
+    result = session.exec(statement).scalar_one_or_none()
+    
+    if result:
+        return {"userExist" : True}
+    else:
+        return {"userExist" : False}
+    
+    
+    
+    
+    
+
+    
     
 
     

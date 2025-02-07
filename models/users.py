@@ -15,6 +15,7 @@ class Users(SQLModel, table=True):
     password:str
     email:str
     birthdate:str
+    direccion:str
     carrito_items: Optional[list[ItemCarritoModel]] = Field(default=None,sa_column=Column(JSON))
     compras_lista: Optional[list[ItemCompraModel]] = Field(default=None,sa_column=Column(JSON))
 
@@ -27,5 +28,11 @@ class UsersModel(BaseModel):
     password:str
     email:str
     birthdate:str
+    direccion:str
     carrito_items: Optional[list[ItemCarritoModel]] = []
     compras_lista: Optional[list[ItemCompraModel]] = []
+
+
+class UsersLoginModel(BaseModel):
+    username:str
+    password:str

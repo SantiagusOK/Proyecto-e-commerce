@@ -85,7 +85,7 @@ const ItemBuy = () =>{
 
                 {/* BOTONES DE COMPRA O CARRITO */}
                 <div className="space-y-4">
-                    <NavLink to={"/carritoPage"} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={AddToCart} >
+                    <NavLink to={"/inicioPage/carritoPage"} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={AddToCart} >
                         AGREGAR AL CARRITO
                     </NavLink>
                     <NavLink to={""} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >

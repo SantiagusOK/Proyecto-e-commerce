@@ -12,7 +12,7 @@ interface CategorieData{
     name:string
 }
 
-const Inicio = () => {
+const MenuPage = () => {
     const[produtsList, setProductsList] = useState<ProductsData[]>([])
     const[categorieList, setCategorieList] = useState<CategorieData[]>([])
 
@@ -70,4 +70,4 @@ const Inicio = () => {
 
 }
 
-export default Inicio
+export default MenuPage

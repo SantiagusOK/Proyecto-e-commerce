@@ -37,11 +37,9 @@ const MisComprasPage = () =>{
                 <div className="bg-neutral-100 w-fit p-5 rounded-2xl shadow">
                     
                     {compraItem.comprasList.map((compras)=>(
-                        
                             
                             <ProductsItem id_product={compras.id_product} amount={compras.amount} totalProduct={compras.total} />
         
-                        
                     ))}
                     <div className="flex flex-col justify-between">
                         <h1>Fecha de compra</h1>

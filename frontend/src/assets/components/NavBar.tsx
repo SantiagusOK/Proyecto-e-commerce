@@ -22,19 +22,22 @@ export default function MyNavBar(){
             <h1>BUY-PRODUCT.COM</h1>
             <nav className="space-x-6">
                 {/* pagina inicio */}
-                <MyNavLink router={"/inicio"} tittle={"Inicio"} />
+                <MyNavLink router={"/inicioPage"} tittle={"Inicio"} />
                 {/* //crear productos */}
-                <MyNavLink router={"/"} tittle={"Agregar Productos"}/>
+                <MyNavLink router={"/inicioPage/productsCreatePage"} tittle={"Agregar Productos"}/>
                 {/* //crear categorias */}
-                <MyNavLink router={"/categorieCreatePage"} tittle={"Agregar Categorias"}/>
+                <MyNavLink router={"/inicioPage/categorieCreatePage"} tittle={"Agregar Categorias"}/>
                 {/* //crearUsuarios */}
-                <MyNavLink router={"/userCreatePage"} tittle={"Agregar Usuarios"}/>
+                <MyNavLink router={"/inicioPage/userCreatePage"} tittle={"Agregar Usuarios"}/>
                 {/* obtener productos + categoria */}
-                <MyNavLink router={"/productsCategoriePage"} tittle={"Obtener Lista Productos"}/>
+                <MyNavLink router={"/inicioPage/productsCategoriePage"} tittle={"Obtener Lista Productos"}/>
                 {/* pagina carrito */}
-                <MyNavLink router={"/carritoPage"} tittle={"Carrito"}/>
+                <MyNavLink router={"/inicioPage/carritoPage"} tittle={"Carrito"}/>
                 {/* pagina mis compras */}
-                <MyNavLink router={"/misComprasPage"} tittle={"Mis Compras"}/>
+                <MyNavLink router={"/inicioPage/misComprasPage"} tittle={"Mis Compras"}/>
+                {/* pagina mis compras */}
+                <MyNavLink router={"/"} tittle={"Cerrar sesion"}/>
+                
             </nav>
         </div>
     )

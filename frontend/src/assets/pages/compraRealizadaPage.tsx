@@ -7,8 +7,8 @@ const CompraRealizadaPage = () =>{
             <h1>COMPRA REALIZADA CON EXITO</h1>
             <div className="flex items-center justify-center space-x-5 ">
 
-                <NavLink className={"text-blue-700"} to={"/inicio"}>ir al inicio</NavLink>
-                <NavLink className={"text-blue-700"} to={"/MisComprasPage"}>ver mis compras</NavLink>
+                <NavLink className={"text-blue-700"} to={"/inicioPage"}>ir al inicio</NavLink>
+                <NavLink className={"text-blue-700"} to={"/inicioPage/MisComprasPage"}>ver mis compras</NavLink>
 
             </div>
 
