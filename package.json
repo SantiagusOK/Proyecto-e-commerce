@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "persist": "^0.2.7",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0"
+  }
+}
