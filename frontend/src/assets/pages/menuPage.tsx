@@ -15,26 +15,45 @@ interface CategorieData{
 const MenuPage = () => {
     const[produtsList, setProductsList] = useState<ProductsData[]>([])
     const[categorieList, setCategorieList] = useState<CategorieData[]>([])
+    const[loading,setLoading] = useState<boolean>(false)
 
     useEffect(()=>{
+        
         GetAllProducts()
-        GetAllCategories()
+        
+        
     },[])
 
-    const GetAllProducts=()=>{
-        fetch("http://localhost:8000/products/getAllProducts+categories")
+    const GetAllProducts=async()=>{
+        setLoading(true)
+        await fetch("http://localhost:8000/products/getAllProducts+categories")
         .then((value)=>value.json())
         .then((data)=>setProductsList(data))
+        GetAllCategories()
+
     }
 
-    const GetAllCategories=()=>{
-        fetch("http://localhost:8000/categories/")
+    const GetAllCategories=async()=>{
+        await fetch("http://localhost:8000/categories/")
         .then((value)=>value.json())
         .then((data)=>setCategorieList(data))
+        setLoading(false)
+    }
+
+    if(loading){
+        return(
+            <div className="p-50 flex flex-col space-y-2 items-center justify-center">
+                <span>CARGANDO</span>
+                <div className="bg-transparent border-b-8 border-neutral-500 animate-spin w-30 h-30 rounded-full"></div>
+
+            </div>
+        )
     }
 
     return(
+        
         <div className="p-10 space-y-10 flex flex-col items-center">
+            
             <div className="w-full justify-between flex items-center 0">
                 {/* BARRA BUSQUEDA  + BOTON BUSCAR*/}
                 <div>
@@ -44,9 +63,9 @@ const MenuPage = () => {
                 </div>
                 {/* TEXTO  + BOTON CATEGORIA*/}
                 <div className="flex space-x-2 h-fit">
-                    <h1 className="text-white">Categoria:</h1>
+                    <h1 >Categoria:</h1>
                     <select className="bg-white w-50" >
-                        <option value="">TODOS</option>
+                        <option value="">...</option>
                         {categorieList.map((categorie)=>(
                             <option value={categorie.id}>{categorie.name.toUpperCase()}</option>
                         ))}
@@ -56,9 +75,9 @@ const MenuPage = () => {
 
             {/* RESULTADOS DE PRODUCTOS */}
 
-            <div className=" space-y-3">
+            <div className=" space-y-[1px]">
 
-                {produtsList.map((products)=>(
+                {produtsList.slice(0,5).map((products)=>(
                     <ItemProducts id={products.id} name={products.name} price={products.price}/>
                 ))}
 

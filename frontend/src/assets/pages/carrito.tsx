@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react"
 import ItemProductsCart from "../components/ItemProductsCart"
 import { NavLink, useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
+
+
+
+
 
 interface CategorieData{
     id:number,
@@ -30,13 +36,17 @@ const CarritoPage = () =>{
     const[loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
+    const nameUSer = useSelector((state:RootState)=>state.user.fullname)
+    const lastnameUSer = useSelector((state:RootState)=>state.user.lastname)
+    const directionUser = useSelector((state:RootState)=>state.user.direccion)
+
     useEffect(()=>{
        
         fetch("http://localhost:8000/users/getCarrito")
         .then((data)=>data.json())
         .then((items)=>{
             setProductsItem(items)
-            const total = items.reduce((acc, item) => acc + item.total, 0);
+            const total = items.reduce((acc: any, item: { total: any }) => acc + item.total, 0);
             setTotalCart(total.toFixed(2));
             
         })
@@ -90,12 +100,12 @@ const CarritoPage = () =>{
                         
                         <div className="flex  justify-between">
                             <h1>Pedido realizado por:</h1>
-                            <h1>Agustin Zapata</h1>
+                            <h1>{nameUSer} {lastnameUSer}</h1>
                         </div>
 
                         <div className="flex  justify-between">
                             <h1>Direccion:</h1>
-                            <h1>Avenida siempre viva 747</h1>
+                            <h1>{directionUser}</h1>
                         </div>
 
                         <div className="mt-5 bg-neutral-400 w-full h-0.5"></div>

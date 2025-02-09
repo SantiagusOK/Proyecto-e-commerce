@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { set } from "react-hook-form"
 import { NavLink, useParams } from "react-router-dom"
 
 const ItemBuy = () =>{
@@ -6,6 +7,8 @@ const ItemBuy = () =>{
     const [name, setName] = useState<string>("")
     const [categorie, setCategorie] = useState<string>("")
     const [amount, setAmount] = useState<number>(1)
+
+    const[loading,setLoading] = useState<boolean>(false)
     
     const [price, setPrice] = useState<number>(0)
     const [total, setTotal] = useState<number>(0)
@@ -16,7 +19,14 @@ const ItemBuy = () =>{
 
 
     useEffect(()=>{
-        fetch("http://localhost:8000/products/"+id)
+        
+        getAnProduct()
+        
+    },[])
+
+    const getAnProduct=async()=>{
+        setLoading(true)
+        await fetch("http://localhost:8000/products/"+id)
         .then((value)=>value.json())
         .then((data)=>{
             setCategorie(data[0].categorie.name)
@@ -24,7 +34,8 @@ const ItemBuy = () =>{
             setPrice(data[0].price)
             setTotal(data[0].price)
         })
-    },[])
+        setLoading(false)
+    }
 
     const ButtonFuncionAdd=()=>{
         if(amount<limitAmout){
@@ -53,11 +64,21 @@ const ItemBuy = () =>{
         })
     }
 
+    
+    if(loading){
+        return(
+            <div className="p-50 flex flex-col space-y-2 items-center justify-center">
+                <span>CARGANDO</span>
+                <div className="bg-transparent border-b-8 border-neutral-500 animate-spin w-30 h-30 rounded-full"></div>
+
+            </div>
+        )
+    }
 
     return(
-        <div className="basis-full flex items-center justify-center">
+        <div className="flex items-center justify-center p-10">
             {/* CUADRADO */}
-            <div className=" flex flex-col bg-white h-fit w-200 space-y-20 p-10">
+            <div className="flex-col flex bg-white h-fit w-200 space-y-20 p-10 rounded-2xl shadow">
 
                 {/* FOTO */}
                 <div className="flex flex-col items-center ">
@@ -76,11 +97,11 @@ const ItemBuy = () =>{
                         <h1 className="font-mono">CANTIDAD</h1>
                         <div className="flex justify-center items-center flex-row-reverse">
                             <input className="text-5xl w-20  rounded-r-2xl border-2 text-center cursor-pointer p-3 border-black active:bg-black active:text-white " type="button" value={"+"} onClick={ButtonFuncionAdd} />
-                            <h1 className="text-5xl w-30 text-center border-y-2 font-bold p-3 ">x{amount}</h1>
+                            <h1 className="text-5xl w-30 text-center border-y-2 p-3 ">x{amount}</h1>
                             <input className="text-5xl w-20  rounded-l-2xl border-2 text-center cursor-pointer p-3 border-black active:bg-black active:text-white" type="button" value={"-"} onClick={ButtonFuncionDelete} />
                         </div>
                     </div>
-                    <h1 className="font-bold text-5xl text-green-700">${total}</h1>
+                    <h1 className="font-medium text-5xl text-neutral-500">${total}</h1>
                 </div>
 
                 {/* BOTONES DE COMPRA O CARRITO */}
