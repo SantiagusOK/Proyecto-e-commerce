@@ -35,7 +35,7 @@ const ItemProductsCart = ({id,id_product, total, amount}:ProductsCartData) =>{
         }
         
         return(
-            <div className="w-230 h-fit shadow bg-white flex flex-col rounded-2xl p-5">
+            <div className="w-230 h-fit shadow bg-white flex flex-col border-neutral-200 p-5">
                 <div className="flex space-x-4  justify-star">
                     <div className="w-50 h-50 bg-neutral-700 rounded-full items-center justify-center flex text-white text-5xl">
                         {nameItem[0]}

@@ -25,6 +25,9 @@ interface ProductsCartData{
 
 const CarritoPage = () =>{
 
+    const storage = localStorage.getItem("userData")
+    const user = JSON.parse(storage!)
+
     const[productsItem, setProductsItem] = useState<ProductsCartData[]>([])
     const[totalCart, setTotalCart] = useState<number>(0)
     const[loading, setLoading] = useState(false)
@@ -36,7 +39,7 @@ const CarritoPage = () =>{
         .then((data)=>data.json())
         .then((items)=>{
             setProductsItem(items)
-            const total = items.reduce((acc, item) => acc + item.total, 0);
+            const total = items.reduce((acc: any, item: { total: any }) => acc + item.total, 0);
             setTotalCart(total.toFixed(2));
             
         })
@@ -74,7 +77,7 @@ const CarritoPage = () =>{
         return(
             <div className="h-full flex items-center p-10">
                 
-                <div className={`h-200 space-y-9 rounded-2xl p-2 ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
+                <div className={`h-200 space-y-0.5 rounded-2xl p-2 ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
                     {productsItem.map((products)=>(
                             <ItemProductsCart id_product={products.id_product} total={products.total} amount={products.amount} id={products.id}/>
                         ))}
@@ -90,12 +93,12 @@ const CarritoPage = () =>{
                         
                         <div className="flex  justify-between">
                             <h1>Pedido realizado por:</h1>
-                            <h1>Agustin Zapata</h1>
+                            <h1>{user.fullname} {user.lastname}</h1>
                         </div>
 
                         <div className="flex  justify-between">
                             <h1>Direccion:</h1>
-                            <h1>Avenida siempre viva 747</h1>
+                            <h1>{user.direccion}</h1>
                         </div>
 
                         <div className="mt-5 bg-neutral-400 w-full h-0.5"></div>

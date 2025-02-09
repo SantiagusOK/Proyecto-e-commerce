@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { NavLink, useParams } from "react-router-dom"
+import Loading from "../components/loading"
 
 const ItemBuy = () =>{
 
@@ -11,12 +12,19 @@ const ItemBuy = () =>{
     const [total, setTotal] = useState<number>(0)
     const {id} = useParams()
 
+    const[loading,setLoading] = useState<boolean>(false)
+
     const limitAmout = 15
     const minorLimitAmout=1
 
 
     useEffect(()=>{
-        fetch("http://localhost:8000/products/"+id)
+        getAnProduct()
+    },[])
+
+    const getAnProduct=async()=>{
+        setLoading(true)
+       await fetch("http://localhost:8000/products/"+id)
         .then((value)=>value.json())
         .then((data)=>{
             setCategorie(data[0].categorie.name)
@@ -24,7 +32,8 @@ const ItemBuy = () =>{
             setPrice(data[0].price)
             setTotal(data[0].price)
         })
-    },[])
+        setLoading(false)
+    }
 
     const ButtonFuncionAdd=()=>{
         if(amount<limitAmout){
@@ -53,20 +62,26 @@ const ItemBuy = () =>{
         })
     }
 
+    if(loading){
+        return(
+            <Loading/>
+        )
+    }
+
 
     return(
         <div className="basis-full flex items-center justify-center">
             {/* CUADRADO */}
-            <div className=" flex flex-col bg-white h-fit w-200 space-y-20 p-10">
+            <div className=" flex flex-col  h-fit w-200 space-y-20 p-10">
 
                 {/* FOTO */}
-                <div className="flex flex-col items-center ">
+                <div className="flex items-center  justify-evenly">
                     <div className="w-50 h-50 bg-neutral-700 rounded-full flex items-center justify-center text-6xl text-white">
                         {name[0]}
                     </div>
                     <div className="flex flex-col items-center ">
-                        <h1 className="text-4xl font-extrabold">{name}</h1>
-                        <h1 className="font-black">[ {categorie} ]</h1> 
+                        <h1 className="text-4xl font-medium">{name}</h1>
+                        <h1 className="font-black">[ {categorie} </h1> 
                     </div>   
                 </div>
                 
@@ -85,10 +100,10 @@ const ItemBuy = () =>{
 
                 {/* BOTONES DE COMPRA O CARRITO */}
                 <div className="space-y-4">
-                    <NavLink to={"/inicioPage/carritoPage"} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={AddToCart} >
+                    <NavLink to={"/inicioPage/carritoPage"} className="h-20 rounded-2xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105" onClick={AddToCart} >
                         AGREGAR AL CARRITO
                     </NavLink>
-                    <NavLink to={""} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >
+                    <NavLink to={""} className="h-20 rounded-2xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >
                         COMPRAR PRODUCTO
                     </NavLink>
                 </div>

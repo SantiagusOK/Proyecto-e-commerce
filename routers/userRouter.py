@@ -173,16 +173,15 @@ async def verify_users(usernameData:UsersModel, session:Session=Depends(get_sess
 @router.post("/verifyLogin")
 async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_session)):
     
-    statement = select(Users.username, Users.password).where(
+    statement = select(Users).where(
         func.lower(Users.username == userLogin.username.lower()), 
         func.lower(Users.password == userLogin.password.lower()))
     
-    result = session.exec(statement).scalar_one_or_none()
+    result = session.exec(statement).first()
     
     if result:
-        return {"userExist" : True}
-    else:
-        return {"userExist" : False}
+        return result
+        
     
     
     

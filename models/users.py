@@ -16,6 +16,7 @@ class Users(SQLModel, table=True):
     email:str
     birthdate:str
     direccion:str
+    isAdmin:Optional[bool] = False
     carrito_items: Optional[list[ItemCarritoModel]] = Field(default=None,sa_column=Column(JSON))
     compras_lista: Optional[list[ItemCompraModel]] = Field(default=None,sa_column=Column(JSON))
 
@@ -29,6 +30,7 @@ class UsersModel(BaseModel):
     email:str
     birthdate:str
     direccion:str
+    isAdmin:Optional[bool] = False
     carrito_items: Optional[list[ItemCarritoModel]] = []
     compras_lista: Optional[list[ItemCompraModel]] = []
 

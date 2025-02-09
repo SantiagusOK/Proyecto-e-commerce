@@ -15,12 +15,18 @@ function CategorieCreatePage() {
   }
 
   return (
-    <div className='flex flex-col  items-center justify-center h-screen space-y-3'>
-      // NOMBRE 
-      <label className='text-white' htmlFor="">Nombre de la categoria</label>
-      <input className='bg-white w-50' type="text" value={categorie} onChange={(e)=>setCategorie(e.target.value)}/>
-      <input type="button" value="AGREGAR" className='bg-red-500 w-50' onClick={saveData}/>
+    <div className='flex  items-center justify-center p-20 space-y-3'>
+      
+      <div className='flex flex-col items-center justify-center bg-white p-5 pr-10 pl-10 space-y-5 rounded-2xl'>
 
+        <span>Registrar una categoria</span>
+
+        {/* NOMBRE DE LA CATEGORIA */}
+        <input className='w-50 rounded-[5px] border-2 border-neutral-400 p-2 outline-none' type="text" value={categorie} placeholder='Nombre de la categoria' onChange={(e)=>setCategorie(e.target.value)}/>
+
+        <input type="button" value="Registrar categoria" className='bg-blue-400 w-50 text-white p-2 text-center rounded-[5px] transition duration-300 hover:scale-110 cursor-pointer' onClick={saveData}/>
+      </div>
+        
     </div>
   )
 }

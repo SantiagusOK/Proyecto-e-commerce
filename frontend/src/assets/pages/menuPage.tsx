@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import ItemProducts from "../components/ItemProduct"
+import Loading from "../components/loading"
 
 interface ProductsData{
     id:number,
@@ -16,21 +17,32 @@ const MenuPage = () => {
     const[produtsList, setProductsList] = useState<ProductsData[]>([])
     const[categorieList, setCategorieList] = useState<CategorieData[]>([])
 
+    const[loading,setLoading] = useState<boolean>(false)
+
     useEffect(()=>{
         GetAllProducts()
-        GetAllCategories()
+        
     },[])
 
-    const GetAllProducts=()=>{
-        fetch("http://localhost:8000/products/getAllProducts+categories")
+    const GetAllProducts=async()=>{
+        setLoading(true)
+       await fetch("http://localhost:8000/products/getAllProducts+categories")
         .then((value)=>value.json())
         .then((data)=>setProductsList(data))
+        GetAllCategories()
     }
 
-    const GetAllCategories=()=>{
-        fetch("http://localhost:8000/categories/")
+    const GetAllCategories=async()=>{
+       await fetch("http://localhost:8000/categories/")
         .then((value)=>value.json())
         .then((data)=>setCategorieList(data))
+        setLoading(false)
+    }
+
+    if(loading){
+        return(
+            <Loading/>
+        )
     }
 
     return(
@@ -56,7 +68,7 @@ const MenuPage = () => {
 
             {/* RESULTADOS DE PRODUCTOS */}
 
-            <div className=" space-y-3">
+            <div className="">
 
                 {produtsList.map((products)=>(
                     <ItemProducts id={products.id} name={products.name} price={products.price}/>

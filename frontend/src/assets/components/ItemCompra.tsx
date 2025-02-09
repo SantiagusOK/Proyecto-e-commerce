@@ -34,7 +34,7 @@ const ProductsItem=({id_product, amount, totalProduct}:productIdData)=>{
 
 
     return(
-        <div className=" flex w-full mb-2  space-x-5 bg-white p-4 drop-shadow-lg rounded-2xl">
+        <div className=" flex w-full mb-0.5  space-x-5 bg-white p-4 shadow ">
             <div className="bg-neutral-500 w-40 h-40 rounded-full flex items-center justify-center text-white text-4xl">{productName[0]}</div>
 
             <div className="flex flex-col justify-center items-start w-90">

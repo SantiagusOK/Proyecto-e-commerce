@@ -41,7 +41,7 @@ const MisComprasPage = () =>{
                             <ProductsItem id_product={compras.id_product} amount={compras.amount} totalProduct={compras.total} />
         
                     ))}
-                    <div className="flex flex-col justify-between">
+                    <div className="flex justify-between mt-5 mb-5">
                         <h1>Fecha de compra</h1>
                         <h1>{compraItem.fechaDeCompra}</h1>
                     </div>
