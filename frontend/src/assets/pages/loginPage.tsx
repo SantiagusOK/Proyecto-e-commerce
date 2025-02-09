@@ -1,11 +1,15 @@
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 import { Navigate, NavLink, useNavigate } from "react-router-dom"
+import { loginUser } from "../../redux/userSlice"
 
 const LoginPage = () =>{
 
     const[username,setUsername] = useState<string>("")
     const[password,setPassword] = useState<string>("")
     const[loading, setLoading] = useState<boolean>(false)
+
+    const dispatch = useDispatch()
 
     const navigate = useNavigate();
 
@@ -15,8 +19,11 @@ const LoginPage = () =>{
             method: "POST",
             headers: {"Content-Type":"application/json"},
             body:JSON.stringify({username:username, password:password})})
-        const data = await responde.json()
-        if(data.userExist){
+        
+        if(responde){
+            const data = await responde.json()
+            dispatch(loginUser(data))
+            console.log(data)
             navigate("/inicioPage")
         } else{
             console.log("NO SE PUDO CAMBIAR DE PAGINA")
