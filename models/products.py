@@ -16,4 +16,7 @@ class Products(SQLModel, table=True):
     stock:int
     price:float
     categories:Optional[int] = Field(default=None, foreign_key="categories.id")
-    
+
+class ProducstSearchModel(BaseModel):
+    name:str
+    categorie:int

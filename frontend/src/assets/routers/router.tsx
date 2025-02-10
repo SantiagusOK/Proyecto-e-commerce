@@ -18,6 +18,8 @@ import InicioPage from "../pages/InicioPage";
 import UserCreatePage from "../pages/registerPage";
 import LoginPage from "../pages/loginPage";
 import Layout from "../pages/layout";
+import { AllUsersPage } from "../pages/allUsersPage";
+import { EditUserPage } from "../pages/editUserPage";
 
 
 const router = createBrowserRouter([
@@ -82,6 +84,14 @@ const router = createBrowserRouter([
                     {
                         path:"/inicioPage/misComprasPage",
                         element: <MisComprasPage/>
+                    },
+                    {
+                        path:"/inicioPage/allUserPage",
+                        element: <AllUsersPage/>
+                    },
+                    {
+                        path:"/inicioPage/editUserPage/:id",
+                        element: <EditUserPage/>
                     }
 
                 ]

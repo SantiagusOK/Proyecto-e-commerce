@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products
+from models.products import ProductModel, Products, ProducstSearchModel
 from models.categories import CategorieModel, Categories
 
 router = APIRouter(prefix="/products", tags=["Products"])
@@ -67,12 +68,42 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
     print(products_with_categories)
     return products_with_categories
 
+@router.get("/searchByName/")
+async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
 
-
+    if productSearch.name=="" and productSearch.categorie==0: 
+        statement = select(Products)
     
+    elif productSearch.name=="" and productSearch.categorie>0: 
+        statement = select(Products).where(
+            func.lower(Products.categories == productSearch.categorie))
+        
+    elif not productSearch.name=="" and productSearch.categorie>0: 
+        statement = select(Products).where(
+            Products.categories == productSearch.categorie,
+            func.lower(Products.name == productSearch.name))
+
+    productResult = session.exec(statement).all()
+    return productResult
+
+@router.get("/searchCategorie/")
+async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
+
+    if productSearch.categorie=="": 
+        statement = select(Products)
+    
+    else :
+        statement = select(Products).where(Products.categories == productSearch.categorie)
+
+    productResult = session.exec(statement).all()
+    return productResult
+# statement = select(Products).where(
+#             func.lower(Products.name) == productSearch.name,
+#             Products.categories == productSearch.categorie)
 def search_value(value:ProductModel ,session:Session):
     result = session.exec(select(Products)).all()
     for product in result:
         if value.name == product.name:
             return value
     return None
+

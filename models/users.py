@@ -38,3 +38,6 @@ class UsersModel(BaseModel):
 class UsersLoginModel(BaseModel):
     username:str
     password:str
+    
+class UsersAdminModel(BaseModel):
+    isAdmin:bool

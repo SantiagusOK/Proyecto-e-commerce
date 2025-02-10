@@ -4,7 +4,7 @@ from db.connect import get_session
 from sqlmodel import Session, select
 from models.products import ProductModel, Products
 from models.categories import CategorieModel, Categories
-from models.users import Users, UsersModel, UsersLoginModel
+from models.users import Users, UsersModel, UsersLoginModel, UsersAdminModel
 from models.itemCarrito import ItemCarritoModel
 from models.itemCompra import ItemCompraModel, ItemCompras
 from sqlalchemy.orm.attributes import flag_modified
@@ -181,7 +181,25 @@ async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_
     
     if result:
         return result
-        
+    
+@router.get("/{id}")
+async def get_a_user(id:int, session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == id)
+    result = session.exec(statement).first()
+    return result
+
+@router.put("/setAdmin/{id}")
+async def get_a_user(id:int, adminModel:UsersAdminModel ,session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == id)
+    user = session.exec(statement).first()
+    
+    user.isAdmin = adminModel.isAdmin
+    
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    
+    return user
     
     
     

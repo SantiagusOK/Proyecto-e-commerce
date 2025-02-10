@@ -75,16 +75,16 @@ const CarritoPage = () =>{
     if(productsItem.length>0){
         
         return(
-            <div className="h-full flex items-center p-10">
+            <div className="h-full flex items-start justify-between  p-10">
                 
-                <div className={`h-200 space-y-0.5 rounded-2xl p-2 ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
+                <div className={`h-200 space-y-0.5 rounded-2xl ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
                     {productsItem.map((products)=>(
                             <ItemProductsCart id_product={products.id_product} total={products.total} amount={products.amount} id={products.id}/>
                         ))}
                 </div>
                 
 
-                <div className="w-150  bg-white fixed right-30 top-30 flex flex-col p-5 text-[20px] items-center space-y-10 rounded-2xl shadow ">
+                <div className="w-130  bg-white flex flex-col p-5 text-[20px] items-center space-y-10 rounded-2xl shadow ">
                     <div className="w-full">
                         <div className="flex  justify-between ">
                             <h1>Cantidad de productos:</h1>
@@ -108,11 +108,10 @@ const CarritoPage = () =>{
                             <h1 className="font-extrabold">$ {totalCart}</h1>
                         </div>
                     </div>
-                    
 
                     <NavLink to={""} className="bg-blue-300 w-full flex justify-center rounded-[10px] p-5 font-medium transition duration-300 hover:scale-105 hover:bg-blue-400 items-center" onClick={realizeBuy}>
                         {loading && <div className="w-5 h-5 bg-transparent border-b-2 rounded-full mr-5 animate-spin"></div>}
-                        REALIZAR COMPRA
+                        <span className="text-white">Realizar Compra</span>
                     </NavLink>
                     
                 </div>

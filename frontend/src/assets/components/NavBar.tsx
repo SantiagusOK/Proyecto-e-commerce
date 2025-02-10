@@ -35,6 +35,8 @@ export default function MyNavBar(){
                     <MyNavLink router={"/inicioPage/categorieCreatePage"} tittle={"Agregar Categorias"}/>
                     {/* obtener productos + categoria */}
                     <MyNavLink router={"/inicioPage/productsCategoriePage"} tittle={"Obtener Lista Productos"}/>
+                    {/* obtener y manipular Usuarios */}
+                    <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Todos usuarios"}/>
                     </>
                 )}
                 
