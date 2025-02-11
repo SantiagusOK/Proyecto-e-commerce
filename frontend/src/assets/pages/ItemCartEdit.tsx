@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react"
 import { NavLink, useParams } from "react-router-dom"
+import Loading from "../components/loading"
+
+
+
 
 const ItemCartEdit = () =>{
 
@@ -11,29 +15,48 @@ const ItemCartEdit = () =>{
     const [total, setTotal] = useState<number>(0)
     const [idProduct, setIdProduct] = useState<number>(0)
 
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const storage = localStorage.getItem("userData")
+    const user = JSON.parse(storage!)
+    const idUser = user.id
+
     const {id} = useParams()
+
+
+    const idItem = id
 
     const limitAmout = 15
     const minorLimitAmout=1
 
 
+
     useEffect(()=>{
-        fetch("http://localhost:8000/users/getItemCarrito/"+id)
+        get_all_carrito()
+    },[])
+
+    const get_all_carrito=async()=>{
+        setLoading(true)
+        const response = await fetch("http://localhost:8000/users/getItemCarrito/" + idItem + "/" + idUser)
         .then((value)=>value.json())
-        .then((data)=>{
+        .then(async(data)=>{
             setTotal(data.total)
             setAmount(data.amount)
             setIdProduct(data.id_product)
-            fetch("http://localhost:8000/products/"+data.id_product)
+            console.log(data.id_product)
+            await fetch("http://localhost:8000/products/"+data.id_product)
                 .then((value)=>value.json())
                 .then((data)=>{
                     console.log(data[0].name)
                     setCategorie(data[0].categorie.name)
                     setName(data[0].name)
                     setPrice(data[0].price)
-                })  
-        })
-    },[])
+                })
+            })
+            setLoading(false)
+        console.log("data:::" + response)
+        
+    }
 
     const ButtonFuncionAdd=()=>{
         if(amount<limitAmout){
@@ -55,11 +78,17 @@ const ItemCartEdit = () =>{
 
 
     const ModifyAnItemCart = () =>{
-        fetch("http://localhost:8000/users/modifyAnItemCart/"+id,{
+        fetch("http://localhost:8000/users/modifyAnItemCart/"+id+"/"+idUser,{
             method:"PUT",
             headers:{"Content-Type" : "application/json"},
             body: JSON.stringify({id_product : idProduct, total:total, amount:amount})
         })
+    }
+
+    if(loading){
+        return(
+            <Loading/>
+        )
     }
 
     return(

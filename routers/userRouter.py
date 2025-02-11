@@ -25,10 +25,10 @@ async def create_categories(anNewUser:UsersModel, session:Session = Depends(get_
     return user
 
     
-@router.put("/setCarrito")
-async def add_product_cart(anProduct:ItemCarritoModel, session:Session = Depends(get_session)):
-    statement = select(Users).where(Users.id == 1)
-    userBD = session.exec(statement).one()
+@router.put("/setCarrito/{idUser}")
+async def add_product_cart(idUser:int, anProduct:ItemCarritoModel, session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == idUser)
+    userBD = session.exec(statement).first()
     anProduct.id = len(userBD.carrito_items)+1
     product = anProduct.model_dump()
     userBD.carrito_items.append(product)
@@ -48,26 +48,26 @@ def search_value(value:Users ,session:Session):
         if user.username == value.username:
             return value
 
-@router.get("/getCarrito")
-async def get_all_carrito(session:Session = Depends(get_session)):
-    statement = select(Users)
-    result = session.exec(statement).one() ##CAMBIAR ESTO MAS ADELANTE
-    return result.carrito_items
+@router.get("/getCarrito/{idUser}")
+async def get_all_carrito(idUser:int, session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == idUser)
+    user = session.exec(statement).first() 
+    return user.carrito_items
 
 
-@router.get("/getItemCarrito/{id}")
-async def get_all_carrito(id:int, session:Session = Depends(get_session)):
-    statement = select(Users)
-    user = session.exec(statement).one() ##CAMBIAR ESTO MAS ADELANTE
+@router.get("/getItemCarrito/{idItem}/{idUser}")
+async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == idUser)
+    user = session.exec(statement).first() 
     for itemCarrito in user.carrito_items:
-        if itemCarrito["id"] == id:
+        if itemCarrito["id"] == idItem:
             return itemCarrito
 
-
-@router.put("/modifyAnItemCart/{id}")
-async def get_all_carrito(id:int,itemCart:ItemCarritoModel ,session:Session = Depends(get_session)):
-    statement = select(Users)
-    userBD = session.exec(statement).one() ##CAMBIAR ESTO MAS ADELANTE
+## arreglar esto mas adelante
+@router.put("/modifyAnItemCart/{id}/{idUser}")
+async def get_all_carrito(id:int, idUser:int, itemCart:ItemCarritoModel ,session:Session = Depends(get_session)):
+    statement = select(Users).where(Users.id == idUser)
+    userBD = session.exec(statement).first() #
     for itemCarrito in userBD.carrito_items:
         if itemCarrito["id"] == id:
             itemCarrito["total"] = itemCart.total
@@ -82,22 +82,21 @@ async def get_all_carrito(id:int,itemCart:ItemCarritoModel ,session:Session = De
             return userBD
 
 
-@router.put("/deleteAnItemCart/{id}")
-async def get_all_carrito(id:int, session:Session = Depends(get_session)):
-    statement = select(Users)
-    userBD = session.exec(statement).one() ##CAMBIAR ESTO MAS ADELANTE
+@router.put("/deleteAnItemCart/{idItem}/{idUser}")
+async def delete_a_item_from_cart(idItem:int, idUser:int, session:Session = Depends(get_session)):
+
+    statement = select(Users).where(Users.id==idUser)
+    userBD = session.exec(statement).first()
+
     index = 0
     for itemCarrito in userBD.carrito_items:
-        if itemCarrito["id"] == id:
+        if itemCarrito["id"] == idItem:
             del userBD.carrito_items[index]
-            
             flag_modified(userBD, "carrito_items")
-            
             session.add(userBD)
             session.commit()
             session.refresh(userBD)
-            
-            return userBD
+            return userBD.carrito_items
             
         index += 1 
 

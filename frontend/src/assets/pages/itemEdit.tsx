@@ -17,6 +17,9 @@ const ItemBuy = () =>{
     const limitAmout = 15
     const minorLimitAmout=1
 
+    const storage = localStorage.getItem("userData")
+    const user = JSON.parse(storage!)
+    const idUser = user.id
 
     useEffect(()=>{
         getAnProduct()
@@ -53,9 +56,8 @@ const ItemBuy = () =>{
         }
     }
 
-
     const AddToCart = () =>{
-        fetch("http://localhost:8000/users/setCarrito",{
+        fetch("http://localhost:8000/users/setCarrito/" + idUser,{
             method:"PUT",
             headers:{"Content-Type" : "application/json"},
             body: JSON.stringify({id_product : id, total:total, amount:amount})
@@ -67,7 +69,6 @@ const ItemBuy = () =>{
             <Loading/>
         )
     }
-
 
     return(
         <div className="basis-full flex items-center justify-center">

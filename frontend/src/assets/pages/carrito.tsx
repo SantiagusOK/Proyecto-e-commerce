@@ -35,7 +35,7 @@ const CarritoPage = () =>{
 
     useEffect(()=>{
        
-        fetch("http://localhost:8000/users/getCarrito")
+        fetch("http://localhost:8000/users/getCarrito/"+user.id)
         .then((data)=>data.json())
         .then((items)=>{
             setProductsItem(items)
@@ -49,13 +49,16 @@ const CarritoPage = () =>{
 
     const realizeBuy=async()=>{
         setLoading(true)
+        const storage = localStorage.getItem("userData")
+        const user = JSON.parse(storage!)
+
         const fecha = new Date()
         const fechaStr = fecha.toLocaleString()
-        const response = await fetch("http://localhost:8000/users/realizeABuy/1",{
+        const response = await fetch("http://localhost:8000/users/realizeABuy/"+user.id,{
             method:"PUT",
             headers:{"Content-Type":"application/json"},
             body: JSON.stringify({
-                id_user:1, 
+                id_user:user.id, 
                 comprasList:productsItem, 
                 fechaDeCompra:fechaStr,
                 totalCompra:Number(totalCart),})
@@ -79,7 +82,7 @@ const CarritoPage = () =>{
                 
                 <div className={`h-200 space-y-0.5 rounded-2xl ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
                     {productsItem.map((products)=>(
-                            <ItemProductsCart id_product={products.id_product} total={products.total} amount={products.amount} id={products.id}/>
+                            <ItemProductsCart item={products} />
                         ))}
                 </div>
                 

@@ -21,8 +21,11 @@ const MisComprasPage = () =>{
 
     const[comprasList, setComprasList] = useState<comprasData[]>([])
 
+    const storage = localStorage.getItem("userData")
+    const user = JSON.parse(storage!)
+
     useEffect(()=>{
-        fetch("http://localhost:8000/users/getAllCart/1")
+        fetch("http://localhost:8000/users/getAllCart/"+user.id)
         .then((value)=>value.json())
         .then((data)=>setComprasList(data))
     },[])
