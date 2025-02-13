@@ -82,7 +82,7 @@ const ItemBuy = () =>{
                     </div>
                     <div className="flex flex-col items-center ">
                         <h1 className="text-4xl font-medium">{name}</h1>
-                        <h1 className="font-black">[ {categorie} </h1> 
+                        <h1 className="font-black"> {categorie} </h1> 
                     </div>   
                 </div>
                 

@@ -52,6 +52,59 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
     result = session.exec(select(Products, Categories).join(Categories, Products.categories==Categories.id).where(Products.id == id))
     
     # result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
+    # products_with_categories = [
+    #         {
+    #             "id": product.id,
+    #             "name": product.name,
+    #             "stock": product.stock,
+    #             "price": product.price,
+    #             "categorie": {
+    #                 "id": category.id,
+    #                 "name": category.name
+    #             }
+    #         }
+    #         for product, category in result
+    #     ]
+    # print(products_with_categories)
+    # return products_with_categories
+    
+    return build_product_category(result)
+
+@router.post("/searchByName/")
+async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
+    
+    # Devuelve todos los productos registrados
+    if not productSearch.name and productSearch.categorie <= 0: 
+        statement = select(Products, Categories).join(Categories, Products.categories==Categories.id)
+        result = session.exec(statement).all()
+        return build_product_category(result)
+    
+    # devuelve todos los productos de cierta categoria
+    elif not productSearch.name and productSearch.categorie > 0:
+        statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
+            Products.categories == productSearch.categorie)
+        result = session.exec(statement).all()
+        # return result
+        # product = 
+        return build_product_category(result)
+    
+    # devuelve solo el producto que se escriba si la categorie es 0(todos)
+    elif productSearch and productSearch.categorie == 0:
+        statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
+            func.lower(Products.name) == productSearch.name)
+        result = session.exec(statement).all()
+        return build_product_category(result)
+    
+    # devuelve todos los productos que escriba de cierta categoria
+    elif productSearch.name and productSearch.categorie>0: 
+        statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
+            Products.categories == productSearch.categorie,
+            func.lower(Products.name) == productSearch.name)
+        result = session.exec(statement).all()
+        return build_product_category(result)
+
+
+def build_product_category(result):
     products_with_categories = [
             {
                 "id": product.id,
@@ -65,45 +118,4 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
             }
             for product, category in result
         ]
-    print(products_with_categories)
     return products_with_categories
-
-@router.get("/searchByName/")
-async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
-
-    if productSearch.name=="" and productSearch.categorie==0: 
-        statement = select(Products)
-    
-    elif productSearch.name=="" and productSearch.categorie>0: 
-        statement = select(Products).where(
-            func.lower(Products.categories == productSearch.categorie))
-        
-    elif not productSearch.name=="" and productSearch.categorie>0: 
-        statement = select(Products).where(
-            Products.categories == productSearch.categorie,
-            func.lower(Products.name == productSearch.name))
-
-    productResult = session.exec(statement).all()
-    return productResult
-
-@router.get("/searchCategorie/")
-async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
-
-    if productSearch.categorie=="": 
-        statement = select(Products)
-    
-    else :
-        statement = select(Products).where(Products.categories == productSearch.categorie)
-
-    productResult = session.exec(statement).all()
-    return productResult
-# statement = select(Products).where(
-#             func.lower(Products.name) == productSearch.name,
-#             Products.categories == productSearch.categorie)
-def search_value(value:ProductModel ,session:Session):
-    result = session.exec(select(Products)).all()
-    for product in result:
-        if value.name == product.name:
-            return value
-    return None
-
