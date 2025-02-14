@@ -14,10 +14,11 @@ app.include_router(userRouter.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Permitir tu frontend local
+    allow_origins=["http://localhost:5173"],  # Aquí defines los orígenes permitidos
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"])
+    allow_methods=["*"],  # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Permite todos los encabezados
+)
 
 @app.get("/")
 async def get():

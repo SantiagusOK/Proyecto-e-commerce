@@ -20,6 +20,9 @@ import LoginPage from "../pages/loginPage";
 import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
+import AllProductsPage from "../pages/tableProducts";
+import EditProduct from "../pages/editProduct";
+import EditProductPage from "../pages/editProduct";
 
 
 const router = createBrowserRouter([
@@ -61,8 +64,17 @@ const router = createBrowserRouter([
                     },
 
                     {
-                        path:"/inicioPage/productsCategoriePage",
-                        element: <TableProducts/>
+                        path:"/inicioPage/allProductsPage",
+                        children:[
+                            {
+                                path:"/inicioPage/allProductsPage",
+                                element: <AllProductsPage/>,
+                            },
+                            {
+                                path:"/inicioPage/allProductsPage/editProduct/:id",
+                                element: <EditProductPage/>
+                            }
+                        ]
                     },
                     {
                         path:"/inicioPage/itemBuy/:id",
@@ -70,12 +82,17 @@ const router = createBrowserRouter([
                     },
                     {
                         path:"/inicioPage/carritoPage",
-                        element: <CarritoPage/>
+                        children:[
+                            {
+                                path:"/inicioPage/carritoPage",
+                                element: <CarritoPage/>,
+                            },
+                            {
+                                path:"/inicioPage/carritoPage/itemCartEdit/:id",
+                                element: <ItemCartEdit/>
+                            }
+                        ]
 
-                    },
-                    {
-                        path:"/inicioPage/itemCartEdit/:id/:item",
-                        element: <ItemCartEdit/>
                     },
                     {
                         path:"/inicioPage/compraRealizadaPage",
@@ -92,7 +109,12 @@ const router = createBrowserRouter([
                     {
                         path:"/inicioPage/editUserPage/:id",
                         element: <EditUserPage/>
+                    },
+                    {
+                        path:"/inicioPage/editProduct/:id",
+                        element: <EditProductPage/>
                     }
+                    
 
                 ]
                 

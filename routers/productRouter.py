@@ -2,19 +2,21 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products, ProducstSearchModel
+from models.products import ProductModel, Products, ProducstSearchModel, ProductUpdateModel
 from models.categories import CategorieModel, Categories
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/")
 async def get_all_products(session:Session = Depends(get_session)):
-    return session.exec(select(Products)).all()
+    statement = select(Products, Categories).join(Categories, Products.categories == Categories.id)
+    result = session.exec(statement).all()
+    return build_product_category(result)
 
 
 @router.post("/create")
 async def create_categories(anNewProduct:ProductModel, session:Session = Depends(get_session)):
-    if type(search_value(anNewProduct, session)) != Products:
+    if type(build_product_category(anNewProduct, session)) != Products:
         newProduct = Products(**anNewProduct.model_dump())
         session.add(newProduct)
         session.commit()
@@ -48,27 +50,14 @@ async def get_all_products_categories(session:Session = Depends(get_session)):
 
 @router.get("/{id}")
 async def getAnProduct(id:int, session:Session=Depends(get_session)):
+    statement = select(Products, Categories).join(Categories, Products.categories == Categories.id).where(Products.id == id)
     
-    result = session.exec(select(Products, Categories).join(Categories, Products.categories==Categories.id).where(Products.id == id))
+    result = session.exec(statement).all()
     
-    # result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
-    # products_with_categories = [
-    #         {
-    #             "id": product.id,
-    #             "name": product.name,
-    #             "stock": product.stock,
-    #             "price": product.price,
-    #             "categorie": {
-    #                 "id": category.id,
-    #                 "name": category.name
-    #             }
-    #         }
-    #         for product, category in result
-    #     ]
-    # print(products_with_categories)
-    # return products_with_categories
+
+    product = build_product_category(result)
     
-    return build_product_category(result)
+    return product
 
 @router.post("/searchByName/")
 async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
@@ -119,3 +108,20 @@ def build_product_category(result):
             for product, category in result
         ]
     return products_with_categories
+
+@router.put("/updatePrice")
+async def update_a_product(productModel:ProductUpdateModel, session:Session=Depends(get_session)):
+    
+    statement = select(Products).where(Products.id == productModel.id)
+    product = session.exec(statement).first()
+    product.price = productModel.price
+    product.stock = productModel.stock
+    
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+    
+    
+    return product
+    
+    

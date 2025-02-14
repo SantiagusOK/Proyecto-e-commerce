@@ -39,6 +39,19 @@ async def add_product_cart(idUser:int, anProduct:ItemCarritoModel, session:Sessi
     session.commit()
     session.refresh(userBD)
     
+    statement = select(Products).where(Products.id == anProduct.id_product)
+    product = session.exec(statement).first()
+    
+    product.stock -= anProduct.amount
+    
+    if product.stock < 0:product.stock = 0
+    
+    session.add(product)
+    session.commit()
+    session.refresh(product)
+    
+    print(f"---------------------{product}")
+        
     return userBD
     
 def search_value(value:Users ,session:Session):
@@ -96,7 +109,20 @@ async def delete_a_item_from_cart(idItem:int, idUser:int, session:Session = Depe
             session.add(userBD)
             session.commit()
             session.refresh(userBD)
-            return userBD.carrito_items
+            
+            productSelect = ItemCarritoModel(**itemCarrito)
+                
+            statementNew = select(Products).where(Products.id == productSelect.id_product)
+            product = session.exec(statementNew).first()
+            
+            print(f"--------------{product}--------------")
+        
+            product.stock += productSelect.amount    
+            session.add(product)
+            session.commit()
+            session.refresh(product)
+            
+            print(f"...................{product}.........................")
             
         index += 1 
 

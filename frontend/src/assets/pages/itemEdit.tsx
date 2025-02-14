@@ -11,6 +11,7 @@ const ItemBuy = () =>{
     const [price, setPrice] = useState<number>(0)
     const [total, setTotal] = useState<number>(0)
     const {id} = useParams()
+    const [stock, setStock] = useState<number>(0)
 
     const[loading,setLoading] = useState<boolean>(false)
 
@@ -24,7 +25,6 @@ const ItemBuy = () =>{
     useEffect(()=>{
         getAnProduct()
     },[])
-
     const getAnProduct=async()=>{
         setLoading(true)
        await fetch("http://localhost:8000/products/"+id)
@@ -34,12 +34,13 @@ const ItemBuy = () =>{
             setName(data[0].name)
             setPrice(data[0].price)
             setTotal(data[0].price)
+            setStock(data[0].stock)
         })
         setLoading(false)
     }
 
     const ButtonFuncionAdd=()=>{
-        if(amount<limitAmout){
+        if(amount<stock){
             setAmount(amount+1)
             setTotal(prevTotal => parseFloat((prevTotal + price).toFixed(2)));
         } else if(amount>=limitAmout){
@@ -70,10 +71,14 @@ const ItemBuy = () =>{
         )
     }
 
+    const SetHola= ()=>{
+        console.log("hola")
+    }
+
     return(
         <div className="basis-full flex items-center justify-center">
             {/* CUADRADO */}
-            <div className=" flex flex-col  h-fit w-200 space-y-20 p-10">
+            <div className=" flex flex-col bg-white h-fit w-200 space-y-20 p-10 rounded-b-3xl ">
 
                 {/* FOTO */}
                 <div className="flex items-center  justify-evenly">
@@ -114,5 +119,6 @@ const ItemBuy = () =>{
         </div>
     )
 }
+
 
 export default ItemBuy

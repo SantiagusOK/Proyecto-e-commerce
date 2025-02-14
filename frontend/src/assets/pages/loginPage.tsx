@@ -11,21 +11,29 @@ const LoginPage = () =>{
 
     const LoginNow = async ()  => {
         setLoading(true)
-        const response = await fetch("http://localhost:8000/users/verifyLogin",{
+        try{
+            
+            const response = await fetch("http://localhost:8000/users/verifyLogin",{
             method: "POST",
             headers: {"Content-Type":"application/json"},
             body:JSON.stringify({username:username, password:password})})
-        const data = await response.json()
-        console.log(data)
-        if(data){
-            
+            const data = await response.json()
             console.log(data)
-            localStorage.setItem("userData", JSON.stringify(data))
-            navigate("/inicioPage")
-        } else{
-            console.log("NO SE PUDO CAMBIAR DE PAGINA")
+            if(data){
+                
+                console.log(data)
+                localStorage.setItem("userData", JSON.stringify(data))
+                navigate("/inicioPage")
+            } else{
+                console.log("NO SE PUDO CAMBIAR DE PAGINA")
+            }
+            setLoading(false)  
+        } catch {
+            console.log("ERROR")
+            setLoading(false)  
         }
-        setLoading(false)
+        
+        
     }
 
     return(

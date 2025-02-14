@@ -64,7 +64,7 @@ const ItemProductsCart = ({item}:itemCartData) =>{
                     </div>
 
                     <div className=" items-end flex space-x-5 w-fit">
-                        <NavLink to={"/inicioPage/itemCartEdit/" + idItem + "/" + item}>MODIFICAR</NavLink>
+                        <NavLink to={"/inicioPage/carritoPage/itemCartEdit/" + idItem}>MODIFICAR CANTIDAD</NavLink>
                         <NavLink to={"/inicioPage/carritoPage"} onClick={deleteAItem}>ELIMINAR</NavLink>
                         
                     </div>

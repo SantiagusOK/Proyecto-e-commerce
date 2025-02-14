@@ -20,3 +20,8 @@ class Products(SQLModel, table=True):
 class ProducstSearchModel(BaseModel):
     name:str
     categorie:int
+
+class ProductUpdateModel(BaseModel):
+    id:int
+    price:float
+    stock:int

@@ -6,6 +6,7 @@ interface ProductsData{
     id:number,
     name:string,
     price:number
+    stock:number
 }
 
 interface CategorieData{
@@ -91,10 +92,10 @@ const MenuPage = () => {
 
             {/* RESULTADOS DE PRODUCTOS */}
 
-            <div className="">
+            <div>
 
                 {produtsList.map((products)=>(
-                    <ItemProducts id={products.id} name={products.name} price={products.price}/>
+                    <ItemProducts product={products} />
                 ))}
 
             </div>

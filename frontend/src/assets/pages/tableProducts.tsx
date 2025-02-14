@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import Loading from "../components/loading"
+import { NavLink } from "react-router-dom"
 
 interface categorieData{
     id:number,
@@ -12,44 +14,53 @@ interface listProductsData{
     categorie:categorieData
 }
 
-const TableProducts= () =>{
+const AllProductsPage= () =>{
 
     const [listProducts, setListProducts] = useState<listProductsData[]>([])
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(()=>{
-        fetch("http://localhost:8000/products/getAllProducts+categories")
-        .then((values) => values.json())
-        .then((data) => setListProducts(data))
+        get_all_products()
     },[])
 
 
+    const get_all_products=async()=>{
+        setLoading(true)
+        const response = await fetch("http://localhost:8000/products/")
+        .then((values) => values.json())
+        .then((data) => setListProducts(data))
+        setLoading(false)
+    }
 
-
+    if(loading){
+        return(
+            <Loading/>
+        )
+    }
 
     return(        
-        <div className=" text-left h-screen flex flex-col items-center pb-10 pt-10">
-            <table className=" h-fit w-fit" >
-                <thead>
-                    <tr>
-                        <th className="bg-neutral-500 w-fit p-5 border-2">ID</th>
-                        <th className="bg-neutral-500 w-fit p-5 border-2">NOMBRE DEL PRODUCTO</th>
-                        <th className="bg-neutral-500 w-fit p-5 border-2">PRECIO</th>
-                        <th className="bg-neutral-500 w-fit p-5 border-2">CATEGORIA</th>
-                    </tr> 
-                </thead>
-                <tbody>
-                    {listProducts.map((product)=>(
-                        <tr>
-                            <th className="bg-neutral-300 w-fit p-5 border-2">{product.id}</th>
-                            <th className="bg-neutral-300 w-fit p-5 border-2">{product.name}</th>
-                            <th className="bg-neutral-300 w-fit p-5 border-2">${product.price}</th>
-                            <th className="bg-neutral-300 w-fit p-5 border-2">{product.categorie.name}</th>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            
+        <div className="flex flex-col items-center justify-start pt-5">
+
+            {listProducts.map((product)=>(
+                <div className="bg-white p-5 flex w-160 m-0.5 items-center space-x-3">
+
+                    <div className="bg-neutral-400 h-20 w-20 rounded-full flex items-center justify-center">
+                        {product.name[0]}
+                    </div>
+
+                    <div className="flex flex-col w-sm">
+                        <span className="text-2xl">{product.name}</span>
+                        {/* <span>{product.categorie.name}</span> */}
+                        <span className="text-2xl font-extralight">${product.price}</span>
+                    </div>
+
+                    <div className="">
+                        <NavLink to={"/inicioPage/allProductsPage/editProduct/" + product.id}>EDITAR</NavLink>
+                    </div>
+
+                </div>
+            ))}
+
         </div>
     )
 
@@ -57,4 +68,4 @@ const TableProducts= () =>{
 
 }
 
-export default TableProducts
+export default AllProductsPage
