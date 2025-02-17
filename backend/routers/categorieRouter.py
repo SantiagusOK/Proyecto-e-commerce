@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
 from models.products import ProductModel, Products
@@ -12,17 +13,24 @@ async def get_all_categories(session:Session = Depends(get_session)):
 
 @router.post("/create")
 async def create_categories(anNewCategorie:CategorieModel, session:Session = Depends(get_session)):
-    if type(search_value(anNewCategorie, session)) != Categories:
-        newCategories = Categories(**anNewCategorie.model_dump())
-        session.add(newCategories)
-        session.commit()
-        session.refresh(newCategories)
-        return newCategories
-    else:
+    
+    statement = select(Categories).where(func.lower(Categories.name) == anNewCategorie.name.lower())
+    category = session.exec(statement).first()
+    
+    if category:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Esta categoria ya esta agregada"
-        )
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Esta categoria ya esta registrado"
+        )  
+    category = Categories(**anNewCategorie.model_dump())
+    session.add(category)
+    session.commit()
+    session.refresh(category)
+    
+    raise HTTPException(
+        status_code=status.HTTP_201_CREATED,
+        detail="Categoria creado con exito"
+    )
     
 def search_value(value:CategorieModel ,session:Session):
     result = session.exec(select(Categories)).all()

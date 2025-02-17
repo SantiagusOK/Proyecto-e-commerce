@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
-import { NavLink, useParams } from "react-router-dom"
+import { NavLink, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
+
+
 
 const ItemBuy = () =>{
 
@@ -14,6 +16,7 @@ const ItemBuy = () =>{
     const [stock, setStock] = useState<number>(0)
 
     const[loading,setLoading] = useState<boolean>(false)
+    const[loadingData,setLoadingData] = useState<boolean>(false)
 
     const limitAmout = 15
     const minorLimitAmout=1
@@ -22,12 +25,15 @@ const ItemBuy = () =>{
     const user = JSON.parse(storage!)
     const idUser = user.id
 
+    const navigate = useNavigate()
+
     useEffect(()=>{
         getAnProduct()
     },[])
+
     const getAnProduct=async()=>{
         setLoading(true)
-       await fetch("http://localhost:8000/products/"+id)
+        await fetch("http://localhost:8000/products/"+id)
         .then((value)=>value.json())
         .then((data)=>{
             setCategorie(data[0].categorie.name)
@@ -57,22 +63,35 @@ const ItemBuy = () =>{
         }
     }
 
-    const AddToCart = () =>{
-        fetch("http://localhost:8000/users/setCarrito/" + idUser,{
+    const AddToCart = async () =>{
+        setLoadingData(true)
+        const response = await fetch("http://localhost:8000/carrito/setCarrito/" + idUser,{
             method:"PUT",
             headers:{"Content-Type" : "application/json"},
             body: JSON.stringify({id_product : id, total:total, amount:amount})
         })
+
+        if(response.status == 200){
+            navigate("/inicioPage/carritoPage")
+        }
+
+        setLoadingData(false)
     }
+
+    const BuyAnProduct = async () => {
+        const ItemProduct = {
+            idProduct: id,
+            name: name,
+            total: total,
+            amount: amount,
+            categorie: categorie
+        };
+        localStorage.setItem("product", JSON.stringify(ItemProduct));
+        navigate("/inicioPage/ComprarProducto");
+    };
 
     if(loading){
-        return(
-            <Loading/>
-        )
-    }
-
-    const SetHola= ()=>{
-        console.log("hola")
+        return(<Loading/>)
     }
 
     return(
@@ -104,13 +123,11 @@ const ItemBuy = () =>{
                     <h1 className="font-bold text-5xl text-green-700">${total}</h1>
                 </div>
 
-                {/* BOTONES DE COMPRA O CARRITO */}
+                {/* BOTON DE CARRITO */}
                 <div className="space-y-4">
-                    <NavLink to={"/inicioPage/carritoPage"} className="h-20 rounded-2xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition hover:bg-blue-600" onClick={AddToCart} >
+                    <NavLink to={""} className="h-20 rounded-2xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition hover:bg-blue-600" onClick={AddToCart} >
+                        {loadingData &&(<div className="h-10 w-10 rounded-full border-4 border-t-blue-400 border-transparent animate-spin mr-3"></div>)}
                         AGREGAR AL CARRITO
-                    </NavLink>
-                    <NavLink to={""} className="h-20 rounded-2xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition hover:bg-blue-600" >
-                        COMPRAR PRODUCTO
                     </NavLink>
                 </div>
 

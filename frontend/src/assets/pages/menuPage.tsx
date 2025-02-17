@@ -69,9 +69,14 @@ const MenuPage = () => {
     }
 
     const cambiarPagina = (expresion:string) => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'instant'
+          });
         if(expresion=="-"){setPaginaActual((e)=> e - 1)}
         else if(expresion=="+"){setPaginaActual((e)=> e + 1)}
       };
+
 
     return(
         <div className="p-10 space-y-10 flex flex-col items-center">
@@ -96,17 +101,30 @@ const MenuPage = () => {
 
             {/* RESULTADOS DE PRODUCTOS */}
 
-            <div>
-                {produtsList.slice(indiceInicial, indiceFinal).map((products, index)=>(
-                    <ItemProducts product={products} key={index} />
-                ))}
-            </div>
+            {produtsList.length==0 &&(
+                <div className="flex flex-col w-full text-center text-4xl">
+                    <span>No hay productos en esta categoria :(</span>
+                </div>
+            )}
 
-            <div className=" flex justify-center items-center">
-                {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
-                <span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>
-                {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
-            </div>
+            {produtsList.length>=1 &&(
+                <>
+                    <div>
+                        {produtsList.slice(indiceInicial, indiceFinal).map((products, index)=>(
+                            <ItemProducts product={products} key={index} />
+                        ))}
+                    </div>
+
+                    <div className=" flex justify-center items-center">
+                        {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
+                        <span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>
+                        {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
+                    </div>
+                </>
+
+            )}
+
+            
             
             
         </div>

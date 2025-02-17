@@ -62,7 +62,7 @@ const LoginPage = () =>{
     return(
         <div className="h-screen flex items-center justify-center">
 
-            <div className="bg-white flex flex-col items-center justify-center p-5 space-y-10 rounded-2xl shadow-2xl w-100">
+            <div className="bg-white flex flex-col items-center justify-center p-5 space-y-10 rounded-2xl shadow w-100">
                 <h1>INICIAR SESION</h1>
                 <form onSubmit={handleSubmit(LoginNow)} className="flex flex-col items-center justify-center space-y-10">
                     <div className="flex flex-col space-y-4">

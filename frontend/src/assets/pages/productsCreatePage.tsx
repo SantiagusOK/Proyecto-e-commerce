@@ -42,10 +42,6 @@ function ProductsCreatePage() {
       body: JSON.stringify({name:name, price:price, stock:stock, categories:categorie})
     })
 
-    const data = await response.json()
-
-    console.log(data.detail)
-
     if(response.status == 201){
       const data = await response.json()
       setMessageCreate(data.detail)
@@ -53,15 +49,14 @@ function ProductsCreatePage() {
       setName("")
       setPrice(0)
       setStock(0)
-
-    } else if(response.status == 401){
+      setLoadingData(false)
+    } 
+    if(response.status == 401){
       const data = await response.json()
       setmessageError(data.detail)
       setDataError(true)
+      setLoadingData(false)
     }
-
-    setLoadingData(false)
-  
   }
 
   useEffect(()=>{
@@ -104,7 +99,7 @@ function ProductsCreatePage() {
                   message: "El precio tiene que ser menor a 5 digitos"
                 },
                 validate: (value) => value > 0 || "El precio tiene que ser mayor a 0"
-              })} className='outline-none' placeholder='0'  onChange={(e)=>setPrice(Number(e.target.value))}/>
+              })} className='outline-none' placeholder='0' value={price} onChange={(e)=>setPrice(Number(e.target.value))}/>
             </div>
           </div>
           
@@ -125,11 +120,11 @@ function ProductsCreatePage() {
                 },
 
                 validate:(value)=>value > 0 || "La cantidad tiene que ser mayor a 0" 
-              })} className='outline-none' placeholder='1'  onChange={(e)=>setPrice(Number(e.target.value))}/>
+              })} className='outline-none' placeholder='1' value={stock} onChange={(e)=>setStock(Number(e.target.value))}/>
             </div> 
           </div>
           
-          <button onClick={saveData} className='bg-blue-400 rounded-2xl p-2 w-50 text-white transition duration-200 hover:bg-blue-600  cursor-pointer flex items-center justify-center' type="submit">
+          <button className='bg-blue-400 rounded-2xl p-2 w-50 text-white transition duration-200 hover:bg-blue-600  cursor-pointer flex items-center justify-center' type="submit">
             {loadingData && <div className='border-2 h-5 w-5 border-t-blue-200 border-transparent rounded-full animate-spin mr-2'></div>}
             Registrar Producto
           </button>

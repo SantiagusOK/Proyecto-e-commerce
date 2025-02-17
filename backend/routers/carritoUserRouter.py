@@ -37,7 +37,10 @@ async def add_product_cart(idUser:int, anProduct:ItemCarritoModel, session:Sessi
     session.commit()
     session.refresh(product)
 
-    return userBD
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Producto agregado al carrito"
+    )
     
 def search_value(value:Users ,session:Session):
     result = session.exec(select(Users)).all()
@@ -145,8 +148,7 @@ async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Sessio
         status_code=status.HTTP_200_OK,
         detail="Compra realizada"
     )
-
-    
+ 
 @router.get("/getAllBuy/{idUser}")
 async def get_buy(idUser:int, session:Session = Depends(get_session)):
     userBD = session.get(Users, idUser)

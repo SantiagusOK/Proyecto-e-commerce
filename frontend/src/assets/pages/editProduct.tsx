@@ -10,6 +10,13 @@ const EditProductPage = () =>{
     const [stockProduct, setStockProduct] = useState<number>(0)
     const [categoryProduct, setCategoryProduct] = useState<string>("")
     const [loadingData, setLoadingData] = useState<boolean>(false)
+    const [dataSaved, setDataSaved] = useState<boolean>(false)
+    const [dataError, setDataError] = useState<boolean>(false)
+    const [messageSaved, setMessageSaved] = useState<string>("")
+    const [messageError, setMessageError] = useState<string>("")
+
+    const [oldPrice, setOldPrice] = useState<number>(0)
+    const [oldStock, setOldStock] = useState<number>(0)
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
@@ -29,25 +36,41 @@ const EditProductPage = () =>{
             setIdProduct(data[0].id)
             setnameProduct(data[0].name),
             setPriceProduct(data[0].price),
+            setStockProduct(data[0].stock)
             setCategoryProduct(data[0].categorie.name)
+            setOldPrice(data[0].price)
+            setOldStock(data[0].stock)
         })
         setLoading(false)
     }
 
     const save_Data=async()=>{
-        setLoadingData(true)
-        await fetch("http://localhost:8000/products/updatePrice",{
-            method: "PUT",
-            headers: {"Content-Type" : "application/json"},
-            body:JSON.stringify({id:idProduct ,price:priceProduct, stock:stockProduct})
-        })
-        setLoadingData(false)
+        if(oldPrice == priceProduct && oldStock == stockProduct){
+            setDataError(true)
+            setMessageError("No hay valores para guardar")
+        } else {
+            setDataError(false)
+            setDataSaved(false)
+            setLoadingData(true)
+            const response = await fetch("http://localhost:8000/products/updateProduct",{
+                method: "PUT",
+                headers: {"Content-Type" : "application/json"},
+                body:JSON.stringify({id:idProduct ,price:priceProduct, stock:stockProduct})
+            })
+
+            if(response.status == 200){
+                const data = await response.json()
+                setMessageSaved(data.detail)
+                setDataSaved(true)
+                setLoadingData(false)
+            }
+        }
+        
+        
     }
 
     if(loading){
-        return(
-            <Loading/>
-        )
+        return(<Loading/>)
     }
 
     return(
@@ -83,13 +106,14 @@ const EditProductPage = () =>{
                 </div>
 
                 {/* BOTONES DE GUARDAR O CANCELAR*/}
-                <div className="space-y-4">
+                <div className="space-y-4 w-full flex flex-col">
+                    {dataError && (<span className="w-full text-red-500 font-black text-center">{messageError}</span>)}
+                    {dataSaved && (<span className="w-full text-green-600 font-black text-center">DATOS GUARDADOS</span>)}
                     <NavLink to={""} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:bg-blue-600"  onClick={save_Data}>
                         {loadingData &&(
                           <div className="h-10 w-10 border-4 border-b-blue-500 border-transparent rounded-full animate-spin mr-5"></div>  
                         )}
-                         
-                        GUARDAR CAMBIOS
+                        GURDAR CAMBIOS
                     </NavLink>
                     <NavLink to={"/inicioPage/allProductsPage"} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:bg-blue-600" >
                         CANCELAR

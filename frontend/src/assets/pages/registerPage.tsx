@@ -94,16 +94,24 @@ const UserCreatePage = () =>{
               {/* NOMBRE */}
               {errors.nombre &&(<span className="text-red-500 font-medium">{errors.nombre.message}</span>)}
               <input {...register("nombre",{
-                required: "Inserte su nombre"
-              })} className='w-80 border-2 rounded p-2   outline-none border-neutral-400' placeholder='Nombre' type="text"  value={name} onChange={(e)=>setName(e.target.value)} />  
+                required: "Inserte su nombre",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80 border-2 rounded p-2 outline-none border-neutral-400' maxLength={10} placeholder='Nombre' type="text"  value={name} onChange={(e)=>setName(e.target.value)} />  
             </div>
 
             {/* APELLIDO */}
             <div className='flex flex-col'>
               {errors.apellido &&(<span className="text-red-500 font-medium">{errors.apellido.message}</span>)}
               <input {...register("apellido",{
-                required: "Inserte su apellido"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Apellido' type="text" value={lastname} onChange={(e)=>setLastname(e.target.value)}/>
+                required: "Inserte su apellido",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Apellido' type="text" value={lastname} onChange={(e)=>setLastname(e.target.value)}/>
             </div>            
           </div>
 
@@ -115,8 +123,12 @@ const UserCreatePage = () =>{
               {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
               {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
               <input {...register("username",{
-                required:"Inserte su nombre de usuario"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
+                required:"Inserte su nombre de usuario",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={6} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
             </div>
 
             {/* DIRECCION  */}
@@ -161,8 +173,12 @@ const UserCreatePage = () =>{
             <div className='flex flex-col'>
               {errors.contraseña &&(<span className="text-red-500 font-medium">{errors.contraseña.message}</span>)}
               <input {...register("contraseña",{
-                required:"Inserte su contraseña"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Contraseña' type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>            
+                required:"Inserte su contraseña",
+                minLength:{
+                  value:7,
+                  message:"Tiene que haber minimo 7 caracteres"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Contraseña' type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>            
             </div>
 
             {/* Contraseña 2do */}
@@ -170,9 +186,13 @@ const UserCreatePage = () =>{
               {errors.contraseña2 &&(<span className="text-red-500 font-medium">{errors.contraseña2.message}</span>)}
               <input {...register("contraseña2",{
                 required:"inserte su contraseña nueva mente",
+                minLength:{
+                  value:7,
+                  message:"Tiene que haber minimo 7 caracteres"
+                },
                 validate:(value)=>
                   value==password || "La contraseña no coinciden"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Confirmar contraseña' type="password" value={passwordSecond} onChange={(e)=>setPasswordSecond(e.target.value)}/>
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Confirmar contraseña' type="password" value={passwordSecond} onChange={(e)=>setPasswordSecond(e.target.value)}/>
             </div>
           </div>
 

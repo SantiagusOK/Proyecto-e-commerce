@@ -59,7 +59,7 @@ const CarritoPage = () =>{
 
         const fecha = new Date()
         const fechaStr = fecha.toLocaleString()
-        const response = await fetch("http://localhost:8000/users/realizeABuy/"+user.id,{
+        const response = await fetch("http://localhost:8000/carrito/realizeABuy/"+user.id,{
             method:"PUT",
             headers:{"Content-Type":"application/json"},
             body: JSON.stringify({

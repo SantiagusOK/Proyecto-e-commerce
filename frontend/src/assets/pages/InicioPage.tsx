@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom"
 import logo from "../img/logo.png"
+import backgraound from "../img/backgraound.jpg"
 
 const InicioPage=()=>{
 
@@ -11,9 +12,13 @@ const InicioPage=()=>{
                 <NavLink to={"/loginPage"} className={"bg-blue-400 text-white p-5 w-50 h-10  flex items-center justify-center rounded transition hover:bg-blue-700"}>INICIAR SESION</NavLink>
                 <NavLink to={"/registerPage"} className={"bg-blue-400 text-white p-5 w-50 h-10 flex items-center justify-center rounded transition hover:bg-blue-700"}>REGISTRARSE</NavLink>
             </div>
-            <div className="flex flex-col  items-center justify-center h-full">
-                <img className="w-170 h-50 scale-120 transition hover:scale-110" src={logo} alt="" />
-                <span className="font-bold">Ahorra dinero. Vive mejor.</span>
+            
+            <div className="flex items-center justify-center w-full h-full space-x-20 ">
+                <img className="w-170 h-50" src={logo} alt="" />
+                <div className="flex flex-col text-5xl">
+                    <span className="font-bold">Ahorra dinero</span>
+                    <span className="font-bold">Vive mejor.</span>
+                </div>
             </div>
 
             <footer className="p-5">

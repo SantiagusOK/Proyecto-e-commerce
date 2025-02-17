@@ -15,7 +15,7 @@ app.include_router(carritoUserRouter.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5174"],  # Aquí defines los orígenes permitidos
+    allow_origins=["http://localhost:5173"],  # Aquí defines los orígenes permitidos
     allow_credentials=True,
     allow_methods=["*"],  # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
     allow_headers=["*"],  # Permite todos los encabezados

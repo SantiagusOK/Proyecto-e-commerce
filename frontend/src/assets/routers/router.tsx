@@ -23,6 +23,7 @@ import { EditUserPage } from "../pages/editUserPage";
 import AllProductsPage from "../pages/tableProducts";
 import EditProduct from "../pages/editProduct";
 import EditProductPage from "../pages/editProduct";
+import { ComprarProductoPage } from "../pages/comprarProductoPage";
 
 
 const router = createBrowserRouter([
@@ -90,9 +91,13 @@ const router = createBrowserRouter([
                             {
                                 path:"/inicioPage/carritoPage/itemCartEdit/:id",
                                 element: <ItemCartEdit/>
-                            }
+                            },
                         ]
 
+                    },
+                    {
+                        path:"/inicioPage/ComprarProducto",
+                        element: <ComprarProductoPage/>
                     },
                     {
                         path:"/inicioPage/compraRealizadaPage",
