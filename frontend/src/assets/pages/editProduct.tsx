@@ -44,14 +44,6 @@ const EditProductPage = () =>{
         setLoadingData(false)
     }
 
-    // const ModifyAnItemCart = () =>{
-    //     fetch("http://localhost:8000/users/modifyAnItemCart/"+id+"/"+idUser,{
-    //         method:"PUT",
-    //         headers:{"Content-Type" : "application/json"},
-    //         body: JSON.stringify({id_product : idProduct, total:total, amount:amount})
-    //     })
-    // }
-
     if(loading){
         return(
             <Loading/>
@@ -90,16 +82,16 @@ const EditProductPage = () =>{
                     </div> 
                 </div>
 
-                {/* BOTONES DE COMPRA O CARRITO */}
+                {/* BOTONES DE GUARDAR O CANCELAR*/}
                 <div className="space-y-4">
-                    <NavLink to={""} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:scale-105"  onClick={save_Data}>
+                    <NavLink to={""} className="h-20 rounded-3xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition duration-300 hover:bg-blue-600"  onClick={save_Data}>
                         {loadingData &&(
                           <div className="h-10 w-10 border-4 border-b-blue-500 border-transparent rounded-full animate-spin mr-5"></div>  
                         )}
                          
                         GUARDAR CAMBIOS
                     </NavLink>
-                    <NavLink to={"/inicioPage/allProductsPage"} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:scale-105" >
+                    <NavLink to={"/inicioPage/allProductsPage"} className="h-20 rounded-3xl  2 font-medium cursor-pointer flex items-center justify-center bg-blue-500 text-white transition duration-300 hover:bg-blue-600" >
                         CANCELAR
                     </NavLink>
                 </div>

@@ -13,11 +13,7 @@ export default function MyNavBar(){
 
     function MyNavLink({ tittle, router} : NavLinkdata){
         return(
-            <NavLink to={router} className="text-white font-bold hover:text-blue-300 focus:text-yellow-400 underline-offset-8 hover:underline">
-
-                {tittle}
-
-            </NavLink>
+            <NavLink to={router} className="text-white font-bold hover:text-blue-300 focus:text-yellow-400 underline-offset-8 hover:underline">{tittle}</NavLink>
         )
     }
 
@@ -26,7 +22,7 @@ export default function MyNavBar(){
             <img className="w-50 h-15 transition duration-200 hover:scale-110 cursor-pointer" src={logo} alt="" />
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
-                <MyNavLink router={"/inicioPage"} tittle={"Inicio"} />
+                <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
                 {user.isAdmin &&(
                     <>
                     {/* //crear productos */}

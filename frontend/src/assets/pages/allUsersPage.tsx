@@ -29,12 +29,9 @@ export const AllUsersPage = ()=>{
 
 
     if(loading){
-        return(
-            <Loading/>
-        )
+        return(<Loading/>)
     }
 
-    
 
     return(
         

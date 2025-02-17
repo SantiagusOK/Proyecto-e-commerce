@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import ItemProductsCart from "../components/ItemProductsCart"
 import { NavLink, useNavigate } from "react-router-dom"
+import Loading from "../components/loading"
 
 interface CategorieData{
     id:number,
@@ -31,23 +32,27 @@ const CarritoPage = () =>{
     const[productsItem, setProductsItem] = useState<ProductsCartData[]>([])
     const[totalCart, setTotalCart] = useState<number>(0)
     const[loading, setLoading] = useState(false)
+    const[processingBuy, setProcessingBuy] = useState<boolean>(false)
     const navigate = useNavigate()
 
     useEffect(()=>{
-       
-        fetch("http://localhost:8000/users/getCarrito/"+user.id)
+        get_all_cart()
+    },[])
+
+    const get_all_cart=async()=>{
+        setLoading(true)
+        await fetch("http://localhost:8000/carrito/getCarrito/"+user.id)
         .then((data)=>data.json())
         .then((items)=>{
             setProductsItem(items)
             const total = items.reduce((acc: any, item: { total: any }) => acc + item.total, 0);
             setTotalCart(total.toFixed(2));
-            
         })
-       
-    },[])
-
+        setLoading(false)
+    }
 
     const realizeBuy=async()=>{
+        setProcessingBuy(true)
         setLoading(true)
         const storage = localStorage.getItem("userData")
         const user = JSON.parse(storage!)
@@ -64,19 +69,19 @@ const CarritoPage = () =>{
                 totalCompra:Number(totalCart),})
         })
 
-        const data = await response.json()
-
-        if (data.state){
+        if(response.status == 200){
             navigate("/inicioPage/compraRealizadaPage")
-        } else{
-            setLoading(false)
         }
+
+        setProcessingBuy(false)
+        setLoading(false)
     }
 
-
+    if(loading){
+        return(<Loading/>)
+    } 
 
     if(productsItem.length>0){
-        
         return(
             <div className="h-full flex items-start justify-between  p-10">
                 
@@ -112,8 +117,8 @@ const CarritoPage = () =>{
                         </div>
                     </div>
 
-                    <NavLink to={""} className="bg-blue-300 w-full flex justify-center rounded-[10px] p-5 font-medium transition duration-300 hover:scale-105 hover:bg-blue-400 items-center" onClick={realizeBuy}>
-                        {loading && <div className="w-5 h-5 bg-transparent border-b-2 rounded-full mr-5 animate-spin"></div>}
+                    <NavLink to={""} className="bg-blue-300 w-full flex justify-center rounded-[10px] p-5 font-medium transition duration-300 hover:bg-blue-700 items-center" onClick={realizeBuy}>
+                        {processingBuy && <div className="w-10 h-10 bg-transparent border-transparent border-4 border-t-blue-400 rounded-full mr-5 animate-spin"></div>}
                         <span className="text-white">Realizar Compra</span>
                     </NavLink>
                     
@@ -122,7 +127,6 @@ const CarritoPage = () =>{
             </div>
         )
     } else {
-        console.log("-------NO HAY PRODUCTOS")
         return(
             <div className="h-screen flex justify-center items-center text-2xl font-extrabold text-neutral-600">
                 <h1>CARRITO VACIO :(</h1>

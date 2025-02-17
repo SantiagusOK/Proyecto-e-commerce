@@ -39,7 +39,7 @@ const ItemProductsCart = ({item}:itemCartData) =>{
         },[])
 
         const deleteAItem=()=>{
-            fetch("http://localhost:8000/users/deleteAnItemCart/"+idItem+"/"+idUser,{
+            fetch("http://localhost:8000/carrito/deleteAnItemCart/"+idItem+"/"+idUser,{
                 method:"PUT",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({})

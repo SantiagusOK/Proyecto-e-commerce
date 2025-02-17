@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from db.connect import conn
-from routers import productRouter, categorieRouter, userRouter
+from routers import productRouter, categorieRouter, userRouter, carritoUserRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -11,10 +11,11 @@ app = FastAPI()
 app.include_router(productRouter.router)
 app.include_router(categorieRouter.router)
 app.include_router(userRouter.router)
+app.include_router(carritoUserRouter.router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Aquí defines los orígenes permitidos
+    allow_origins=["http://localhost:5174"],  # Aquí defines los orígenes permitidos
     allow_credentials=True,
     allow_methods=["*"],  # Permite todos los métodos (GET, POST, PUT, DELETE, etc.)
     allow_headers=["*"],  # Permite todos los encabezados

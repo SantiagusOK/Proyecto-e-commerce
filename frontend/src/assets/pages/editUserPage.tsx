@@ -19,14 +19,17 @@ export const EditUserPage = () =>{
     const[loadingData,setLoadingData] = useState<boolean>(false)
     const[userIsAdmin, setAdmin] = useState<boolean>(false)
     const[shotMessage, setShowMessage] = useState<boolean>(false)
+    const[oldAdminState, setOldAdminState] = useState<boolean>(false)
     const{id}=useParams()
 
     const getAUser=async()=>{
         setLoading(true)
-        await fetch("http://localhost:8000/users/"+id).then((value)=>value.json()).then((data)=>{
+        await fetch("http://localhost:8000/users/"+id)
+        .then((value)=>value.json())
+        .then((data)=>{
             setUser(data)
             setAdmin(Boolean(data.isAdmin))
-            
+            setOldAdminState(Boolean(data.isAdmin))
         })
         console.log("El usuario es admin?: "+userIsAdmin)
         setLoading(false)
@@ -38,25 +41,28 @@ export const EditUserPage = () =>{
     },[])
 
     if(loading){
-        return(
-            <Loading/>
-        )
+        return(<Loading/>)
     }
 
-    
     const saveData =async()=>{
-        setLoadingData(true)
         setShowMessage(false)
-        const response = await fetch("http://localhost:8000/users/setAdmin/"+id,{
-            method: "PUT",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({isAdmin:userIsAdmin})
-        })
+        console.log("UserIsAdmin:" + userIsAdmin)
+        console.log("oldAdminState:" + oldAdminState)
+        if(oldAdminState != userIsAdmin){
+            setLoadingData(true)
+            const response = await fetch("http://localhost:8000/users/setAdmin/"+id,{
+                method: "PUT",
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({isAdmin:userIsAdmin})
+            })
 
-        if(response){
-            setLoadingData(false)
-            setShowMessage(true)
+            if(response){
+                setOldAdminState(userIsAdmin)
+                setShowMessage(true)
+                setLoadingData(false)
+            }  
         }
+        
     }
 
     return(

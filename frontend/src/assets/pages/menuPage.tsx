@@ -22,6 +22,16 @@ const MenuPage = () => {
     const[categorie, setCategorie] = useState<number>(0)
     const[loading,setLoading] = useState<boolean>(false)
 
+    const [paginaActual, setPaginaActual] = useState(1);
+
+    const limiteElementos = 5
+
+    const indiceFinal = paginaActual * limiteElementos;
+    const indiceInicial = indiceFinal - limiteElementos;
+    const paginaFinal = Math.ceil(produtsList.length / limiteElementos)
+    console.log(paginaFinal)
+    console.log(indiceInicial)
+
     useEffect(()=>{
         GetAllProducts()
     },[])
@@ -50,9 +60,7 @@ const MenuPage = () => {
     }
 
     if(loading){
-        return(
-            <Loading/>
-        )
+        return(<Loading/>)
     }
 
     const selectCategorie=(value:string)=>{
@@ -60,14 +68,10 @@ const MenuPage = () => {
         
     }
 
-    const update_on_quit=(value:string)=>{
-        setValueSearch(value)
-        console.log("despues del set: " + valueSearch)
-        if(!valueSearch){
-            console.log("despues del del chequeo: " + valueSearch)
-        }
-
-    }
+    const cambiarPagina = (expresion:string) => {
+        if(expresion=="-"){setPaginaActual((e)=> e - 1)}
+        else if(expresion=="+"){setPaginaActual((e)=> e + 1)}
+      };
 
     return(
         <div className="p-10 space-y-10 flex flex-col items-center">
@@ -93,11 +97,15 @@ const MenuPage = () => {
             {/* RESULTADOS DE PRODUCTOS */}
 
             <div>
-
-                {produtsList.map((products)=>(
-                    <ItemProducts product={products} />
+                {produtsList.slice(indiceInicial, indiceFinal).map((products, index)=>(
+                    <ItemProducts product={products} key={index} />
                 ))}
+            </div>
 
+            <div className=" flex justify-center items-center">
+                {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
+                <span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>
+                {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
             </div>
             
             

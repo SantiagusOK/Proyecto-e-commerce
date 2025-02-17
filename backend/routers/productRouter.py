@@ -16,17 +16,27 @@ async def get_all_products(session:Session = Depends(get_session)):
 
 @router.post("/create")
 async def create_categories(anNewProduct:ProductModel, session:Session = Depends(get_session)):
-    if type(build_product_category(anNewProduct, session)) != Products:
+    
+    statement = select(Products).where(func.lower(Products.name) == anNewProduct.name.lower())
+    anProduct = session.exec(statement).all()
+    
+    print(anProduct)
+    if not anProduct:
         newProduct = Products(**anNewProduct.model_dump())
         session.add(newProduct)
         session.commit()
         session.refresh(newProduct)
-        return newProduct
-    else:
+        
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Este producto ya esta agregado"
+            status_code=status.HTTP_201_CREATED,
+            detail="Producto creado con exito"
         )
+    else:
+        
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Este producto ya esta registrado"
+        )   
 
 @router.get("/getAllProducts+categories")
 async def get_all_products_categories(session:Session = Depends(get_session)):
@@ -115,7 +125,7 @@ async def update_a_product(productModel:ProductUpdateModel, session:Session=Depe
     statement = select(Products).where(Products.id == productModel.id)
     product = session.exec(statement).first()
     product.price = productModel.price
-    product.stock = productModel.stock
+    product.stock += productModel.stock
     
     session.add(product)
     session.commit()
