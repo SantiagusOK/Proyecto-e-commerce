@@ -2,6 +2,9 @@ from sqlmodel import SQLModel, Session, create_engine
 from models.categories import Categories
 from models.products import Products
 from models.users import Users
+from models.itemCarrito import ItemCarrito
+from models.itemCompra import ItemCompra
+from models.itemProductCompra import ItemProductCompra
 
 
 database_file = "database.db"
