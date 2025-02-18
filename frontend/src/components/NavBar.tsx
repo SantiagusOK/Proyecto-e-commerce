@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom"
-import logo from "../img/logo.png"
+import logo from "../assets/img/logo.png"
 
 interface NavLinkdata{
     router:string,

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import error from "../img/error.gif"
+import error from "../assets/img/error.gif"
 
 
 const PaginaErrorPage = () => {

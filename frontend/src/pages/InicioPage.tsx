@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom"
-import logo from "../img/logo.png"
-import backgraound from "../img/backgraound.jpg"
+import logo from "../assets/img/logo.png"
 
 const InicioPage=()=>{
 

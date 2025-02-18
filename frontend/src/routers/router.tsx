@@ -5,7 +5,6 @@ import ProductsCreatePage from "../pages/productsCreatePage";
 
 import CategorieCreatePage from "../pages/categories";
 
-import TableProducts from "../pages/tableProducts";
 
 import ItemBuy from "../pages/itemEdit";
 import CarritoPage from "../pages/carrito";
@@ -21,7 +20,6 @@ import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
 import AllProductsPage from "../pages/tableProducts";
-import EditProduct from "../pages/editProduct";
 import EditProductPage from "../pages/editProduct";
 import { ComprarProductoPage } from "../pages/comprarProductoPage";
 
