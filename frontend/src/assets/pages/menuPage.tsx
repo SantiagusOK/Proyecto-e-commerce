@@ -29,14 +29,14 @@ const MenuPage = () => {
     const indiceFinal = paginaActual * limiteElementos;
     const indiceInicial = indiceFinal - limiteElementos;
     const paginaFinal = Math.ceil(produtsList.length / limiteElementos)
-    console.log(paginaFinal)
-    console.log(indiceInicial)
+
 
     useEffect(()=>{
         GetAllProducts()
     },[])
 
     const GetAllProducts=async()=>{
+        setPaginaActual(1)
         setLoading(true)
        await fetch("http://localhost:8000/products/searchByName/",{
         method:"POST",
@@ -46,7 +46,6 @@ const MenuPage = () => {
         .then((value)=>value.json())
         .then((data)=>{
             setProductsList(data)
-            console.log(produtsList)
         })
         GetAllCategories()
     }
@@ -117,7 +116,7 @@ const MenuPage = () => {
 
                     <div className=" flex justify-center items-center">
                         {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
-                        <span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>
+                        {paginaActual != indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
                         {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
                     </div>
                 </>

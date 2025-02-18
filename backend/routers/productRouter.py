@@ -62,7 +62,6 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
     statement = select(Products, Categories).join(Categories, Products.categories == Categories.id).where(Products.id == id)
     
     result = session.exec(statement).all()
-    
 
     product = build_product_category(result)
     
@@ -70,7 +69,6 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
 
 @router.post("/searchByName/")
 async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
-    
     # Devuelve todos los productos registrados
     if not productSearch.name and productSearch.categorie <= 0: 
         statement = select(Products, Categories).join(Categories, Products.categories==Categories.id)
@@ -82,14 +80,12 @@ async def search_a_product(productSearch:ProducstSearchModel, session:Session=De
         statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
             Products.categories == productSearch.categorie)
         result = session.exec(statement).all()
-        # return result
-        # product = 
         return build_product_category(result)
     
     # devuelve solo el producto que se escriba si la categorie es 0(todos)
     elif productSearch and productSearch.categorie == 0:
         statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
-            func.lower(Products.name) == productSearch.name)
+            func.lower(Products.name) == productSearch.name.lower())
         result = session.exec(statement).all()
         return build_product_category(result)
     
@@ -97,7 +93,7 @@ async def search_a_product(productSearch:ProducstSearchModel, session:Session=De
     elif productSearch.name and productSearch.categorie>0: 
         statement = select(Products, Categories).join(Categories, Products.categories==Categories.id).where(
             Products.categories == productSearch.categorie,
-            func.lower(Products.name) == productSearch.name)
+            func.lower(Products.name) == productSearch.name.lower())
         result = session.exec(statement).all()
         return build_product_category(result)
 

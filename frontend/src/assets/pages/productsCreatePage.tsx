@@ -17,7 +17,7 @@ function ProductsCreatePage() {
 
   const [categoriesList, setCategoriesList] = useState<DataCategoriesList[]>([])
   const [name, setName] = useState("")
-  const [price, setPrice] = useState(0.0)
+  const [price, setPrice] = useState("")
   const [stock, setStock] = useState(1)
   const [categorie, setCategorie] = useState(1)
 
@@ -39,7 +39,7 @@ function ProductsCreatePage() {
     const response = await fetch("http://localhost:8000/products/create",{
       method: "POST",
       headers: {"Content-Type" : "application/json"},
-      body: JSON.stringify({name:name, price:price, stock:stock, categories:categorie})
+      body: JSON.stringify({name:name, price:parseFloat(price), stock:stock, categories:categorie})
     })
 
     if(response.status == 201){
@@ -64,6 +64,13 @@ function ProductsCreatePage() {
     .then((value) => value.json())
     .then((cate) => setCategoriesList(cate))
   },[])
+
+  const onChangePrice=(e)=>{
+    const value = e.target.value;
+    if (/^\d*\.?\d*$/.test(value)) {
+      setPrice(value);
+    }
+  }
 
   return (
     <div className='flex items-center justify-center p-20'>
@@ -91,7 +98,7 @@ function ProductsCreatePage() {
           <div className='flex flex-col items-center justify-center'>
             {errors.precio && <span className='text-red-500 font-medium'>{errors.precio.message}</span>}
             <div className=' w-50 border-2 border-neutral-400 rounded-2xl p-2 pl-5 flex items-center justify-center'>
-              <span className=''>$</span>
+              <span>$</span>
               <input {...register("precio",{
                 required: "Este campo es requerido",
                 maxLength:{
@@ -99,7 +106,7 @@ function ProductsCreatePage() {
                   message: "El precio tiene que ser menor a 5 digitos"
                 },
                 validate: (value) => value > 0 || "El precio tiene que ser mayor a 0"
-              })} className='outline-none' placeholder='0' value={price} onChange={(e)=>setPrice(Number(e.target.value))}/>
+              })} className='outline-none' placeholder='0' value={price} onChange={onChangePrice} type='text' maxLength={9}/>
             </div>
           </div>
           
