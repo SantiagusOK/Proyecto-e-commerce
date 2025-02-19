@@ -3,7 +3,7 @@ import Loading from "../components/loading"
 import { ItemUser } from "../components/itemUsers"
 
 interface UserData{
-    id:number,
+    idUser:number,
     fullname:string,
     lastname:string,
     username:string,

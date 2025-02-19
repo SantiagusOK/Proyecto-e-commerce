@@ -8,7 +8,7 @@ from models.itemCompra import ItemCompraModel
 
 
 class Users(SQLModel, table=True):
-    id:Optional[int] = Field(default=None, primary_key=True)
+    idUser:Optional[int] = Field(default=None, primary_key=True)
     fullname:str
     lastname:str
     username:str
@@ -20,7 +20,7 @@ class Users(SQLModel, table=True):
 
 
 class UsersModel(BaseModel):
-    id:Optional[int] = None
+    idUser:Optional[int] = None
     fullname:str
     lastname:str
     username:str

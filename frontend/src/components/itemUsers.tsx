@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 interface UserData {
-    id: number;
+    idUser: number;
     fullname: string;
     lastname: string;
     username: string;
@@ -16,7 +16,7 @@ interface UserData {
 
 export const ItemUser =({ user }:ItemUserProps)=>{
     return(
-        <NavLink to={"/inicioPage/editUserPage/"+user.id} className="bg-white flex w-200 p-5 items-center justify-between transition hover:bg-neutral-100">
+        <NavLink to={"/inicioPage/editUserPage/"+user.idUser} className="bg-white flex w-200 p-5 items-center justify-between transition hover:bg-neutral-100">
             <div className="flex">
                 <div className="bg-neutral-300 rounded-full w-20 h-20 flex items-center justify-center text-2xl">
                     {user.fullname[0]}
@@ -34,10 +34,6 @@ export const ItemUser =({ user }:ItemUserProps)=>{
                     <span className="bg-yellow-400  pl-5 pr-5 rounded-2xl">ADMIN</span>
                 </div>
             )}
-
-
-
-
         </NavLink>
     )
 }

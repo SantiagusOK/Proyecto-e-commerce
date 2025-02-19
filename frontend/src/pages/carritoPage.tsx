@@ -3,25 +3,12 @@ import ItemProductsCart from "../components/ItemProductsCart"
 import { NavLink, useNavigate } from "react-router-dom"
 import Loading from "../components/loading"
 
-interface CategorieData{
-    id:number,
-    name:string
-}
-
-interface ProductsData{
-    id:number,
-    name:string,
-    stock:number,
-    price:number,
-    categorie:CategorieData
-
-}
-
 interface ProductsCartData{
-    id_product:number,
-    id:number,
-    total:number,
-    amount:number
+    id_item_carrito:number,
+    cantidad:number,
+    product:string,
+    priceProduct:number,
+    total:number
 }
 
 const CarritoPage = () =>{
@@ -29,7 +16,7 @@ const CarritoPage = () =>{
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
 
-    const[productsItem, setProductsItem] = useState<ProductsCartData[]>([])
+    const[itemCarrito, setItemCarrito] = useState<ProductsCartData[]>([])
     const[totalCart, setTotalCart] = useState<number>(0)
     const[loading, setLoading] = useState(false)
     const[processingBuy, setProcessingBuy] = useState<boolean>(false)
@@ -39,32 +26,30 @@ const CarritoPage = () =>{
         get_all_cart()
     },[])
 
-    const get_all_cart=async()=>{
+    const get_all_cart = async () => {
         setLoading(true)
-        await fetch("http://localhost:8000/carrito/getCarrito/"+user.id)
-        .then((data)=>data.json())
-        .then((items)=>{
-            setProductsItem(items)
+        const response = await fetch("http://localhost:8000/carrito/getCarrito/"+user.idUser)
+        if(response.status == 200){
+            const items = await response.json()
+            setItemCarrito(items)
             const total = items.reduce((acc: any, item: { total: any }) => acc + item.total, 0);
             setTotalCart(total.toFixed(2));
-        })
+        }
         setLoading(false)
+        
     }
 
     const realizeBuy=async()=>{
         setProcessingBuy(true)
         setLoading(true)
-        const storage = localStorage.getItem("userData")
-        const user = JSON.parse(storage!)
 
         const fecha = new Date()
         const fechaStr = fecha.toLocaleString()
-        const response = await fetch("http://localhost:8000/carrito/realizeABuy/"+user.id,{
+        const response = await fetch("http://localhost:8000/carrito/realizeABuy/"+user.idUser,{
             method:"PUT",
             headers:{"Content-Type":"application/json"},
             body: JSON.stringify({
-                id_user:user.id, 
-                comprasList:productsItem, 
+                id_user:user.idUser, 
                 fechaDeCompra:fechaStr,
                 totalCompra:Number(totalCart),})
         })
@@ -81,12 +66,12 @@ const CarritoPage = () =>{
         return(<Loading/>)
     } 
 
-    if(productsItem.length>0){
+    if(itemCarrito.length>0){
         return(
             <div className="h-full flex items-start justify-between  p-10">
                 
-                <div className={`h-200 space-y-0.5 rounded-2xl ${productsItem.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
-                    {productsItem.map((products)=>(
+                <div className={`h-200 space-y-0.5 rounded-2xl ${itemCarrito.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
+                    {itemCarrito.map((products)=>(
                             <ItemProductsCart item={products} />
                         ))}
                 </div>
@@ -96,7 +81,7 @@ const CarritoPage = () =>{
                     <div className="w-full">
                         <div className="flex  justify-between ">
                             <h1>Cantidad de productos:</h1>
-                            <h1>x{productsItem.length}</h1>
+                            <h1>x{itemCarrito.length}</h1>
                         </div>
                         
                         <div className="flex  justify-between">

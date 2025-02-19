@@ -3,7 +3,7 @@ import ItemProducts from "../components/ItemProduct"
 import Loading from "../components/loading"
 
 interface ProductsData{
-    id:number,
+    idProduct:number,
     name:string,
     price:number
     stock:number
@@ -46,6 +46,7 @@ const MenuPage = () => {
         .then((value)=>value.json())
         .then((data)=>{
             setProductsList(data)
+            
         })
         GetAllCategories()
     }
@@ -78,6 +79,7 @@ const MenuPage = () => {
 
 
     return(
+        // <div>hola</div>
         <div className="p-10 space-y-10 flex flex-col items-center">
             <div className="w-full justify-between flex items-center 0">
                 {/* BARRA BUSQUEDA  + BOTON BUSCAR*/}
@@ -89,12 +91,15 @@ const MenuPage = () => {
                 {/* TEXTO  + BOTON CATEGORIA*/}
                 <div className="flex space-x-2 h-fit">
                     <h1>Categoria:</h1>
-                    <select className="w-fit" value={categorie} onChange={(event)=>selectCategorie(event.target.value)}  >
+                    {categorieList.length>=1&&(
+                        <select className="w-fit" value={categorie} onChange={(event)=>selectCategorie(event.target.value)}  >
                         <option value={0}>...</option>
                         {categorieList.map((categorie)=>(
                             <option value={categorie.id}>{categorie.name.toUpperCase()}</option>
                         ))}
-                    </select>
+                        </select>
+                    )}
+                    
                 </div>
             </div>
 
@@ -122,10 +127,6 @@ const MenuPage = () => {
                 </>
 
             )}
-
-            
-            
-            
         </div>
     )
 

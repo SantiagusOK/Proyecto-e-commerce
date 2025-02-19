@@ -9,7 +9,12 @@ router = APIRouter(prefix="/categories", tags=["Categorie"])
 
 @router.get("/")
 async def get_all_categories(session:Session = Depends(get_session)):
-    return session.exec(select(Categories)).all()
+    result = session.exec(select(Categories)).all()
+    
+    if result:
+        return result
+    else:
+        return {"error": "un error"}
 
 @router.post("/create")
 async def create_categories(anNewCategorie:CategorieModel, session:Session = Depends(get_session)):

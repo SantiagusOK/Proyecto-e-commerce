@@ -33,7 +33,7 @@ const EditProductPage = () =>{
         await fetch("http://localhost:8000/products/" + id)
         .then((value)=>value.json())
         .then((data)=>{
-            setIdProduct(data[0].id)
+            setIdProduct(data[0].idProduct)
             setnameProduct(data[0].name),
             setPriceProduct(data[0].price),
             setStockProduct(data[0].stock)
@@ -55,7 +55,7 @@ const EditProductPage = () =>{
             const response = await fetch("http://localhost:8000/products/updateProduct",{
                 method: "PUT",
                 headers: {"Content-Type" : "application/json"},
-                body:JSON.stringify({id:idProduct ,price:priceProduct, stock:stockProduct})
+                body:JSON.stringify({idProduct:idProduct ,price:priceProduct, stock:stockProduct})
             })
 
             if(response.status == 200){

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from db.connect import conn
-from routers import productRouter, categorieRouter, userRouter, carritoUserRouter
+from routers import productRouter, categorieRouter, userRouter, carritoRouter
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -11,7 +11,7 @@ app = FastAPI()
 app.include_router(productRouter.router)
 app.include_router(categorieRouter.router)
 app.include_router(userRouter.router)
-app.include_router(carritoUserRouter.router)
+app.include_router(carritoRouter.router)
 
 app.add_middleware(
     CORSMiddleware,

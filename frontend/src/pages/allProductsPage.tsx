@@ -8,7 +8,7 @@ interface categorieData{
 }
 
 interface listProductsData{
-    id:number,
+    idProduct:number,
     name:string,
     price:number,
     categorie:categorieData
@@ -43,20 +43,23 @@ const AllProductsPage= () =>{
         return(        
             <div className="flex flex-col items-center justify-start p-5">
                 {listProducts.map((product)=>(
-                    <div className="bg-white p-5 flex w-160 m-0.5 items-center space-x-3">
+                    <div className="bg-white p-5 flex w-200 m-0.5 items-center justify-between space-x-3 ">
 
-                        <div className="bg-neutral-400 h-20 w-20 rounded-full flex items-center justify-center">
-                            {product.name[0]}
-                        </div>
+                        <div className="flex space-x-5">
+                            <div className="bg-neutral-400 h-20 w-20 rounded-full flex items-center justify-center">
+                                {product.name[0]}
+                            </div>
 
-                        <div className="flex flex-col w-sm">
-                            <span className="text-2xl">{product.name}</span>
-                            <span className="text-2xl font-extralight">${product.price}</span>
-                            <span className="font-medium">Stock: {product.stock}</span>
+                            <div className="flex flex-col w-sm">
+                                <span className="text-2xl">{product.name}</span>
+                                <span className="text-2xl font-extralight">${product.price}</span>
+                                <span className="font-medium">Stock: {product.stock}</span>
+                            </div>
                         </div>
+                        
 
                         <div className="">
-                            <NavLink to={"/inicioPage/allProductsPage/editProduct/" + product.id}>EDITAR</NavLink>
+                            <NavLink to={"/inicioPage/allProductsPage/editProduct/" + product.idProduct}>EDITAR</NavLink>
                         </div>
 
                     </div>

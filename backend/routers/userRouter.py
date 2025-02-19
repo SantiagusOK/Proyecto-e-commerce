@@ -6,7 +6,7 @@ from models.products import ProductModel, Products
 from models.categories import CategorieModel, Categories
 from models.users import Users, UsersModel, UsersLoginModel, UsersAdminModel
 from models.itemCarrito import ItemCarritoModel
-from models.itemCompra import ItemCompraModel, ItemCompras
+from models.itemCompra import ItemCompraModel, ItemCompra
 from sqlalchemy.orm.attributes import flag_modified
 from fastapi.responses import JSONResponse
 
@@ -59,13 +59,13 @@ async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_
     
 @router.get("/{id}")
 async def get_a_user(id:int, session:Session = Depends(get_session)):
-    statement = select(Users).where(Users.id == id)
+    statement = select(Users).where(Users.idUser == id)
     result = session.exec(statement).first()
     return result
 
 @router.put("/setAdmin/{id}")
 async def get_a_user(id:int, adminModel:UsersAdminModel ,session:Session = Depends(get_session)):
-    statement = select(Users).where(Users.id == id)
+    statement = select(Users).where(Users.idUser == id)
     user = session.exec(statement).first()
     
     user.isAdmin = adminModel.isAdmin

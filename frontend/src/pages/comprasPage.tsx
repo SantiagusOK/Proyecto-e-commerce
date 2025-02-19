@@ -3,19 +3,18 @@ import ItemCompra from "../components/ItemCompra"
 import ProductsItem from "../components/ItemCompra"
 import Loading from "../components/loading"
 
-interface itemCarritoData{
-    idItemCarrito: number
-    id_product: number
-    total: number
-    amount: number
+interface itemProduct{
+    name:string
+    cantidad:number
+    totalCantidad:number
+    categoria:string
 }
 
 interface comprasData{
-    idCompra:number
-    id_user:number
-    fechaDeCompra:string
+    fechaCompra:string
+    id_compra:number
     totalCompra:number
-    comprasList:itemCarritoData[]
+    productos:itemProduct[]
 }
 
 const MisComprasPage = () =>{
@@ -40,7 +39,7 @@ const MisComprasPage = () =>{
 
     const get_all_compras=async()=>{
         setLoading(true)
-        await fetch("http://localhost:8000/carrito/getAllBuy/"+user.id)
+        await fetch("http://localhost:8000/carrito/getAllBuy/"+user.idUser)
         .then((value)=>value.json())
         .then((data)=>setComprasList(data))
         setLoading(false)
@@ -80,16 +79,16 @@ const MisComprasPage = () =>{
                     <div className="bg-neutral-100 w-fit p-5 rounded shadow">
                         <div className="flex justify-between mt-2 mb-5">
                             <h1>Fecha de compra</h1>
-                            <h1>{compraItem.fechaDeCompra}</h1>
+                            <h1>{compraItem.fechaCompra}</h1>
                         </div>
                         <div className="flex justify-between  rounded-2xl pb-5">
                             <h1 className="text-3xl font-bold">Total</h1>
                             <h1 className="text-3xl text-green-700 font-bold">${compraItem.totalCompra}</h1>
                         </div>
 
-                        {compraItem.comprasList.map((compras)=>(
+                        {compraItem.productos.map((compras)=>(
                                 
-                                <ProductsItem id_product={compras.id_product} amount={compras.amount} totalProduct={compras.total} />
+                                <ProductsItem  product={compras}/>
             
                         ))}
 

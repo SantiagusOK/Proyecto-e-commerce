@@ -1,22 +1,16 @@
 import { useEffect, useState } from "react"
 import { data, Navigate, NavLink, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
-
-
-
+import { set } from "react-hook-form"
 
 const ItemCartEdit = () =>{
 
     const [name, setName] = useState<string>("")
-    const [categorie, setCategorie] = useState<string>("")
     const [amount, setAmount] = useState<number>(1)
     const [stockP, setStock] = useState<number>(0)
     const [amoutOld, setAmoutOld] = useState<number>(0)
-    
     const [price, setPrice] = useState<number>(0)
     const [total, setTotal] = useState<number>(0)
-    const [idProduct, setIdProduct] = useState<number>(0)
-
     const [limitAmout, setLimit] = useState<number>(0)
 
     const [loading, setLoading] = useState<boolean>(false)
@@ -25,16 +19,15 @@ const ItemCartEdit = () =>{
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
-    const idUser = user.id
+    const idUser = user.idUser
 
-    const {id} = useParams()
-    const idItem = id
+    const {idItem} = useParams()
     const minorLimitAmout=1
 
     const navigate = useNavigate()
 
     useEffect(()=>{
-        get_all_carrito()
+        get_item_cart()
     },[])
 
     useEffect(()=>{
@@ -45,31 +38,25 @@ const ItemCartEdit = () =>{
         }
     },[dataUpgrade])
 
-    const get_all_carrito=async()=>{
+    const get_item_cart=async()=>{
         setLoading(true)
         const response = await fetch("http://localhost:8000/carrito/getItemCarrito/" + idItem + "/" + idUser)
         .then((value)=>value.json())
         .then(async(data)=>{
+            setAmount(data.cantidad)
+            setAmoutOld(data.cantidad)
+            setName(data.product)
             setTotal(data.total)
-            setAmount(data.amount)
-            setAmoutOld(data.amount)
-            setIdProduct(data.id_product)
-            await fetch("http://localhost:8000/products/"+data.id_product)
-                .then((value)=>value.json())
-                .then((data)=>{
-                    setStock(data[0].stock)
-                    setCategorie(data[0].categorie.name)
-                    setName(data[0].name)
-                    setPrice(data[0].price)
-                    setLimit(data[0].stock + data[0].stock)
-                })
+            setPrice(data.product_price)
+            setStock(data.stock_product)
+            setLimit(data.stock_product)
             })
             setLoading(false)    
     }
 
     const ButtonFuncionAdd=()=>{
         if(amount<limitAmout){
-            setAmount(amount+1)
+            setAmount((e)=> e+1)
             setStock((e)=> e -= 1)
             setTotal(prevTotal => parseFloat((prevTotal + price).toFixed(2)));
         } else if(amount>=limitAmout){
@@ -90,10 +77,10 @@ const ItemCartEdit = () =>{
     const ModifyAnItemCart = async () =>{
         if(amoutOld != amount){
             setLoadingData(true)
-            const response = await fetch("http://localhost:8000/carrito/modifyAnItemCart/" + id + "/"+ idUser + "/" + stockP,{
+            const response = await fetch("http://localhost:8000/carrito/modifyAnItemCart/" + idItem,{
                 method:"PUT",
                 headers:{"Content-Type" : "application/json"},
-                body: JSON.stringify({id_product : idProduct, total:total, amount:amount})
+                body: JSON.stringify({total:total, cantidad:amount, stockProduct:stockP})
                 })
             if(response.status==200){
                 setDataUpgrade(true)
@@ -121,7 +108,6 @@ const ItemCartEdit = () =>{
                     </div>
                     <div className="flex flex-col items-center ">
                         <h1 className="text-4xl font-extrabold">{name}</h1>
-                        <h1 className="font-black">[ {categorie} ]</h1> 
                     </div>   
                 </div>
                 

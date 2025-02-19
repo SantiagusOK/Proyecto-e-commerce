@@ -4,7 +4,7 @@ import Loading from "../components/loading"
 
 
 
-const ItemBuy = () =>{
+const ItemProductSelect = () =>{
 
     const [name, setName] = useState<string>("")
     const [categorie, setCategorie] = useState<string>("")
@@ -23,7 +23,7 @@ const ItemBuy = () =>{
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
-    const idUser = user.id
+    const idUser = user.idUser
 
     const navigate = useNavigate()
 
@@ -68,7 +68,7 @@ const ItemBuy = () =>{
         const response = await fetch("http://localhost:8000/carrito/setCarrito/" + idUser,{
             method:"PUT",
             headers:{"Content-Type" : "application/json"},
-            body: JSON.stringify({id_product : id, total:total, amount:amount})
+            body: JSON.stringify({id_product : Number(id), total:total, cantidad:amount, id_usuario:idUser})
         })
 
         if(response.status == 200){
@@ -77,18 +77,6 @@ const ItemBuy = () =>{
 
         setLoadingData(false)
     }
-
-    const BuyAnProduct = async () => {
-        const ItemProduct = {
-            idProduct: id,
-            name: name,
-            total: total,
-            amount: amount,
-            categorie: categorie
-        };
-        localStorage.setItem("product", JSON.stringify(ItemProduct));
-        navigate("/inicioPage/ComprarProducto");
-    };
 
     if(loading){
         return(<Loading/>)
@@ -138,4 +126,4 @@ const ItemBuy = () =>{
 }
 
 
-export default ItemBuy
+export default ItemProductSelect

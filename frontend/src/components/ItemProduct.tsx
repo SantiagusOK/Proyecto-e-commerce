@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom"
 
 interface productData{
-    id:number,
+    idProduct:number,
     name:string,
     price:number
     stock: number
@@ -14,7 +14,7 @@ interface product{
 
 const ItemProducts=({product}:product)=>{
     return(
-        <NavLink to={product.stock<=0 ? "" : "/inicioPage/itemBuy/"+String(product.id)} className="w-215 shadow bg-white border border-neutral-300 flex items-center transition   hover:bg-blue-200  cursor-pointer">
+        <NavLink to={product.stock<=0 ? "" : "/inicioPage/itemBuy/"+String(product.idProduct)} className="w-215 shadow bg-white border border-neutral-300 flex items-center transition   hover:bg-blue-200  cursor-pointer">
             <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center space-x-4 p-3">
                     <div className="bg-neutral-400 rounded-full w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">{product.name[0]}</div>

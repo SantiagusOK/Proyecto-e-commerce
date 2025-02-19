@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import Loading from "../components/loading";
 
 interface UserData {
-    id: number;
+    idUser: number;
     fullname: string;
     lastname: string;
     username: string;

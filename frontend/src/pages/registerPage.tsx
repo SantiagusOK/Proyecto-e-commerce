@@ -128,7 +128,7 @@ const UserCreatePage = () =>{
                   value:3,
                   message:"Tiene que haber 3 carateres como minimo"
                 }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={6} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
             </div>
 
             {/* DIRECCION  */}
