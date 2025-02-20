@@ -1,7 +1,12 @@
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
+from typing import TYPE_CHECKING, List, Optional
+
 from models.categories import Categories
+
+if TYPE_CHECKING:
+    from models.categories import Categories
+    from models.itemCarrito import ItemCarrito
 
 class ProductModel(BaseModel):
     idProduct:Optional[int] = None
@@ -16,6 +21,9 @@ class Products(SQLModel, table=True):
     stock:int
     price:float
     categories:Optional[int] = Field(default=None, foreign_key="categories.id")
+
+    category:Optional[Categories] = Relationship(back_populates="products")
+    itemCarrito:List["ItemCarrito"] = Relationship(back_populates="productoItem")
 
 class ProducstSearchModel(BaseModel):
     name:str

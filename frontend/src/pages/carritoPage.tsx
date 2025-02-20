@@ -3,12 +3,26 @@ import ItemProductsCart from "../components/ItemProductsCart"
 import { NavLink, useNavigate } from "react-router-dom"
 import Loading from "../components/loading"
 
+interface categoryData{
+    name:string
+}
+
+interface productData{
+    name:string,
+    price:number,
+    stock:number,
+    idProduct:number,
+    
+}
+
 interface ProductsCartData{
-    id_item_carrito:number,
-    cantidad:number,
-    product:string,
-    priceProduct:number,
     total:number
+    cantidad:number,
+    priceProduct:number,
+    id_item_carrito:number,
+    product:productData,
+    category:categoryData
+    
 }
 
 const CarritoPage = () =>{
@@ -54,9 +68,11 @@ const CarritoPage = () =>{
                 totalCompra:Number(totalCart),})
         })
 
-        if(response.status == 200){
+        if(response.status == 202){
             navigate("/inicioPage/compraRealizadaPage")
-        }
+        } else if (response.status == 404){
+            console.log("ERRRRRRRRRRRRRRRO")
+            }
 
         setProcessingBuy(false)
         setLoading(false)
@@ -72,7 +88,7 @@ const CarritoPage = () =>{
                 
                 <div className={`h-200 space-y-0.5 rounded-2xl ${itemCarrito.length>3 ? 'overflow-y-scroll' : 'h-auto'}`}>
                     {itemCarrito.map((products)=>(
-                            <ItemProductsCart item={products} />
+                            <ItemProductsCart category={products.category} product={products} />
                         ))}
                 </div>
                 

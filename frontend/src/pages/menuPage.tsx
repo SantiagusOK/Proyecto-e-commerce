@@ -80,26 +80,29 @@ const MenuPage = () => {
 
     return(
         // <div>hola</div>
-        <div className="p-10 space-y-10 flex flex-col items-center">
+        <div className="p-2 space-y-2 flex flex-col items-center">
             <div className="w-full justify-between flex items-center 0">
                 {/* BARRA BUSQUEDA  + BOTON BUSCAR*/}
-                <div>
-                    <input className="bg-white w-80 p-2 rounded-l-2xl border-neutral-500 border-1 outline-none" type="search" value={valueSearch} onChange={(e) => setValueSearch(e.target.value)}/>
-                    {/* BOTON BUSCAR */}
-                    <input className="bg-white p-2 border-1 w-fit text-center border-neutral-500 rounded-r-2xl cursor-pointer hover:hover:bg-blue-400 " type="button" value="BUSCAR" onClick={GetAllProducts}/>
-                </div>
-                {/* TEXTO  + BOTON CATEGORIA*/}
-                <div className="flex space-x-2 h-fit">
-                    <h1>Categoria:</h1>
-                    {categorieList.length>=1&&(
-                        <select className="w-fit" value={categorie} onChange={(event)=>selectCategorie(event.target.value)}  >
-                        <option value={0}>...</option>
-                        {categorieList.map((categorie)=>(
-                            <option value={categorie.id}>{categorie.name.toUpperCase()}</option>
-                        ))}
-                        </select>
-                    )}
-                    
+                <div className="space-y-3">
+                    <div>
+                        <input className="bg-white w-80 p-2 rounded-l-2xl border-neutral-500 border-1 outline-none" type="search" value={valueSearch} onChange={(e) => setValueSearch(e.target.value)}/>
+                        {/* BOTON BUSCAR */}
+                        <input className="bg-white p-2 border-1 w-fit text-center border-neutral-500 rounded-r-2xl cursor-pointer hover:hover:bg-blue-400 " type="button" value="BUSCAR" onClick={GetAllProducts}/>
+                    </div>
+                    {/* TEXTO  + BOTON CATEGORIA*/}
+                    <div className="flex space-x-2 h-fit">
+                        <h1>Categoria:</h1>
+                        {categorieList.length>=1&&(
+                            <select className="w-fit" value={categorie} onChange={(event)=>selectCategorie(event.target.value)}  >
+                            <option value={0}>...</option>
+                            {categorieList.map((categorie)=>(
+                                <option value={categorie.id}>{categorie.name.toUpperCase()}</option>
+                            ))}
+                            </select>
+                        )}
+                        
+                    </div>
+
                 </div>
             </div>
 

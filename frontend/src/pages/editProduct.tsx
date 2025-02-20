@@ -2,7 +2,23 @@ import { useEffect, useState } from "react"
 import { NavLink, useParams } from "react-router-dom"
 import Loading from "../components/loading"
 
+interface categorieData{
+    name:string
+}
+
+interface productData{
+    idProduct:number,
+    name:string,
+    stock:number,
+    price:number,
+    category:categorieData,
+}
+
+
 const EditProductPage = () =>{
+
+    const[productItem , setProductItem] = useState<productData>()
+
     const [loading, setLoading] = useState<boolean>(false)
     const [idProduct, setIdProduct] = useState<number>(0)
     const [nameProduct, setnameProduct] = useState<string>("")
@@ -33,13 +49,12 @@ const EditProductPage = () =>{
         await fetch("http://localhost:8000/products/" + id)
         .then((value)=>value.json())
         .then((data)=>{
-            setIdProduct(data[0].idProduct)
-            setnameProduct(data[0].name),
-            setPriceProduct(data[0].price),
-            setStockProduct(data[0].stock)
-            setCategoryProduct(data[0].categorie.name)
-            setOldPrice(data[0].price)
-            setOldStock(data[0].stock)
+            setnameProduct(data.name),
+            setPriceProduct(data.price),
+            setStockProduct(data.stock)
+            setCategoryProduct(data.category.name)
+            setOldPrice(data.price)
+            setOldStock(data.stock)
         })
         setLoading(false)
     }
@@ -55,7 +70,7 @@ const EditProductPage = () =>{
             const response = await fetch("http://localhost:8000/products/updateProduct",{
                 method: "PUT",
                 headers: {"Content-Type" : "application/json"},
-                body:JSON.stringify({idProduct:idProduct ,price:priceProduct, stock:stockProduct})
+                body:JSON.stringify({idProduct:Number(id) ,price:priceProduct, stock:stockProduct})
             })
 
             if(response.status == 200){
@@ -63,10 +78,10 @@ const EditProductPage = () =>{
                 setMessageSaved(data.detail)
                 setDataSaved(true)
                 setLoadingData(false)
+            } else {
+                setLoadingData(false)
             }
         }
-        
-        
     }
 
     if(loading){

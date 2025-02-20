@@ -11,7 +11,7 @@ interface listProductsData{
     idProduct:number,
     name:string,
     price:number,
-    categorie:categorieData
+    category:categorieData
     stock:number
 }
 

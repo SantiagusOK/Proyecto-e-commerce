@@ -1,29 +1,41 @@
 import { useEffect, useState } from "react"
 import { NavLink } from "react-router-dom"
 
+interface categoryData{
+    name:string
+}
+
+interface productData{
+    name:string,
+    price:number,
+    stock:number,
+    idProduct:number,
+}
+
 interface ProductsCartData{
-    id_item_carrito:number,
-    cantidad:number,
-    product:string,
-    priceProduct:number,
     total:number
+    cantidad:number,
+    priceProduct:number,
+    id_item_carrito:number,
+    product:productData,
+    category:categoryData
+    
 }
 
-interface itemCartData{
-    item: ProductsCartData
+interface productParams{
+    product:ProductsCartData
+    category:categoryData
+
 }
 
-const ItemProductsCart = ({item}:itemCartData) =>{
+const ItemProductsCart = ({product, category}:productParams) =>{
         
         const storage = localStorage.getItem("userData")
         const user = JSON.parse(storage!)
         const idUser = user.idUser
-        const idItem = item.id_item_carrito
-
-        console.log(idItem)
         
         const deleteAItem = async ()=>{
-            await fetch("http://localhost:8000/carrito/deleteAnItemCart/" + idItem + "/" + idUser,{
+            await fetch("http://localhost:8000/carrito/deleteAnItemCart/" + product.id_item_carrito,{
                 method:"PUT",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({})
@@ -36,18 +48,18 @@ const ItemProductsCart = ({item}:itemCartData) =>{
                 
                 <div className="flex space-x-4  justify-star">
                     <div className="w-50 h-50 bg-neutral-700 rounded-full items-center justify-center flex text-white text-5xl">
-                        {item.product[0]}
+                        {product.product.name[0]}
                     </div>
 
                     <div className="space-y-2  w-80">
-                        <h1 className="text-4xl font-black">{item.product}</h1>
-                        <h1>CANTIDAD: x{item.cantidad}</h1>
-                        <h1>PRECIO DEL PRODUCTO: ${item.priceProduct}</h1>
-                        <h1 className="font-extrabold">TOTAL: ${item.total}</h1>
+                        <h1 className="text-4xl font-black">{product.product.name}</h1>
+                        <h1>CANTIDAD: x{product.cantidad}</h1>
+                        <h1>PRECIO DEL PRODUCTO: ${product.product.price}</h1>
+                        <h1 className="font-extrabold">TOTAL: ${product.total}</h1>
                     </div>
 
                     <div className=" items-end flex space-x-5 w-fit">
-                        <NavLink to={"/inicioPage/carritoPage/itemCartEdit/" + idItem}>MODIFICAR CANTIDAD</NavLink>
+                        <NavLink to={"/inicioPage/carritoPage/itemCartEdit/" + product.id_item_carrito}>MODIFICAR CANTIDAD</NavLink>
                         <NavLink to={"/inicioPage/carritoPage"} onClick={deleteAItem}>ELIMINAR</NavLink>
                     </div>
                 </div>

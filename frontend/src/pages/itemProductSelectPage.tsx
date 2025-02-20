@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import { NavLink, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
 
-
-
 const ItemProductSelect = () =>{
 
     const [name, setName] = useState<string>("")
@@ -36,11 +34,11 @@ const ItemProductSelect = () =>{
         await fetch("http://localhost:8000/products/"+id)
         .then((value)=>value.json())
         .then((data)=>{
-            setCategorie(data[0].categorie.name)
-            setName(data[0].name)
-            setPrice(data[0].price)
-            setTotal(data[0].price)
-            setStock(data[0].stock)
+            setCategorie(data.category.name)
+            setName(data.name)
+            setPrice(data.price)
+            setTotal(data.price)
+            setStock(data.stock)
         })
         setLoading(false)
     }

@@ -3,11 +3,14 @@ import ItemCompra from "../components/ItemCompra"
 import ProductsItem from "../components/ItemCompra"
 import Loading from "../components/loading"
 
-interface itemProduct{
+interface categorie{
     name:string
+}
+
+interface itemProduct{
     cantidad:number
-    totalCantidad:number
-    categoria:string
+    total_por_cantidad:number
+    id_product:number
 }
 
 interface comprasData{
@@ -71,7 +74,7 @@ const MisComprasPage = () =>{
             <>
                 <div className=" flex justify-center items-center">
                     {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
-                    {paginaActual != indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
+                    {paginaActual == indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
                     {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
                 </div> 
 
@@ -87,9 +90,7 @@ const MisComprasPage = () =>{
                         </div>
 
                         {compraItem.productos.map((compras)=>(
-                                
-                                <ProductsItem  product={compras}/>
-            
+                                <ProductsItem  AnProduct={compras}/>
                         ))}
 
                     </div>
@@ -97,7 +98,7 @@ const MisComprasPage = () =>{
                 ))}
                 <div className=" flex justify-center items-center">
                     {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
-                    {paginaActual != indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
+                    {paginaActual == indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
                     {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
                 </div>   
             </>

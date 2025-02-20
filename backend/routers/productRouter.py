@@ -9,9 +9,22 @@ router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/")
 async def get_all_products(session:Session = Depends(get_session)):
-    statement = select(Products, Categories).join(Categories, Products.categories == Categories.id)
+    statement = select(Products)
     result = session.exec(statement).all()
-    return build_product_category(result)
+    
+    response = [
+        {
+            "idProduct": products.idProduct,
+            "stock":products.stock,
+            "name":products.name,
+            "price":products.price,
+            "category":products.category
+            
+        }
+        for products in result
+    ]
+    
+    return response
 
 @router.post("/create")
 async def create_categories(anNewProduct:ProductModel, session:Session = Depends(get_session)):
@@ -26,6 +39,12 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
             detail="Este producto ya esta registrado"
         )  
     newProduct = Products(**anNewProduct.model_dump())
+    
+    statementCategorie = select(Categories).where(Categories.id == anNewProduct.categories)
+    categoriesResult = session.exec(statementCategorie).first()
+    
+    newProduct.category = categoriesResult
+    
     session.add(newProduct)
     session.commit()
     session.refresh(newProduct)
@@ -58,23 +77,27 @@ async def get_all_products_categories(session:Session = Depends(get_session)):
 
 @router.get("/{id}")
 async def getAnProduct(id:int, session:Session=Depends(get_session)):
-    statement = select(Products, Categories).join(Categories, Products.categories == Categories.id).where(Products.idProduct == id)
-    
+    statement = select(Products).where(Products.idProduct == id)
     result = session.exec(statement).all()
-
-    product = build_product_category(result)
+    reponse = [
+        {
+            "name":products.name,
+            "price":products.price,
+            "stock":products.stock,
+            "category":products.category
+        }
+        for products in result
+    ]
     
-    return product
+    return reponse[0]
 
 @router.post("/searchByName/")
 async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
     # Devuelve todos los productos registrados
     if not productSearch.name and productSearch.categorie == 0: 
-        statement = select(Products, Categories).join(
-            Categories, Categories.id == Products.categories
-        )
+        statement = select(Products)
         result = session.exec(statement).all()
-        return build_product_category(result)
+        return result
 
     # devuelve todos los productos de cierta categoria
     elif not productSearch.name and productSearch.categorie > 0:
@@ -91,6 +114,7 @@ async def search_a_product(productSearch:ProducstSearchModel, session:Session=De
         .where(
             Products.name.ilike(f"%{productSearch.name}%")))
         result = session.exec(statement).all()
+        # return result
         return build_product_category(result)
     
     # devuelve todos los productos que escriba de cierta categoria
@@ -110,18 +134,14 @@ def build_product_category(result):
                 "name": product.name,
                 "stock": product.stock,
                 "price": product.price,
-                "categorie": {
-                    "id": category.id,
-                    "name": category.name
-                }
+                "category": product.category
             }
-            for product, category in result
+            for product, categories in result
         ]
     return products_with_categories
 
 @router.put("/updateProduct")
 async def update_a_product(productModel:ProductUpdateModel, session:Session=Depends(get_session)):
-    
     statement = select(Products).where(Products.idProduct == productModel.idProduct)
     
     product = session.exec(statement).first()
@@ -136,5 +156,5 @@ async def update_a_product(productModel:ProductUpdateModel, session:Session=Depe
         status_code=status.HTTP_200_OK,
         detail="Producto actualizado con exito"
     )
-    
+
     
