@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
+import { useSelector, UseSelector } from "react-redux"
 
 interface NavLinkdata{
     router:string,
@@ -7,6 +8,8 @@ interface NavLinkdata{
 }
 
 export default function MyNavBar(){
+
+    const users = useSelector((state) => state.users.idUser)
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)

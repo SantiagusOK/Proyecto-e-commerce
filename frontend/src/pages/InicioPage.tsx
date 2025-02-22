@@ -1,9 +1,12 @@
 import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logo.png"
+import { useSelector, UseSelector } from "react-redux"
 
 const InicioPage=()=>{
 
     localStorage.clear()
+
+    
 
     return(
         <div className="flex flex-col items-center justify-start h-screen space-y-10">

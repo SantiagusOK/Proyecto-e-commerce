@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from db.connect import conn
 from routers import productRouter, categorieRouter, userRouter, carritoRouter
-from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
 

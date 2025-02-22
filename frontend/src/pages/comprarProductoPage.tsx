@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ItemBuyProduct } from "../components/itemBuyProduct";
 
-// id:Optional[int] = None
-// id_product: int 
-// total: float
-// amount: int
-
 export const ComprarProductoPage = () => {
 
     const storage = localStorage.getItem("product")
