@@ -57,7 +57,10 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
 
 @router.get("/getAllProducts+categories")
 async def get_all_products_categories(session:Session = Depends(get_session)):
-    result = session.exec(select(Product, Category).join(Category, Product.categories == Category.id)).all()
+    statement = (select(Product, Category)
+                 .join(Category, Product.categories == Category.id))
+    result = session.exec(statement).all()
+    
     products_with_categories = [
             {
                 "id": product.id,

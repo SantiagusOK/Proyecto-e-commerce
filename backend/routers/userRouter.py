@@ -63,15 +63,20 @@ async def get_a_user(id:int, session:Session = Depends(get_session)):
     result = session.exec(statement).first()
     return result
 
-@router.put("/setAdmin/{id}")
+@router.put("/setRol/{id}")
 async def get_a_user(id:int, adminModel:UserAdminModel ,session:Session = Depends(get_session)):
-    statement = select(User).where(User.id == id)
-    user = session.exec(statement).first()
+    pass
+    #esto cambiara el rol de una cuenta 
     
-    user.isAdmin = adminModel.isAdmin
     
-    session.add(user)
-    session.commit()
-    session.refresh(user)
     
-    return user
+    # statement = select(User).where(User.id == id)
+    # user = session.exec(statement).first()
+    
+    # user.isAdmin = adminModel.isAdmin ## cambiar el rol a Admin
+    
+    # session.add(user)
+    # session.commit()
+    # session.refresh(user)
+    
+    # return user

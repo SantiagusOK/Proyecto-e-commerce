@@ -40,7 +40,7 @@ async def add_product_cart(idUser:int, anProduct:CartModel, session:Session = De
     statement = select(Product).where(Product.id == anProduct.id_product)
     product = session.exec(statement).first()
 
-    product.stock -= anProduct.cantidad
+    product.stock -= anProduct.amount
 
     if product.stock < 0:
         product.stock = 0
@@ -63,15 +63,16 @@ def search_value(value:User ,session:Session):
 
 @router.get("/getCarrito/{idUser}")
 async def get_all_carrito(idUser:int, session:Session = Depends(get_session)):
-    statement = (select(User, Cart)
-                 .join(Cart, Cart.id_usuario == User.id)
-                 .where(User.id == idUser).where(Cart.eliminado == False))
+    statement = (select(User, Cart, State)
+                 .join(State, Cart.state_id == State.id)
+                 .join(Cart, Cart.id_user == User.id)
+                 .where(User.id == idUser).where(State.name == "seleccionado"))
     cart = session.exec(statement).all()
     if cart:
         response = [
             {
                 "total":itemCarrito.total,
-                "cantidad":itemCarrito.cantidad,
+                "cantidad":itemCarrito.amount,
                 "id_item_carrito":itemCarrito.id,
                 "product":itemCarrito.product,
                 "categorieProduct":itemCarrito.product.category
@@ -91,7 +92,7 @@ async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_
     statement = (select(Cart, Product)
                  .join(Product, Product.id == Cart.id_product)
                  .where(Cart.id == idItem)
-                 .where(Cart.id_usuario == idUser))
+                 .where(Cart.id_user == idUser))
     itemCart = session.exec(statement).first() 
     
     itemCarrito, product = itemCart 
@@ -99,7 +100,7 @@ async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_
     response = {
         "product": product.name,
         "product_price":product.price,
-        "cantidad":itemCarrito.cantidad,
+        "cantidad":itemCarrito.amount,
         "total":itemCarrito.total,
         "id_item_carrito":itemCarrito.id,
         "stock_product":product.stock
@@ -113,7 +114,7 @@ async def get_all_carrito(idItem:int,itemCartUpdate:CartUpdate ,session:Session 
     itemCart = session.exec(statement).first()
     
     itemCart.total = itemCartUpdate.total
-    itemCart.cantidad = itemCartUpdate.cantidad
+    itemCart.amount = itemCartUpdate.amount
     
     statementNew = select(Product).where(Product.id == itemCart.id_product)
     product = session.exec(statementNew).first()
@@ -136,12 +137,12 @@ async def delete_a_item_from_cart(idItem:int, session:Session = Depends(get_sess
                  .where(Cart.id == idItem))
     itemCart = session.exec(statement).first()
     
-    itemCart.eliminado = True
+    # itemCart.eliminado = True cambiar el estado a eliminado
 
     statementNew = select(Product).where(Product.id == itemCart.id_product)
     product = session.exec(statementNew).first()
 
-    product.stock += itemCart.cantidad  
+    product.stock += itemCart.amount  
       
     session.add_all([product, itemCart])
     session.commit()
@@ -161,7 +162,7 @@ async def realize_a_buy(idUser:int, comprasModel:OrderModel, session:Session = D
     session.commit()
     session.refresh(newCompraItem)
     
-    statementCarrito = select(Cart).where(Cart.id_usuario == idUser, Cart.eliminado == False)
+    statementCarrito = select(Cart).where(Cart.id_user == idUser, Cart.eliminado == False) ## cart.State.name == "eliminado"
     
     itemCart = session.exec(statementCarrito).all()
     
@@ -170,10 +171,10 @@ async def realize_a_buy(idUser:int, comprasModel:OrderModel, session:Session = D
             id_compra=newCompraItem.id,
             id_product=item.id_product,
             total_por_cantidad=item.total,
-            cantidad=item.cantidad
+            cantidad=item.amount
             )
         
-        item.eliminado = True
+        item.eliminado = True ## cambiar el estado a "eliminado"
         
         newCompraItem.orders.append(newProductCompra)
         
@@ -198,8 +199,8 @@ async def get_buy(idUser:int, session:Session = Depends(get_session)):
     
     response =[
         {
-            "fechaCompra": itemCompra.fechaDeCompra,
-            "totalCompra" : itemCompra.totalCompra,
+            "fechaCompra": itemCompra.date,
+            "totalCompra" : itemCompra.totalOrder,
             "productos" : itemCompra.orders,
             
         }
@@ -209,10 +210,10 @@ async def get_buy(idUser:int, session:Session = Depends(get_session)):
     return list(reversed(response))
 
 async def clear_all_carrito(idUser:int, session:Session):
-    statement = (select(Cart).where(Cart.id_usuario == idUser))
+    statement = (select(Cart).where(Cart.id_user == idUser))
     itemCart = session.exec(statement).all()
     for item in itemCart:
-        item.eliminado = True
+        item.eliminado = True # cambiar el estado a "eliminado"
         session.add(item)
         session.commit()
         session.refresh(item)
