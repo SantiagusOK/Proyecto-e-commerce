@@ -3,7 +3,7 @@ import ItemProducts from "../components/ItemProduct"
 import Loading from "../components/loading"
 
 interface ProductsData{
-    idProduct:number,
+    id:number,
     name:string,
     price:number
     stock:number

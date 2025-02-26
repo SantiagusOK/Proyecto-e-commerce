@@ -2,19 +2,19 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products, ProducstSearchModel, ProductUpdateModel
-from models.categories import CategorieModel, Categories
+from models.product import ProductModel, Product, ProductSearchModel, ProductUpdateModel
+from models.category import CategoryModel, Category
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/")
 async def get_all_products(session:Session = Depends(get_session)):
-    statement = select(Products)
+    statement = select(Product)
     result = session.exec(statement).all()
     
     response = [
         {
-            "idProduct": products.idProduct,
+            "idProduct": products.id,
             "stock":products.stock,
             "name":products.name,
             "price":products.price,
@@ -29,7 +29,7 @@ async def get_all_products(session:Session = Depends(get_session)):
 @router.post("/create")
 async def create_categories(anNewProduct:ProductModel, session:Session = Depends(get_session)):
     
-    statement = select(Products).where(func.lower(Products.name) == anNewProduct.name.lower())
+    statement = select(Product).where(func.lower(Product.name) == anNewProduct.name.lower())
     anProduct = session.exec(statement).first()
     
     print(anProduct)
@@ -38,9 +38,9 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Este producto ya esta registrado"
         )  
-    newProduct = Products(**anNewProduct.model_dump())
+    newProduct = Product(**anNewProduct.model_dump())
     
-    statementCategorie = select(Categories).where(Categories.id == anNewProduct.categories)
+    statementCategorie = select(Category).where(Category.id == anNewProduct.categories)
     categoriesResult = session.exec(statementCategorie).first()
     
     newProduct.category = categoriesResult
@@ -57,7 +57,7 @@ async def create_categories(anNewProduct:ProductModel, session:Session = Depends
 
 @router.get("/getAllProducts+categories")
 async def get_all_products_categories(session:Session = Depends(get_session)):
-    result = session.exec(select(Products, Categories).join(Categories, Products.categories == Categories.id)).all()
+    result = session.exec(select(Product, Category).join(Category, Product.categories == Category.id)).all()
     products_with_categories = [
             {
                 "id": product.id,
@@ -77,7 +77,7 @@ async def get_all_products_categories(session:Session = Depends(get_session)):
 
 @router.get("/{id}")
 async def getAnProduct(id:int, session:Session=Depends(get_session)):
-    statement = select(Products).where(Products.idProduct == id)
+    statement = select(Product).where(Product.id == id)
     result = session.exec(statement).all()
     reponse = [
         {
@@ -92,37 +92,37 @@ async def getAnProduct(id:int, session:Session=Depends(get_session)):
     return reponse[0]
 
 @router.post("/searchByName/")
-async def search_a_product(productSearch:ProducstSearchModel, session:Session=Depends(get_session)):
+async def search_a_product(productSearch:ProductSearchModel, session:Session=Depends(get_session)):
     # Devuelve todos los productos registrados
     if not productSearch.name and productSearch.categorie == 0: 
-        statement = select(Products)
+        statement = select(Product)
         result = session.exec(statement).all()
         return result
 
     # devuelve todos los productos de cierta categoria
     elif not productSearch.name and productSearch.categorie > 0:
-        statement = (select(Products, Categories)
-                     .join(Categories, Products.categories==Categories.id)
-                     .where(Products.categories == productSearch.categorie))
+        statement = (select(Product, Category)
+                     .join(Category, Product.categories==Category.id)
+                     .where(Product.categories == productSearch.categorie))
         result = session.exec(statement).all()
         return build_product_category(result)
     
     # devuelve solo el producto que se escriba si la categorie es 0(todos)
     elif productSearch and productSearch.categorie == 0:        
-        statement = (select(Products, Categories)
-        .join(Categories, Products.categories==Categories.id)
+        statement = (select(Product, Category)
+        .join(Category, Product.categories==Category.id)
         .where(
-            Products.name.ilike(f"%{productSearch.name}%")))
+            Product.name.ilike(f"%{productSearch.name}%")))
         result = session.exec(statement).all()
         # return result
         return build_product_category(result)
     
     # devuelve todos los productos que escriba de cierta categoria
     elif productSearch.name and productSearch.categorie>0: 
-        statement = (select(Products, Categories)
-        .join(Categories, Products.categories==Categories.id)
-        .where(Products.categories == productSearch.categorie,
-            Products.name.ilike(f"%{productSearch.name}%")))
+        statement = (select(Product, Category)
+        .join(Category, Product.categories==Category.id)
+        .where(Product.categories == productSearch.categorie,
+            Product.name.ilike(f"%{productSearch.name}%")))
         result = session.exec(statement).all()
         return build_product_category(result)
 
@@ -130,7 +130,7 @@ async def search_a_product(productSearch:ProducstSearchModel, session:Session=De
 def build_product_category(result):
     products_with_categories = [
             {
-                "idProduct": product.idProduct,
+                "idProduct": product.id,
                 "name": product.name,
                 "stock": product.stock,
                 "price": product.price,
@@ -142,7 +142,7 @@ def build_product_category(result):
 
 @router.put("/updateProduct")
 async def update_a_product(productModel:ProductUpdateModel, session:Session=Depends(get_session)):
-    statement = select(Products).where(Products.idProduct == productModel.idProduct)
+    statement = select(Product).where(Product.id == productModel.id)
     
     product = session.exec(statement).first()
     product.price = productModel.price

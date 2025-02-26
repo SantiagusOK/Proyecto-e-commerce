@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Form } from 'react-router-dom'
+import Loading from '../components/loading'
 
 
 
@@ -30,46 +31,64 @@ function ProductsCreatePage() {
   const[messageCreate , setMessageCreate] = useState<string>("")
   const[messageError , setmessageError] = useState<string>("")
 
+  const[loading, setLoading] = useState<boolean>(false)
+
 
 
   const saveData=async()=>{
-    setLoadingData(true)
-    setDataSave(false)
-    setDataError(false)
-    const response = await fetch("http://localhost:8000/products/create",{
-      method: "POST",
-      headers: {"Content-Type" : "application/json"},
-      body: JSON.stringify({name:name, price:parseFloat(price), stock:stock, categories:categorie})
-    })
+    if(categoriesList.length >= 1){
 
-    if(response.status == 201){
-      const data = await response.json()
-      setMessageCreate(data.detail)
-      setDataSave(true)
-      setName("")
-      setPrice(0)
-      setStock(0)
-      setLoadingData(false)
-    } 
-    if(response.status == 401){
-      const data = await response.json()
-      setmessageError(data.detail)
-      setDataError(true)
-      setLoadingData(false)
+      setLoadingData(true)
+      setDataSave(false)
+      setDataError(false)
+      const response = await fetch("http://localhost:8000/products/create",{
+        method: "POST",
+        headers: {"Content-Type" : "application/json"},
+        body: JSON.stringify({name:name, price:parseFloat(price), stock:stock, categories:categorie})
+      })
+  
+      if(response.status == 201){
+        const data = await response.json()
+        setMessageCreate(data.detail)
+        setDataSave(true)
+        setName("")
+        setPrice("")
+        setStock(0)
+        setLoadingData(false)
+      } 
+      if(response.status == 401){
+        const data = await response.json()
+        setmessageError(data.detail)
+        setDataError(true)
+        setLoadingData(false)
+      }
     }
   }
 
   useEffect(()=>{
-    fetch("http://localhost:8000/categories/")
+    get_all_categories()
+  },[])
+  
+  const get_all_categories = async () => {
+    setLoading(true)
+    await fetch("http://localhost:8000/categories/")
     .then((value) => value.json())
     .then((cate) => setCategoriesList(cate))
-  },[])
+    setLoading(false)
+    console.log(categoriesList.length)
+  }
 
   const onChangePrice=(e)=>{
     const value = e.target.value;
     if (/^\d*\.?\d*$/.test(value)) {
       setPrice(value);
     }
+  }
+
+  if(loading){
+    return(
+      <Loading/>
+    )
   }
 
   return (
@@ -88,10 +107,15 @@ function ProductsCreatePage() {
           </div>
           
           {/* CATEGORIA */}
+
           <select className=' w-50 outline-none border-2 border-neutral-400 rounded-2xl p-2' name="CATEGORIA" onChange={(e)=>setCategorie(Number(e.target.value))}>
-            {categoriesList.map((value)=>(
-              <option value={String(value.id)}>{value.name}</option>
-            ))}
+            {categoriesList.length > 0&&(
+              <>
+                {categoriesList.map((value)=>(
+                  <option value={String(value.id)}>{value.name}</option>
+                ))}
+              </>
+            )}
           </select>
 
           {/* PRECIO */}

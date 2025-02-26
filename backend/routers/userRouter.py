@@ -2,23 +2,18 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products
-from models.categories import CategorieModel, Categories
-from models.users import Users, UsersModel, UsersLoginModel, UsersAdminModel
-from models.itemCarrito import ItemCarritoModel
-from models.itemCompra import ItemCompraModel, ItemCompra
+from models.user import User, UserModel, UserLoginModel, UserAdminModel
 from sqlalchemy.orm.attributes import flag_modified
 from fastapi.responses import JSONResponse
-
 router = APIRouter(prefix="/users", tags=["User"])
 
 @router.get("/")
 async def get_all_categories(session:Session = Depends(get_session)):
-    return session.exec(select(Users)).all()
+    return session.exec(select(User)).all()
 
 @router.post("/registerUser")
-async def create_categories(anNewUser:UsersModel, session:Session = Depends(get_session)):
-    statement = select(Users).where(func.lower(Users.username) == anNewUser.username)
+async def create_categories(anNewUser:UserModel, session:Session = Depends(get_session)):
+    statement = select(User).where(func.lower(User.username) == anNewUser.username)
     userExist = session.exec(statement).first()
     
     if userExist:
@@ -27,7 +22,7 @@ async def create_categories(anNewUser:UsersModel, session:Session = Depends(get_
             detail="Nombre de usuario ya esta en uso"
         ) 
     else:
-        newUser = Users(**anNewUser.model_dump())
+        newUser = User(**anNewUser.model_dump())
         session.add(newUser)
         session.commit()
         session.refresh(newUser)
@@ -37,10 +32,15 @@ async def create_categories(anNewUser:UsersModel, session:Session = Depends(get_
         )
 
 @router.post("/verifyLogin")
-async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_session)):
-    statement = select(Users).where(
-        func.lower(Users.username == userLogin.username.lower()))
+async def verify_login(userLogin:UserLoginModel, session:Session = Depends(get_session)):
+    
+    statement = select(User).where(
+        func.lower(User.username) == userLogin.username.lower())
+    
     user = session.exec(statement).first()
+    
+    print("hola-----------------------2")
+    
     
     if not user:
         raise HTTPException(
@@ -59,13 +59,13 @@ async def verify_login(userLogin:UsersLoginModel, session:Session = Depends(get_
     
 @router.get("/{id}")
 async def get_a_user(id:int, session:Session = Depends(get_session)):
-    statement = select(Users).where(Users.idUser == id)
+    statement = select(User).where(User.id == id)
     result = session.exec(statement).first()
     return result
 
 @router.put("/setAdmin/{id}")
-async def get_a_user(id:int, adminModel:UsersAdminModel ,session:Session = Depends(get_session)):
-    statement = select(Users).where(Users.idUser == id)
+async def get_a_user(id:int, adminModel:UserAdminModel ,session:Session = Depends(get_session)):
+    statement = select(User).where(User.id == id)
     user = session.exec(statement).first()
     
     user.isAdmin = adminModel.isAdmin

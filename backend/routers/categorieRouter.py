@@ -2,14 +2,14 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products
-from models.categories import CategorieModel, Categories
+from models.product import ProductModel, Product
+from models.category import CategoryModel, Category
 
 router = APIRouter(prefix="/categories", tags=["Categorie"])
 
 @router.get("/")
 async def get_all_categories(session:Session = Depends(get_session)):
-    result = session.exec(select(Categories)).all()
+    result = session.exec(select(Category)).all()
     
     if result:
         return result
@@ -17,9 +17,9 @@ async def get_all_categories(session:Session = Depends(get_session)):
         return {"error": "un error"}
 
 @router.post("/create")
-async def create_categories(anNewCategorie:CategorieModel, session:Session = Depends(get_session)):
+async def create_categories(anNewCategorie:CategoryModel, session:Session = Depends(get_session)):
     
-    statement = select(Categories).where(func.lower(Categories.name) == anNewCategorie.name.lower())
+    statement = select(Category).where(func.lower(Category.name) == anNewCategorie.name.lower())
     category = session.exec(statement).first()
     
     if category:
@@ -27,7 +27,7 @@ async def create_categories(anNewCategorie:CategorieModel, session:Session = Dep
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Esta categoria ya esta registrado"
         )  
-    category = Categories(**anNewCategorie.model_dump())
+    category = Category(**anNewCategorie.model_dump())
     session.add(category)
     session.commit()
     session.refresh(category)
@@ -37,8 +37,8 @@ async def create_categories(anNewCategorie:CategorieModel, session:Session = Dep
         detail="Categoria creado con exito"
     )
     
-def search_value(value:CategorieModel ,session:Session):
-    result = session.exec(select(Categories)).all()
+def search_value(value:CategoryModel ,session:Session):
+    result = session.exec(select(Category)).all()
     for categorie in result:
         if value.name == categorie.name:
             return value

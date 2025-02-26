@@ -16,12 +16,12 @@ const ItemProductSelect = () =>{
     const[loading,setLoading] = useState<boolean>(false)
     const[loadingData,setLoadingData] = useState<boolean>(false)
 
-    const limitAmout = 15
+    const limitAmout = stock
     const minorLimitAmout=1
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
-    const idUser = user.idUser
+    const idUser = user.id
 
     const navigate = useNavigate()
 

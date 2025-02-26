@@ -3,13 +3,13 @@ from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
-    from models.products import Products
+    from backend.models.product import Product
     
-class CategorieModel(BaseModel):
+class CategoryModel(BaseModel):
     id:Optional[int] = None
     name:str
 
-class Categories(SQLModel, table=True):
+class Category(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
     name:str
-    products: List["Products"] = Relationship(back_populates="category")
+    products: List["Product"] = Relationship(back_populates="category")

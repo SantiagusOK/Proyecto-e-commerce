@@ -9,14 +9,14 @@ interface NavLinkdata{
 
 export default function MyNavBar(){
 
-    const users = useSelector((state) => state.users.idUser)
+    // const users = useSelector((state) => state.users.idUser)
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
 
     function MyNavLink({ tittle, router} : NavLinkdata){
         return(
-            <NavLink to={router} className="text-white font-bold hover:text-blue-300 focus:text-yellow-400 underline-offset-8 hover:underline">{tittle}</NavLink>
+            <NavLink to={router} className="text-white font-bold duration-300 hover:text-yellow-400 hover:scale-105  underline-offset-8 ">{tittle}</NavLink>
         )
     }
 
@@ -28,16 +28,19 @@ export default function MyNavBar(){
                 <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
                 {user.isAdmin &&(
                     <>
-                    {/* //crear productos */}
-                    <MyNavLink router={"/inicioPage/productsCreatePage"} tittle={"Agregar Productos"}/>
-                    {/* //crear categorias */}
-                    <MyNavLink router={"/inicioPage/categorieCreatePage"} tittle={"Agregar Categorias"}/>
-                    {/* obtener productos + categoria */}
-                    <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
-                    {/* obtener y manipular Usuarios */}
-                    <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Todos usuarios"}/>
                     </>
+                    
                 )}
+                {/* //crear productos */}
+                <MyNavLink router={"/inicioPage/productsCreatePage"} tittle={"Agregar Productos"}/>
+                {/* //crear categorias */}
+                <MyNavLink router={"/inicioPage/categorieCreatePage"} tittle={"Agregar Categorias"}/>
+                {/* obtener productos + categoria */}
+                <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
+                {/* obtener y manipular Usuarios */}
+                <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Todos usuarios"}/>
+                {/* Crear categoria */}
+                <MyNavLink router={"/inicioPage/createRolePage"} tittle={"Crear Roles"}/>
                 
                 {/* pagina carrito */}
                 <MyNavLink router={"/inicioPage/carritoPage"} tittle={"Carrito"}/>

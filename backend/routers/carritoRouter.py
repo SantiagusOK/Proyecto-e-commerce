@@ -3,39 +3,47 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
-from models.products import ProductModel, Products
-from models.categories import CategorieModel, Categories
-from models.users import Users, UsersModel, UsersLoginModel, UsersAdminModel
-from models.itemCarrito import ItemCarritoModel, ItemCarrito, ItemCarritoUpdate
-from models.itemCompra import ItemCompraModel, ItemCompra
-from models.itemProductCompra import ItemProductCompra, ItemProductCompraModel
+from models.product import ProductModel, Product
+from models.category import CategoryModel, Category
+from models.user import User, UserModel, UserLoginModel, UserAdminModel
+from models.cart import CartModel, Cart, CartUpdate
+from models.order import OrderModel, Order
+from models.orderItem import OrderItem, OrderItemModel
+from models.state import State
 from sqlalchemy.orm.attributes import flag_modified
 from fastapi.responses import JSONResponse
 
 router = APIRouter(tags=["Carrito"], prefix="/carrito")
 
 @router.put("/setCarrito/{idUser}")
-async def add_product_cart(idUser:int, anProduct:ItemCarritoModel, session:Session = Depends(get_session)):
-
-    newItemCarrito = ItemCarrito(**anProduct.model_dump())
+async def add_product_cart(idUser:int, anProduct:CartModel, session:Session = Depends(get_session)):
     
-    productStatement = (select(Products)
-                        .where(Products.idProduct == anProduct.id_product))
+
+    newCart = Cart(**anProduct.model_dump())
+    
+    productStatement = (select(Product)
+                        .where(Product.id == anProduct.id_product))
     productResult = session.exec(productStatement).first()
     
+    stateStatement = select(State).where(State.name == "seleccionado")
+    anState = session.exec(stateStatement).first()
     
-    newItemCarrito.productoItem = productResult
+    newCart.product = productResult
+    newCart.state_id = anState.id
+    newCart.state = anState
     
-    session.add(newItemCarrito)
+    
+    session.add(newCart)
     session.commit()
-    session.refresh(newItemCarrito)
+    session.refresh(newCart)
     
-    statement = select(Products).where(Products.idProduct == anProduct.id_product)
+    statement = select(Product).where(Product.id == anProduct.id_product)
     product = session.exec(statement).first()
 
     product.stock -= anProduct.cantidad
 
-    if product.stock < 0:product.stock = 0
+    if product.stock < 0:
+        product.stock = 0
 
     session.add(product)
     session.commit()
@@ -46,8 +54,8 @@ async def add_product_cart(idUser:int, anProduct:ItemCarritoModel, session:Sessi
     detail="Producto agregado al carrito"
     )
 
-def search_value(value:Users ,session:Session):
-    result = session.exec(select(Users)).all()
+def search_value(value:User ,session:Session):
+    result = session.exec(select(User)).all()
     
     for user in result:
         if user.username == value.username:
@@ -55,24 +63,18 @@ def search_value(value:Users ,session:Session):
 
 @router.get("/getCarrito/{idUser}")
 async def get_all_carrito(idUser:int, session:Session = Depends(get_session)):
-    # stament = select(ItemCarrito).where(ItemCarrito.id_item_carrito == idUser)
-    # result = session.exec(stament).first()
-    
-    # return result.productoItem
-    statement = (select(Users, ItemCarrito)
-                 .join(ItemCarrito, ItemCarrito.id_usuario == Users.idUser)
-                 
-                 .where(Users.idUser == idUser).where(ItemCarrito.eliminado == False)
-                 )
+    statement = (select(User, Cart)
+                 .join(Cart, Cart.id_usuario == User.id)
+                 .where(User.id == idUser).where(Cart.eliminado == False))
     cart = session.exec(statement).all()
     if cart:
         response = [
             {
                 "total":itemCarrito.total,
                 "cantidad":itemCarrito.cantidad,
-                "id_item_carrito":itemCarrito.id_item_carrito,
-                "product":itemCarrito.productoItem,
-                "categorieProduct":itemCarrito.productoItem.category
+                "id_item_carrito":itemCarrito.id,
+                "product":itemCarrito.product,
+                "categorieProduct":itemCarrito.product.category
             }
             for Users, itemCarrito in cart
         ]
@@ -84,14 +86,12 @@ async def get_all_carrito(idUser:int, session:Session = Depends(get_session)):
             detail="Carrito vacio"
         )
     
-
-
 @router.get("/getItemCarrito/{idItem}/{idUser}")
 async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_session)):
-    statement = (select(ItemCarrito, Products)
-                 .join(Products, Products.idProduct == ItemCarrito.id_product)
-                 .where(ItemCarrito.id_item_carrito == idItem)
-                 .where(ItemCarrito.id_usuario == idUser))
+    statement = (select(Cart, Product)
+                 .join(Product, Product.id == Cart.id_product)
+                 .where(Cart.id == idItem)
+                 .where(Cart.id_usuario == idUser))
     itemCart = session.exec(statement).first() 
     
     itemCarrito, product = itemCart 
@@ -101,25 +101,21 @@ async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_
         "product_price":product.price,
         "cantidad":itemCarrito.cantidad,
         "total":itemCarrito.total,
-        "id_item_carrito":itemCarrito.id_item_carrito,
+        "id_item_carrito":itemCarrito.id,
         "stock_product":product.stock
     }
     return response
-    # for itemCarrito in user.carrito_items:
-    #     if itemCarrito["id"] == idItem:
-    #         return itemCarrito
 
-## arreglar esto mas adelante
 @router.put("/modifyAnItemCart/{idItem}")
-async def get_all_carrito(idItem:int,itemCartUpdate:ItemCarritoUpdate ,session:Session = Depends(get_session)):
+async def get_all_carrito(idItem:int,itemCartUpdate:CartUpdate ,session:Session = Depends(get_session)):
     
-    statement = select(ItemCarrito).where(ItemCarrito.id_item_carrito == idItem)
+    statement = select(Cart).where(Cart.id == idItem)
     itemCart = session.exec(statement).first()
     
     itemCart.total = itemCartUpdate.total
     itemCart.cantidad = itemCartUpdate.cantidad
     
-    statementNew = select(Products).where(Products.idProduct == itemCart.id_product)
+    statementNew = select(Product).where(Product.id == itemCart.id_product)
     product = session.exec(statementNew).first()
     product.stock = itemCartUpdate.stockProduct
     
@@ -133,17 +129,16 @@ async def get_all_carrito(idItem:int,itemCartUpdate:ItemCarritoUpdate ,session:S
         detail="item del carrito editado con exito"
     )
             
-
 @router.put("/deleteAnItemCart/{idItem}")
 async def delete_a_item_from_cart(idItem:int, session:Session = Depends(get_session)):
 
-    statement = (select(ItemCarrito)
-                 .where(ItemCarrito.id_item_carrito == idItem))
+    statement = (select(Cart)
+                 .where(Cart.id == idItem))
     itemCart = session.exec(statement).first()
     
     itemCart.eliminado = True
 
-    statementNew = select(Products).where(Products.idProduct == itemCart.id_product)
+    statementNew = select(Product).where(Product.id == itemCart.id_product)
     product = session.exec(statementNew).first()
 
     product.stock += itemCart.cantidad  
@@ -158,23 +153,21 @@ async def delete_a_item_from_cart(idItem:int, session:Session = Depends(get_sess
         detail="Item de carrito eliminado"
     )
 @router.put("/realizeABuy/{idUser}")
-async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Session = Depends(get_session)):
+async def realize_a_buy(idUser:int, comprasModel:OrderModel, session:Session = Depends(get_session)):
     
-    
-    
-    newCompraItem = ItemCompra(**comprasModel.model_dump())
+    newCompraItem = Order(**comprasModel.model_dump())
     
     session.add(newCompraItem)
     session.commit()
     session.refresh(newCompraItem)
     
-    statementCarrito = select(ItemCarrito).where(ItemCarrito.id_usuario == idUser, ItemCarrito.eliminado == False)
+    statementCarrito = select(Cart).where(Cart.id_usuario == idUser, Cart.eliminado == False)
     
     itemCart = session.exec(statementCarrito).all()
     
     for item in itemCart:
-        newProductCompra = ItemProductCompra(
-            id_compra=newCompraItem.idCompra,
+        newProductCompra = OrderItem(
+            id_compra=newCompraItem.id,
             id_product=item.id_product,
             total_por_cantidad=item.total,
             cantidad=item.cantidad
@@ -182,7 +175,7 @@ async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Sessio
         
         item.eliminado = True
         
-        newCompraItem.productList.append(newProductCompra)
+        newCompraItem.orders.append(newProductCompra)
         
         session.add(newCompraItem)
         session.add(item)
@@ -194,108 +187,29 @@ async def realize_a_buy(idUser:int, comprasModel:ItemCompraModel, session:Sessio
         detail="Compra realizada"
     )
      
-        
-    
-    # statement = (select(Users, ItemCarrito)
-    #             .join(ItemCarrito, ItemCarrito.id_usuario == Users.idUser)
-    #             .where(Users.idUser == idUser).where(ItemCarrito.eliminado == False)
-    #             )
-    # cart = session.exec(statement).all()
-    
-    # response = [
-    #     {
-    #         "total_por_cantidad":itemCarrito.total,
-    #         "cantidad":itemCarrito.cantidad,
-    #     }
-    #     for Users, itemCarrito, products in cart
-    # ]
-    
-    # for itemProducts in response:
-    #     newProductCompra = ItemProductCompra(**itemProducts)
-    #     newProductCompra.id_compra = newCompraItem.idCompra
-    #     # aca guardar un item de compra en la lista de compras
-    #     newCompraItem.productList.append(newProductCompra)
-        
-    #     session.add(newProductCompra)
-    #     session.add(newCompraItem)
-    #     session.commit()
-    #     session.refresh(newProductCompra) 
-        
-    # await clear_all_carrito(idUser,session)
-        
-    # raise HTTPException(
-    #     status_code=status.HTTP_202_ACCEPTED,
-    #     detail="Compra realizada"
-    # )
- 
 @router.get("/getAllBuy/{idUser}")
 async def get_buy(idUser:int, session:Session = Depends(get_session)):
     
-    statement = (select(ItemCompra)
-                 .where(ItemCompra.id_user == idUser))
+    statement = (select(Order)
+                 .where(Order.id_user == idUser))
     
     result = session.exec(statement).all()
-    
 
-    # compraList = []
-    
-    # for item in result:
-    #     print(item.productList)
-        
-    
     
     response =[
         {
             "fechaCompra": itemCompra.fechaDeCompra,
             "totalCompra" : itemCompra.totalCompra,
-            "productos" : itemCompra.productList,
+            "productos" : itemCompra.orders,
             
         }
         for itemCompra in result
     ]
     
     return list(reversed(response))
-    
-    
-    # statement = (select(ItemCompra)
-    #                 .where(ItemCompra.id_user == idUser))
-    # compras = session.exec(statement).all()
-    
-    # response = [
-    #     {
-    #         "fechaCompra": itemCompra.fechaDeCompra,  
-    #         "id_compra":itemCompra.idCompra,
-    #         "totalCompra":itemCompra.totalCompra
-    #     }
-    #     for itemCompra in compras
-    # ]
-      
-    # for itemC in response: 
-    #     statement2 = (select(ItemCompra, ItemProductCompra, Products, Categories)
-    #                 .join(ItemProductCompra, ItemCompra.idCompra == ItemProductCompra.idCompra)
-    #                 .join(Categories,Products.categories == Categories.id )
-    #                 .join(Products, ItemProductCompra.idCompra == Products.idProduct)
-    #                 .where(ItemCompra.id_user == idUser)
-    #                 .where(ItemCompra.idCompra == itemC["id_compra"]))
-    #     productos = session.exec(statement2).all()    
-    #     productDict = [
-    #         {   
-    #             "name":products.name,
-    #             "cantidad":itemProductCompra.cantidad,
-    #             "totalCantidad":itemProductCompra.total_por_cantidad,
-    #             "categoria":categories.name
-    #         }
-    #         for itemCompra, itemProductCompra, products, categories in productos
-    #     ]
-        
-    #     itemC["productos"] = productDict
-        
-    # return response
-    
-
 
 async def clear_all_carrito(idUser:int, session:Session):
-    statement = (select(ItemCarrito).where(ItemCarrito.id_usuario == idUser))
+    statement = (select(Cart).where(Cart.id_usuario == idUser))
     itemCart = session.exec(statement).all()
     for item in itemCart:
         item.eliminado = True

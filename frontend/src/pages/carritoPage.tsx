@@ -11,7 +11,7 @@ interface productData{
     name:string,
     price:number,
     stock:number,
-    idProduct:number,
+    id:number,
     
 }
 
@@ -42,7 +42,7 @@ const CarritoPage = () =>{
 
     const get_all_cart = async () => {
         setLoading(true)
-        const response = await fetch("http://localhost:8000/carrito/getCarrito/"+user.idUser)
+        const response = await fetch("http://localhost:8000/carrito/getCarrito/"+user.id)
         if(response.status == 200){
             const items = await response.json()
             setItemCarrito(items)

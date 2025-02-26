@@ -1,10 +1,14 @@
 from sqlmodel import SQLModel, Session, create_engine
-from models.categories import Categories
-from models.products import Products
-from models.users import Users
-from models.itemCarrito import ItemCarrito
-from models.itemCompra import ItemCompra
-from models.itemProductCompra import ItemProductCompra
+from models.role import Role
+from models.category import Category
+from models.product import Product
+from models.user import User
+from models.cart import Cart
+from models.order import Order
+from models.orderItem import OrderItem
+from models.state import State
+from models.PriceChangeHistory import PriceChangeHistory
+
 
 
 database_file = "database.db"

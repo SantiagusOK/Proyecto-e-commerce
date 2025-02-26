@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from db.connect import conn
-from routers import productRouter, categorieRouter, userRouter, carritoRouter
+from routers import productRouter, categorieRouter, userRouter, carritoRouter, roleRouter
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,6 +12,7 @@ app.include_router(productRouter.router)
 app.include_router(categorieRouter.router)
 app.include_router(userRouter.router)
 app.include_router(carritoRouter.router)
+app.include_router(roleRouter.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,4 +31,4 @@ async def onStartUp():
     conn()
     
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(app="main:app", host="0.0.0.0", port=8000)
