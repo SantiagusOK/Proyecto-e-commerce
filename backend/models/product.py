@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from models.category import Category
     from models.cart import Cart
+    from models.cart import CartItem
     from models.PriceChangeHistory import PriceChangeHistory
     from models.address import Address
 
@@ -21,7 +22,7 @@ class Product(SQLModel, table=True):
     id_address:Optional[int] = Field(default=None, foreign_key="address.id")
     
     category:Optional["Category"] = Relationship(back_populates="products")
-    cart:List["Cart"] = Relationship(back_populates="product")
+    cart:List["CartItem"] = Relationship(back_populates="product")
     priceHistory:Optional[list["PriceChangeHistory"]] = Relationship(back_populates="product")
     address:Optional["Address"] = Relationship(back_populates="users")
 

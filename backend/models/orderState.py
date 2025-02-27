@@ -15,3 +15,4 @@ class OrderState(SQLModel, table=True):
     
     order:Optional[list["Order"]] = Relationship(back_populates="state")
     ordersState:Optional[list["OrderStateHistory"]] = Relationship(back_populates="orderState")
+    

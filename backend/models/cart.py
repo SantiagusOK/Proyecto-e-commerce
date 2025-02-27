@@ -13,9 +13,8 @@ class Cart(SQLModel, table=True):
     state_id: int = Field(default=None, foreign_key="cartstate.id")
     totalCart: float
     
-    product:Optional["Product"] = Relationship(back_populates="cart")
-    state:Optional["CartState"] = Relationship(back_populates="cart")
-    carItems: Optional[list["CartItem"]] = Relationship(back_populates="carts")
+    state:Optional["CartState"] = Relationship(back_populates="cartsStatus")
+    cart_items: list["CartItem"] = Relationship(back_populates="carts")
 
 class CartModel(BaseModel):
     id:Optional[int] = None
