@@ -7,14 +7,11 @@ from models.cart import Cart
 if TYPE_CHECKING:
     from models.cart import Cart
     from models.order import Order
+    from models.orderStateHistory import OrderStateHistory
 
-class State(SQLModel, table=True):
+class OrderState(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
     name:str
     
-    cart:Optional[list[Cart]] = Relationship(back_populates="state")
     order:Optional[list["Order"]] = Relationship(back_populates="state")
-
-    
-class StateModel(BaseModel):
-    name:str
+    ordersState:Optional[list["OrderStateHistory"]] = Relationship(back_populates="orderState")

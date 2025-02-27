@@ -4,27 +4,25 @@ from sqlmodel import Relationship, SQLModel, Field
 
 if TYPE_CHECKING:
     from models.product import Product
-    from models.state import State
+    from models.cartItem import CartItem
+    from models.cartState import CartState
     
 class Cart(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
     id_user: int = Field(default=None, foreign_key="user.id")
-    id_product: int = Field(default=None, foreign_key="product.id")
-    total: float
-    amount: int
-    state_id: int = Field(default=None, foreign_key="state.id")
+    state_id: int = Field(default=None, foreign_key="cartstate.id")
+    totalCart: float
     
     product:Optional["Product"] = Relationship(back_populates="cart")
-    state:Optional["State"] = Relationship(back_populates="cart")
+    state:Optional["CartState"] = Relationship(back_populates="cart")
+    carItems: Optional[list["CartItem"]] = Relationship(back_populates="carts")
 
 class CartModel(BaseModel):
     id:Optional[int] = None
     id_user:int
-    id_product: int 
+    state_id: int
     total: float
-    amount: int
 
 class CartUpdate(BaseModel):
     total: float
-    amount: int
     stockProduct:int

@@ -6,7 +6,8 @@ from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
     from models.orderItem import OrderItem
-    from models.state import State
+    from models.orderState import OrderState
+    from models.orderStateHistory import OrderStateHistory
 
 class Order(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -14,11 +15,12 @@ class Order(SQLModel, table=True):
     date: str
     totalOrder: float
     address:str
-    state_id: int = Field(default=None, foreign_key="state.id")
+    state_id: int = Field(default=None, foreign_key="orderstate.id")
     
-    state:Optional["State"] = Relationship(back_populates="order")
+    state:Optional["OrderState"] = Relationship(back_populates="order")
     orders: List["OrderItem"] = Relationship(back_populates="order")
-
+    ordersHistory: List["OrderStateHistory"] = Relationship(back_populates="order")
+    
 class OrderModel(BaseModel):
     id: Optional[int] = None
     id_user: int

@@ -7,6 +7,8 @@ from models.cart import Cart
 
 if TYPE_CHECKING:
     from models.role import Role
+    from models.address import Address
+    from models.orderStateHistory import OrderStateHistory
     
 
 class User(SQLModel, table=True):
@@ -17,11 +19,12 @@ class User(SQLModel, table=True):
     password:str
     email:str
     birthdate:str
-    address:str
+    id_address:Optional[int] = Field(default=None, foreign_key="address.id")
     role_id:Optional[int] = Field(default=None, foreign_key="role.id")
     
     role:Optional["Role"] = Relationship(back_populates="users")
-
+    address:Optional["Address"] = Relationship(back_populates="users")
+    orderStateHistory: Optional[list["OrderStateHistory"]] = Relationship(back_populates="user")
 
 class UserModel(BaseModel):
     id:Optional[int] = None
@@ -31,7 +34,7 @@ class UserModel(BaseModel):
     password:str
     email:str
     birthdate:str
-    address:str
+    id_address:int
 
 class UserLoginModel(BaseModel):
     username:str

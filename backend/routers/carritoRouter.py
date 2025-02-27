@@ -9,7 +9,7 @@ from models.user import User, UserModel, UserLoginModel, UserAdminModel
 from models.cart import CartModel, Cart, CartUpdate
 from models.order import OrderModel, Order
 from models.orderItem import OrderItem, OrderItemModel
-from models.state import State
+from models.orderState import OrderState
 from sqlalchemy.orm.attributes import flag_modified
 from fastapi.responses import JSONResponse
 

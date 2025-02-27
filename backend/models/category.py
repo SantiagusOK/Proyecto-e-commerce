@@ -8,8 +8,11 @@ if TYPE_CHECKING:
 class CategoryModel(BaseModel):
     id:Optional[int] = None
     name:str
+    description:str
 
 class Category(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
     name:str
+    description:str
+    
     products: List["Product"] = Relationship(back_populates="category")
