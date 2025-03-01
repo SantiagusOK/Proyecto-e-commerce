@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from controllers import cart_router, category_router, product_router
+from controllers import cart_router, category_router, product_router, user_router, role_router, order_router
 from db.connect import conn
-from controllers import user_router
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -13,6 +12,8 @@ app.include_router(product_router.router)
 app.include_router(category_router.router)
 app.include_router(user_router.router)
 app.include_router(cart_router.router)
+app.include_router(role_router.router)
+app.include_router(order_router.router)
 
 app.add_middleware(
     CORSMiddleware,

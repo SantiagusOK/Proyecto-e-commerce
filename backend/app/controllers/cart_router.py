@@ -1,231 +1,238 @@
 from collections import defaultdict
+from datetime import datetime
+import locale
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy import func
 from db.connect import get_session
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 
 from models.product import Product
 from models.category import Category
 from models.user import User
 from models.cart import Cart
 from models.cart_state import CartState
-from models.order import Order
-from models.order_item import OrderItem
-from models.order_state import OrderState
+from models.cart_item import CartItem
 
 from schema.product_schema import *
 from schema.category_schema import * 
 from schema.user_schema import *
 from schema.cart_schema import *
+from schema.cartItem_schema import * 
 from schema.order_schema import *
 from schema.orderItem_schema import *
+from schema.cart_item_update_schema import *
 
 from sqlalchemy.orm.attributes import flag_modified
 from fastapi.responses import JSONResponse
 
-router = APIRouter(tags=["cart"], prefix="/cart")
+locale.setlocale(locale.LC_TIME, "es_ES") 
 
-@router.put("/setCarrito/{idUser}")
-async def add_product_cart(idUser:int, anProduct:CartSchema, session:Session = Depends(get_session)):
+router = APIRouter(tags=["Cart"], prefix="/cart")
+
+@router.get("/")
+async def get_all_cart(sessio:Session=Depends(get_session)):
+    cartStatement = (select(Cart))
+    cart = sessio.exec(cartStatement).all()
     
-    newCart = Cart(**anProduct.model_dump())
+    if not cart:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No hay carritos registrados"
+        )
+    
+    return cart
+
+@router.put("/createCart/{id}")
+async def add_product_cart(id:int, session:Session = Depends(get_session)):
+    
+    cartItemStatement = (select(Cart)
+                     .where(Cart.state_id == 1))
+    anCart = session.exec(cartItemStatement).all()
+    
+    # si no hay un carrito activo, crea un nuevo carrito
+    if not anCart:
+        
+        stateCartItemStatement = (select(CartState)
+                     .where(CartState.name == "activo"))
+        anState = session.exec(stateCartItemStatement).first()
+    
+        date = datetime.now()
+        newDate = date.strftime("%d de %B de %Y | a las %H:%M")
+        
+        newCart = Cart(id_user=id, createdAt=newDate, state_id=anState.id, state=anState, totalCart=0)
+        
+        session.add(newCart)
+        session.commit()
+        session.refresh(newCart)
+        
+        return newCart
+    
+    raise HTTPException(
+        status_code=status.HTTP_201_CREATED,
+        detail="Hay un carrito ya activo"
+    )
+
+@router.put("/saveItemInCart/{id}")
+async def save_item_in_cart(id:int, anItem:CartItemSchema, session:Session = Depends(get_session)):
+    cartItemStatement = (select(Cart)
+                    .where(Cart.id_user == id))
     
     productStatement = (select(Product)
-                        .where(Product.id == anProduct.id))
-    productResult = session.exec(productStatement).first()
+                        .where(Product.id == anItem.id_product))
     
-#     stateStatement = select(CartState).where(CartState.name == "seleccionado")
-#     anState = session.exec(stateStatement).first()
+    productFromItem = session.exec(productStatement).first()
+    cartUser = session.exec(cartItemStatement).first()
     
-#     # newCart.product = productResult
-#     newCart.state_id = anState.id
-#     newCart.state = anState
+    newCartItem = CartItem(**anItem.model_dump())
+    
+    newCartItem.id_cart = cartUser.id
+    newCartItem.cart = cartUser
+    newCartItem.product = productFromItem
+    
+    session.add(newCartItem)
+    session.commit()
+    session.refresh(newCartItem)
     
     
-#     session.add(newCart)
-#     session.commit()
-#     session.refresh(newCart)
+    newTotalCart = 0.0
+    for item in cartUser.cart_items:
+        newTotalCart += item.unityPrice
+        print(f"-------------save{newTotalCart}")
     
-#     statement = select(Product).where(Product.id == anProduct.id_product)
-#     product = session.exec(statement).first()
-
-#     product.stock -= anProduct.amount
-
-#     if product.stock < 0:
-#         product.stock = 0
-
-#     session.add(product)
-#     session.commit()
-#     session.refresh(product)
-
-#     raise HTTPException(
-#     status_code=status.HTTP_200_OK,
-#     detail="Producto agregado al carrito"
-#     )
-
-# def search_value(value:User ,session:Session):
-#     result = session.exec(select(User)).all()
+    cartUser.totalCart = newTotalCart
+    cartUser.cart_items.append(newCartItem)
     
-#     for user in result:
-#         if user.username == value.username:
-#             return value
+    session.add(cartUser)
+    session.commit()
+    session.refresh(cartUser)
+    
+    raise HTTPException(
+        status_code=status.HTTP_201_CREATED,
+        detail="Item guardado en el carrito con exito"
+    )
+    
 
-# @router.get("/getCarrito/{idUser}")
-# async def get_all_carrito(idUser:int, session:Session = Depends(get_session)):
-#     statement = (select(User, Cart, State)
-#                  .join(State, Cart.state_id == State.id)
-#                  .join(Cart, Cart.id_user == User.id)
-#                  .where(User.id == idUser).where(State.name == "seleccionado"))
-#     cart = session.exec(statement).all()
-#     if cart:
-#         response = [
-#             {
-#                 "total":itemCarrito.total,
-#                 "cantidad":itemCarrito.amount,
-#                 "id_item_carrito":itemCarrito.id,
-#                 "product":itemCarrito.product,
-#                 "categorieProduct":itemCarrito.product.category
-#             }
-#             for Users, itemCarrito in cart
-#         ]
+@router.get("/getCart/{id}")
+async def get_cart(id:int, session:Session = Depends(get_session)):
+    statement = (select(Cart)
+                 .join(CartState)
+                 .where(Cart.id_user == id)
+                 .where(CartState.name == "activo")
+                 .options(selectinload(Cart.cart_items)))
+    
+    cart = session.exec(statement).first()
+    
+    if cart:
+        response = {
+            "id":cart.id,
+            "totalCart":cart.totalCart,
+            "createdAt":cart.createdAt,
+            "cart_items":cart.cart_items,
+        }
+        return response
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Carrito vacio"
+        )
+    
+@router.get("/getItemCart/{id}/{id_cart}")
+async def get_item_cart(id:int, id_cart:int, session:Session = Depends(get_session)):
+    statement = (select(CartItem)
+                 .join(Product)
+                 .where(Cart.id == id_cart)
+                 .where(Cart.id_user == id))
+    itemCart = session.exec(statement).first() 
+    
+    if not itemCart:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No se encontro el item del carrito"
+        )
         
-#         return list(reversed(response))
-#     else:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail="Carrito vacio"
-#         )
+    item_response = {
+        "id": itemCart.id,
+        "id_cart": itemCart.id_cart,
+        "id_product": itemCart.id_product,
+        "quantity" : itemCart.quantity,
+        "unityPrice" : itemCart.unityPrice,
+        
+        "product" : itemCart.product
+    }
     
-# @router.get("/getItemCarrito/{idItem}/{idUser}")
-# async def get_all_carrito(idItem:int, idUser:int, session:Session = Depends(get_session)):
-#     statement = (select(Cart, Product)
-#                  .join(Product, Product.id == Cart.id_product)
-#                  .where(Cart.id == idItem)
-#                  .where(Cart.id_user == idUser))
-#     itemCart = session.exec(statement).first() 
-    
-#     itemCarrito, product = itemCart 
+    return item_response
 
-#     response = {
-#         "product": product.name,
-#         "product_price":product.price,
-#         "cantidad":itemCarrito.amount,
-#         "total":itemCarrito.total,
-#         "id_item_carrito":itemCarrito.id,
-#         "stock_product":product.stock
-#     }
-#     return response
+@router.put("/modifyAnItemCart/{id_item}")
+async def modify_item_cart(id_item:int,itemCartUpdate:CartItemUpdateSchema ,session:Session = Depends(get_session)):
+    
+    cartItemStatement = (select(CartItem)
+                     .where(CartItem.id == id_item))
+    
+    itemCart = session.exec(cartItemStatement).first()
+    
+    
+    #actualiza el el precio total del item, y la cantidad de un item
+    itemCart.unityPrice = itemCartUpdate.unityPrice
+    itemCart.quantity = itemCartUpdate.quantity
+    
+    #actualiza el stockCurrent de un producto
+    product = itemCart.product
+    product.stockCurrent = itemCartUpdate.stockCurrent
+    
+    newTotalCart = 0.0
+    cart = itemCart.cart
+    
+    for item in cart.cart_items:
+        newTotalCart += item.unityPrice
+        print(f"-------------modificar{newTotalCart}")
+        
+    cart.totalCart = newTotalCart
+    
+    session.add_all([product, itemCart, cart])
+    session.commit()
+    session.refresh(product)
+    session.refresh(itemCart)
+    
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="item del carrito editado con exito"
+    )
+          
+@router.put("/deleteItemCart/{id_item}")
+async def delete_a_item_from_cart(id_item:int, session:Session = Depends(get_session)):
 
-# @router.put("/modifyAnItemCart/{idItem}")
-# async def get_all_carrito(idItem:int,itemCartUpdate:CartUpdate ,session:Session = Depends(get_session)):
+    cartItemStatement = (select(CartItem)
+                 .where(CartItem.id == id_item))
+    cartItem = session.exec(cartItemStatement).first()
     
-#     statement = select(Cart).where(Cart.id == idItem)
-#     itemCart = session.exec(statement).first()
+    cart = cartItem.cart
+
+    product = cartItem.product
+    product.stockCurrent += cartItem.quantity
     
-#     itemCart.total = itemCartUpdate.total
-#     itemCart.amount = itemCartUpdate.amount
+    index = 0
     
-#     statementNew = select(Product).where(Product.id == itemCart.id_product)
-#     product = session.exec(statementNew).first()
-#     product.stock = itemCartUpdate.stockProduct
-    
-#     session.add_all([product, itemCart])
-#     session.commit()
-#     session.refresh(product)
-#     session.refresh(itemCart)
-    
-#     raise HTTPException(
-#         status_code=status.HTTP_200_OK,
-#         detail="item del carrito editado con exito"
-#     )
+    for item in cart.cart_items:
+        if item.id == id_item:
+            session.delete(item)
+            del cart.cart_items[index]
+            session.commit()
+            session.refresh(cart)
+        index += 1
             
-# @router.put("/deleteAnItemCart/{idItem}")
-# async def delete_a_item_from_cart(idItem:int, session:Session = Depends(get_session)):
-
-#     statement = (select(Cart)
-#                  .where(Cart.id == idItem))
-#     itemCart = session.exec(statement).first()
+    newTotalCart = 0.0
+    for item in cart.cart_items:
+        newTotalCart += item.unityPrice
+        print(f"-------------delete{newTotalCart}")
     
-#     # itemCart.eliminado = True cambiar el estado a eliminado
-
-#     statementNew = select(Product).where(Product.id == itemCart.id_product)
-#     product = session.exec(statementNew).first()
-
-#     product.stock += itemCart.amount  
-      
-#     session.add_all([product, itemCart])
-#     session.commit()
-#     session.refresh(product)
-#     session.refresh(itemCart)
-    
-#     raise HTTPException(
-#         status_code=status.HTTP_200_OK,
-#         detail="Item de carrito eliminado"
-#     )
-# @router.put("/realizeABuy/{idUser}")
-# async def realize_a_buy(idUser:int, comprasModel:OrderModel, session:Session = Depends(get_session)):
-    
-#     newCompraItem = Order(**comprasModel.model_dump())
-    
-#     session.add(newCompraItem)
-#     session.commit()
-#     session.refresh(newCompraItem)
-    
-#     statementCarrito = select(Cart).where(Cart.id_user == idUser, Cart.eliminado == False) ## cart.State.name == "eliminado"
-    
-#     itemCart = session.exec(statementCarrito).all()
-    
-#     for item in itemCart:
-#         newProductCompra = OrderItem(
-#             id_compra=newCompraItem.id,
-#             id_product=item.id_product,
-#             total_por_cantidad=item.total,
-#             cantidad=item.amount
-#             )
+    cart.totalCart = newTotalCart
         
-#         item.eliminado = True ## cambiar el estado a "eliminado"
-        
-#         newCompraItem.orders.nd(newProductCompra)
-        
-#         session.add(newCompraItem)
-#         session.add(item)
-#         session.commit()
-#         session.refresh(newCompraItem)
+    session.add_all([product, cart])
+    session.commit()
+    session.refresh(product)
     
-#     raise HTTPException(
-#         status_code=status.HTTP_202_ACCEPTED,
-#         detail="Compra realizada"
-#     )
-     
-# @router.get("/getAllBuy/{idUser}")
-# async def get_buy(idUser:int, session:Session = Depends(get_session)):
-    
-#     statement = (select(Order)
-#                  .where(Order.id_user == idUser))
-    
-#     result = session.exec(statement).all()
-
-    
-#     response =[
-#         {
-#             "fechaCompra": itemCompra.date,
-#             "totalCompra" : itemCompra.totalOrder,
-#             "productos" : itemCompra.orders,
-            
-#         }
-#         for itemCompra in result
-#     ]
-    
-#     return list(reversed(response))
-
-# async def clear_all_carrito(idUser:int, session:Session):
-#     statement = (select(Cart).where(Cart.id_user == idUser))
-#     itemCart = session.exec(statement).all()
-#     for item in itemCart:
-#         item.eliminado = True # cambiar el estado a "eliminado"
-#         session.add(item)
-#         session.commit()
-#         session.refresh(item)
-        
-        
-    
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail="Item de carrito eliminado"
+    )

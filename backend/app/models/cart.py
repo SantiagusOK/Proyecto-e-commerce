@@ -10,6 +10,7 @@ class Cart(SQLModel, table=True):
     id_user: int = Field(default=None, foreign_key="user.id")
     state_id: int = Field(default=None, foreign_key="cartstate.id")
     totalCart: float
+    createdAt:str
     
     state:Optional["CartState"] = Relationship(back_populates="cartsStatus")
-    cart_items: list["CartItem"] = Relationship(back_populates="carts")
+    cart_items: Optional[list["CartItem"]] = Relationship(back_populates="cart")

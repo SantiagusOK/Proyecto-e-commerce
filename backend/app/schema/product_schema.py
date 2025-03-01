@@ -4,7 +4,6 @@ from typing import Optional
 class ProductModelSchema(BaseModel):
     id:Optional[int] = None
     name:str
-    stock:int
     price:float
     categories:Optional[int] = None
     description:str
@@ -14,9 +13,11 @@ class ProductModelSchema(BaseModel):
 
 class ProductSearchModelSchema(BaseModel):
     name:str
-    categorie:int
+    id_category:int
 
 class ProductUpdateModelSchema(BaseModel):
     id:int
     price:float
     stockCurrent:int
+    description:str
+    stockMax:int

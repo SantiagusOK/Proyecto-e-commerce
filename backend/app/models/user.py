@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import TYPE_CHECKING, Optional
+from sqlalchemy.orm import remote
 
 if TYPE_CHECKING:
     from models.role import Role
@@ -14,9 +15,8 @@ class User(SQLModel, table=True):
     password:str
     email:str
     birthdate:str
-    id_address:Optional[int] = Field(default=None, foreign_key="address.id")
     role_id:Optional[int] = Field(default=None, foreign_key="role.id")
     
     role:Optional["Role"] = Relationship(back_populates="users")
-    address:Optional["Address"] = Relationship(back_populates="users")
-    orderStateHistory: Optional[list["OrderStateHistory"]] = Relationship(back_populates="user")
+    address:Optional["Address"] = Relationship(back_populates="user")
+    orderStateHistory:Optional["OrderStateHistory"] = Relationship(back_populates="user")

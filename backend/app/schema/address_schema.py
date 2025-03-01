@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class AddressSchema(BaseModel):
     id:Optional[int] = None
-    id_user:int
+    id_user:Optional[int] = None
     street:str
     city:str
     state:str

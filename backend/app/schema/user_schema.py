@@ -9,7 +9,6 @@ class UserModelSchema(BaseModel):
     password:str
     email:str
     birthdate:str
-    id_address:int
 
 class UserLoginModelSchema(BaseModel):
     username:str

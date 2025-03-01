@@ -13,5 +13,5 @@ class CartItem(SQLModel, table=True):
     quantity:int
     unityPrice:float
     
-    carts:Optional["Cart"] = Relationship(back_populates="carItems")
-    product: Optional["Product"] = Relationship(back_populates="cartItems")
+    cart:Optional["Cart"] = Relationship(back_populates="cart_items")
+    product: Optional["Product"] = Relationship(back_populates="cart_item")

@@ -9,11 +9,11 @@ if TYPE_CHECKING:
 
 class OrderStateHistory(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
-    id_order:int
-    id_orderState: int
-    id_user: int
+    id_user: Optional[int] = Field(default=None, foreign_key="user.id")
+    id_order: Optional[int] = Field(default=None, foreign_key="order.id")
+    id_orderState:Optional[int] = Field(default=None, foreign_key="orderstate.id")
     changeAt: str
     
     order:Optional["Order"] = Relationship(back_populates="ordersHistory")
-    orderState:Optional["OrderState"] = Relationship(back_populates="ordersState")
+    state:Optional["OrderState"] = Relationship(back_populates="stateList")
     user:Optional["User"] = Relationship(back_populates="orderStateHistory")

@@ -9,4 +9,4 @@ class CartState(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
     name:str
     
-    cartsStatus: Optional[list["Cart"]] = Relationship(back_populates="status")
+    cartsStatus: Optional[list["Cart"]] = Relationship(back_populates="state")

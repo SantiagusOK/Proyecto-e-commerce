@@ -9,42 +9,37 @@ from models.category import Category
 from schema.product_schema import *
 from schema.category_schema import *
 
-router = APIRouter(prefix="/categories", tags=["Categorie"])
+router = APIRouter(prefix="/category", tags=["Category"])
 
 @router.get("/")
 async def get_all_categories(session:Session = Depends(get_session)):
-    result = session.exec(select(Category)).all()
+    result = session.exec(select(Category)).first()
     
     if result:
-        return result
+        return result.products
     else:
-        return {"error": "un error"}
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No hay categorias registradas"
+        )
 
-# @router.post("/create")
-# async def create_categories(anNewCategorie:CategoryModel, session:Session = Depends(get_session)):
+@router.post("/create")
+async def create_categories(anNewCategorie:CategorySchema, session:Session = Depends(get_session)):
+    statement = (select(Category)
+                 .where(func.lower(Category.name) == anNewCategorie.name.lower()))
+    category = session.exec(statement).first()
     
-#     statement = select(Category).where(func.lower(Category.name) == anNewCategorie.name.lower())
-#     category = session.exec(statement).first()
+    if category:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Esta categoria ya esta registrado")
+        
+    category = Category(**anNewCategorie.model_dump())
     
-#     if category:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Esta categoria ya esta registrado"
-#         )  
-#     category = Category(**anNewCategorie.model_dump())
-#     session.add(category)
-#     session.commit()
-#     session.refresh(category)
+    session.add(category)
+    session.commit()
+    session.refresh(category)
     
-#     raise HTTPException(
-#         status_code=status.HTTP_201_CREATED,
-#         detail="Categoria creado con exito"
-#     )
-    
-# def search_value(value:CategoryModel ,session:Session):
-#     result = session.exec(select(Category)).all()
-#     for categorie in result:
-#         if value.name == categorie.name:
-#             return value
-    
-#     return None
+    raise HTTPException(
+        status_code=status.HTTP_201_CREATED,
+        detail="Categoria creado con exito")

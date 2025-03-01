@@ -11,7 +11,6 @@ from models.cart_state import CartState
 from models.address import Address
 from models.cart_item import CartItem
 from models.order_state_history import OrderStateHistory
-from models.price_change_history import PriceChangeHistory
 
 database_file = "db/database.db"
 database_connection_string = f"sqlite:///{database_file}"
