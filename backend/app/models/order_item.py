@@ -6,6 +6,7 @@ from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
     from models.order import Order
+    from models.product import Product
 
 class OrderItem(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -14,5 +15,6 @@ class OrderItem(SQLModel, table=True):
     amountTotal:int
     amount:int
 
-    order: Optional["Order"] = Relationship(back_populates="orders")
+    order: Optional["Order"] = Relationship(back_populates="items")
+    product: Optional["Product"] = Relationship(back_populates="orderItem")
 

@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 from typing import Optional
 
+from models.category import Category
+from models.cart_item import CartItem
+from models.order_item import OrderItem
+
 class ProductModelSchema(BaseModel):
     id:Optional[int] = None
     name:str
@@ -21,3 +25,15 @@ class ProductUpdateModelSchema(BaseModel):
     stockCurrent:int
     description:str
     stockMax:int
+
+class ProductResponse(BaseModel):
+    id:int
+    name:str
+    price:float
+    id_category:int
+    description:str
+    stockMin:int
+    stockMax:int
+    stockCurrent:int
+    
+    category:Category

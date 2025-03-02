@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
-from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 from db.connect import get_session
 from sqlmodel import Session, select
 
@@ -12,9 +12,10 @@ from schema.product_category_schema import *
 
 router = APIRouter(prefix="/product", tags=["Products"])
 
-@router.get("/")
+@router.get("/", response_model=list[ProductResponse],status_code=status.HTTP_200_OK)
 async def get_all_products(session:Session = Depends(get_session)):
-    statement = select(Product)
+    statement = (select(Product)
+                 .options(selectinload(Product.category)))
     result = session.exec(statement).all()
     
     if not result:
@@ -25,7 +26,7 @@ async def get_all_products(session:Session = Depends(get_session)):
         
     return result
 
-@router.get("/{id}")
+@router.get("/{id}",response_model=ProductResponse, status_code=status.HTTP_200_OK)
 async def get_all_products(id:int ,session:Session = Depends(get_session)):
     productStatement = (select(Product)
                         .where(Product.id == id))
@@ -36,22 +37,10 @@ async def get_all_products(id:int ,session:Session = Depends(get_session)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No hay productos registrados"
         )
-        
-    product_response = {
-        "id":product.id,
-        "name":product.name,
-        "price":product.price,
-        "id_category":product.id_category,
-        "description":product.description,
-        "stockMin":product.stockMin,
-        "stockMax":product.stockMax,
-        "stockCurrent":product.stockCurrent,
-        "category":product.category
-    }
     
-    return product_response
+    return product
 
-@router.post("/create")
+@router.post("/create",status_code=status.HTTP_201_CREATED)
 async def create_categories(anNewProduct:ProductCategorySchema, session:Session = Depends(get_session)):
     
     productStatement = (select(Product)
@@ -80,23 +69,22 @@ async def create_categories(anNewProduct:ProductCategorySchema, session:Session 
     session.commit()
     session.refresh(newProduct)
     
-    raise HTTPException(
-        status_code=status.HTTP_201_CREATED,
-        detail="Producto creado con exito"
-    )
+    return {"message" : "Producto creado con exito"}
          
 
-@router.post("/searchByName")
+@router.post("/searchByName",response_model=ProductResponse, status_code=status.HTTP_200_OK)
 async def search_a_product(productSearch:ProductSearchModelSchema, session:Session=Depends(get_session)):
     # Devuelve todos los productos registrados
     if not productSearch.name and productSearch.id_category == 0: 
-        statement = select(Product)
+        statement = (select(Product)
+                     .options(selectinload(Product.category)))
         result = session.exec(statement).all()
         return result
 
     # devuelve todos los productos de cierta categoria
     elif not productSearch.name and productSearch.id_category > 0:
         statement = (select(Product)
+                     .options(selectinload(Product.category))
                      .where(Category.id == productSearch.id_category))
         result = session.exec(statement).all()
         return result
@@ -104,6 +92,7 @@ async def search_a_product(productSearch:ProductSearchModelSchema, session:Sessi
     # devuelve solo el producto que se escriba si la categorie es 0(todos)
     elif productSearch and productSearch.id_category == 0:        
         statement = (select(Product)
+                     .options(selectinload(Product.category))
                      .where(Product.name.ilike(f"%{productSearch.name}%")))
         result = session.exec(statement).all()
         return result
@@ -111,15 +100,17 @@ async def search_a_product(productSearch:ProductSearchModelSchema, session:Sessi
     # devuelve un productos de cierta categoria
     elif productSearch.name and productSearch.id_category>0: 
         statement = (select(Product)
-        .where(Product.id_category == productSearch.id_category,
-            Product.name.ilike(f"%{productSearch.name}%")))
+                     .options(selectinload(Product.category))
+                     .where(Product.id_category == productSearch.id_category,
+                            Product.name.ilike(f"%{productSearch.name}%")))
         result = session.exec(statement).all()
         return result
 
-@router.put("/updateProduct")
+@router.put("/updateProduct",status_code=status.HTTP_200_OK)
 async def update_a_product(productModel:ProductUpdateModelSchema, session:Session=Depends(get_session)):
-    statement = select(Product).where(Product.id == productModel.id)
     
+    statement = (select(Product)
+                 .where(Product.id == productModel.id))
     product = session.exec(statement).first()
     
     product.price = productModel.price
@@ -131,9 +122,6 @@ async def update_a_product(productModel:ProductUpdateModelSchema, session:Sessio
     session.commit()
     session.refresh(product)
 
-    raise HTTPException(
-        status_code=status.HTTP_200_OK,
-        detail="Producto actualizado con exito"
-    )
+    return {"message":"Producto actualizado con exito"}
 
     

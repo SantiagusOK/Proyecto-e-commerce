@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 from pydantic import BaseModel, Field
 from sqlmodel import SQLModel, Field, Relationship
+from models.user import User
 
 if TYPE_CHECKING:
     from models.user import User
@@ -10,3 +11,9 @@ class Role(SQLModel, table=True):
     roleName:str
     
     users:Optional[list["User"]] = Relationship(back_populates="role")
+
+class RoleResponse(BaseModel):
+    id:int
+    roleName:str
+    
+    users:list[User]

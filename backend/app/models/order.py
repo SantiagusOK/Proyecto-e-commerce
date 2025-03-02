@@ -20,6 +20,6 @@ class Order(SQLModel, table=True):
     # id_ordersHistory:Optional[int] = Field(default=None, foreign_key="orderStateHistory.id")
     
     state:Optional["OrderState"] = Relationship(back_populates="order")
-    orders: List["OrderItem"] = Relationship(back_populates="order")
+    items: List["OrderItem"] = Relationship(back_populates="order")
     ordersHistory: List["OrderStateHistory"] = Relationship(back_populates="order")
     address:Optional["Address"] = Relationship(back_populates="orderlist")
