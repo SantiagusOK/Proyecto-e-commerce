@@ -1,65 +1,41 @@
 import { useEffect, useState } from "react"
 import Loading from "../components/loading"
 import { NavLink } from "react-router-dom"
-
-interface categorieData{
-    id:number,
-    name:string
-}
-
-interface listProductsData{
-    idProduct:number,
-    name:string,
-    price:number,
-    category:categorieData
-    stock:number
-}
+import { useProducts } from "../hooks/products_hooks"
 
 const AllProductsPage= () =>{
 
-    const [listProducts, setListProducts] = useState<listProductsData[]>([])
-    const [loading, setLoading] = useState<boolean>(false)
+    const{data:product = [], isLoading, isError} = useProducts()
 
-    useEffect(()=>{
-        get_all_products()
-    },[])
+    
 
-
-    const get_all_products=async()=>{
-        setLoading(true)
-        await fetch("http://localhost:8000/products/")
-        .then((values) => values.json())
-        .then((data) => setListProducts(data))
-        setLoading(false)
-    }
-
-    if(loading){
+    if(isLoading){
         return(<Loading/>)
     }
 
-    if(listProducts.length<=0){
+    if(product.length<=0){
         return(<div className="flex h-screen items-center justify-center  text-2xl">No hay productos registrados</div>)
     } else {
         return(        
             <div className="flex flex-col items-center justify-start p-5">
-                {listProducts.map((product)=>(
-                    <div className="bg-white p-5 flex w-200 m-0.5 items-center justify-between space-x-3 ">
+                {product.map((product)=>(
+                    <div className="bg-white flex w-200 m-0.5 items-center justify-between  ">
 
-                        <div className="flex space-x-5">
-                            <div className="bg-neutral-400 h-20 w-20 rounded-full flex items-center justify-center">
-                                {product.name[0]}
+                        <div className="flex">
+                            <div className="bg-neutral-400 h-40 w-40 flex items-center justify-center">
+                                <span>{product.name[0]}</span>
                             </div>
 
-                            <div className="flex flex-col w-sm">
+                            <div className="flex flex-col w-lg p-2 ">
                                 <span className="text-2xl">{product.name}</span>
                                 <span className="text-2xl font-extralight">${product.price}</span>
-                                <span className="font-medium">Stock: {product.stock}</span>
+                                <span className="font-medium">x {product.stockCurrent}</span>
+                                <span className="font-medium">{product.category.name}</span>
                             </div>
                         </div>
-                        
 
-                        <div className="">
-                            <NavLink to={"/inicioPage/allProductsPage/editProduct/" + product.idProduct}>EDITAR</NavLink>
+                        <div className="flex-1  w-xl">
+                            <NavLink to={"/inicioPage/allProductsPage/editProduct/" + product.id}>EDITAR</NavLink>
                         </div>
 
                     </div>

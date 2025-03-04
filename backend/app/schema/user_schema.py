@@ -32,7 +32,3 @@ class UserResponse(BaseModel):
     
     role:Role
     address:Address
-    
-    class Config:
-        orm_mode = True
-        from_attributes = True 

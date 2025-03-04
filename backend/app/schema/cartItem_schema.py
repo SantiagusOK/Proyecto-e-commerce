@@ -10,7 +10,7 @@ class CartItemSchema(BaseModel):
     quantity:int
     unityPrice:float
 
-class CartItemSchema(BaseModel):
+class CartItemSchemaResponse(BaseModel):
     id: Optional[int] = None
     id_cart: Optional[int] = None
     id_product: int

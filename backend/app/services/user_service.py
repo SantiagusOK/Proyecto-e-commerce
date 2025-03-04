@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
-from sqlalchemy import func
-from sqlmodel import Session, select
+from sqlmodel import Session, select, func
 from sqlalchemy.orm import selectinload
 
 from schema.user_address_schema import UsersAddressSchema, UserLoginModelSchema
@@ -79,8 +78,7 @@ class UserService:
     def log_user(session:Session, userLogin:UserLoginModelSchema):
         statement = (select(User)
                     .options(selectinload(User.role),
-                            selectinload(User.address),
-                            selectinload(User.orderStateHistory))
+                            selectinload(User.address))
                     .where(func.lower(User.username) == userLogin.username.lower()))
         user = session.exec(statement).first()
         
@@ -92,10 +90,25 @@ class UserService:
         
         if user.password != userLogin.password:
             raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
+                status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="contraseña incorrecta"
             )
+            
+        # return JSONResponse(
+        #     status_code=status.HTTP_200_OK,
+        #     content={"user":{
+        #         "id":user.id,
+        #         "username":user.username,
+        #         "fullname":user.fullname,
+        #         "lastname":user.lastname,
+        #         "adress":{
+        #             "city":user.address.city,
+        #             "state":user.address.state,
+        #             "postal_code":user.address.postal_code,
+        #             "street":user.address.street,
+        #             "country":user.address.country
+        #         }
+        #     }}
+        # )
         
-        user_data = UserResponse.model_validate(user)
-        
-        return JSONResponse(content={"User":user_data.model_dump()})
+        return user

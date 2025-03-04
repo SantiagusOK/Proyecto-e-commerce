@@ -35,4 +35,6 @@ async def register_user(anNewUser:UsersAddressSchema, session:Session = Depends(
         
 @router.post("/logUser",response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def log_user(userLogin:UserLoginModelSchema, session:Session = Depends(get_session)):
+    print(f"-------------------{userLogin.username}")
+    
     return UserService.log_user(session, userLogin)

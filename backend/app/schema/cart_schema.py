@@ -2,7 +2,8 @@ from pydantic import BaseModel
 from typing import TYPE_CHECKING, Optional
 
 from models.cart_state import CartState
-from models.cart_item import CartItem
+from schema.cart_item_response import CartItemResponse
+
 
 class CartSchema(BaseModel):
     id:Optional[int] = None
@@ -11,13 +12,3 @@ class CartSchema(BaseModel):
     totalCart: Optional[float] = None
     id_user:int
 
-
-class CartResponse(BaseModel):
-    id:int
-    state_id: int
-    createdAt:str
-    totalCart: float
-    id_user:int
-    
-    state:CartState
-    cart_items:list["CartItem"]

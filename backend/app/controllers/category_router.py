@@ -4,8 +4,8 @@ from sqlalchemy.orm import selectinload
 from db.connect import get_session
 from sqlmodel import Session, select
 
-from schema.product_schema import *
-from schema.category_schema import CategoryResponse, CategorySchema
+from schema.category_schema import CategorySchema
+from schema.category_response import CategoryResponse
 
 from models.category import Category
 

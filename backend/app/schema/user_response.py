@@ -5,17 +5,7 @@ class RoleResponse(BaseModel):
     id:int
     roleName:str
 
-class UserResponse(BaseModel):
-    id:int
-    fullname:str
-    lastname:str
-    username:str
-    password:str
-    email:str
-    birthdate:str
-    role_id:int
-    role:Optional["RoleResponse"] = None
-    address:Optional["AddressReponse"] = None
+
 
 class AddressReponse(BaseModel):
     id:int
@@ -25,3 +15,17 @@ class AddressReponse(BaseModel):
     state:str
     postal_code:str
     country:str
+
+    
+class UserResponse(BaseModel):
+    id:int
+    fullname:str
+    lastname:str
+    username:str
+    password:str
+    email:str
+    birthdate:str
+    role_id:int
+    role:RoleResponse
+    address:AddressReponse
+ 

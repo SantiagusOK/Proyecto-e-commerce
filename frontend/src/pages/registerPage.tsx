@@ -143,6 +143,73 @@ const UserCreatePage = () =>{
           <div className='h-0.5 bg-neutral-400 w-full'></div>
 
           <div className='flex space-x-2'>
+            {/* CALLE  */}
+            <div className='flex flex-col'>
+              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
+              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
+              <input {...register("username",{
+                required:"Inserte su nombre de usuario",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
+            </div>
+
+            {/* CIUDAD  */}
+            <div className='flex flex-col'>
+              {errors.direccion &&(<span className="text-red-500 font-medium">{errors.direccion.message}</span>)}
+              <input {...register("direccion",{
+                required:"Inserte su direccion"
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Direccion o calle' type="text" value={direccion} onChange={(e)=>setDireccion(e.target.value)}/>
+            </div>
+
+          </div>
+
+          <div className='h-0.5 bg-neutral-400 w-full'></div>
+
+          <div className='flex space-x-2'>
+            {/* ESTADO  */}
+            <div className='flex flex-col'>
+              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
+              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
+              <input {...register("username",{
+                required:"Inserte su nombre de usuario",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
+            </div>
+
+            {/* CODIGO POSTAL  */}
+            <div className='flex flex-col'>
+              {errors.direccion &&(<span className="text-red-500 font-medium">{errors.direccion.message}</span>)}
+              <input {...register("direccion",{
+                required:"Inserte su direccion"
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Direccion o calle' type="text" value={direccion} onChange={(e)=>setDireccion(e.target.value)}/>
+            </div>
+
+          </div>
+          <div className='flex space-x-2'>
+            {/* ESTADO  */}
+            <div className='flex flex-col'>
+              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
+              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
+              <input {...register("username",{
+                required:"Inserte su nombre de usuario",
+                minLength:{
+                  value:3,
+                  message:"Tiene que haber 3 carateres como minimo"
+                }
+              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
+            </div>
+
+          </div>
+
+          <div className='h-0.5 bg-neutral-400 w-full'></div>
+
+          <div className='flex space-x-2'>
             {/* FECHA DE NACIMIENTO  */}
             <div className='flex flex-col'>
               {errors.fecha &&(<span className="text-red-500 font-medium">{errors.fecha.message}</span>)}

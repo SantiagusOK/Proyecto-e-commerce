@@ -11,3 +11,8 @@ class Category(SQLModel, table=True):
     description:str
     
     products: List["Product"] = Relationship(back_populates="category")
+
+class CategoryResponse(BaseModel):
+    id:int
+    name:str
+    description:str

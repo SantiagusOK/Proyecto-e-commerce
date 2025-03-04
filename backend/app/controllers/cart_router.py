@@ -19,6 +19,7 @@ from schema.cartItem_schema import *
 from schema.order_schema import *
 from schema.orderItem_schema import *
 from schema.cart_item_update_schema import *
+from schema.cart_response import CartResponse
 
 from services.cart_service import CartService
 
@@ -26,11 +27,11 @@ locale.setlocale(locale.LC_TIME, "es_ES")
 
 router = APIRouter(tags=["Cart"], prefix="/cart")
 
-@router.get("/",response_model=list[CartResponse], status_code=status.HTTP_200_OK)
+@router.get("/",response_model=list[Cart], status_code=status.HTTP_200_OK)
 async def get_all_cart(sessio:Session=Depends(get_session)):
     return CartService.get_all_cart(sessio)
 
-@router.put("/createCart/{id_user}", status_code=status.HTTP_201_CREATED)
+@router.get("/createCart/{id_user}", status_code=status.HTTP_201_CREATED)
 async def create_cart(id_user:int, session:Session = Depends(get_session)):
     return CartService.create_cart(session,id_user)
 
@@ -42,7 +43,7 @@ async def save_item_in_cart(id_user:int, anItem:CartItemSchema, session:Session 
 async def get_cart(id:int, session:Session = Depends(get_session)):
     return CartService.get_cart(session, id)
     
-@router.get("/getItemCart/{id}/{id_cart}", response_model=CartItemSchema, status_code=status.HTTP_200_OK)
+@router.get("/getItemCart/{id}/{id_cart}", response_model=CartItemSchemaResponse, status_code=status.HTTP_200_OK)
 async def get_item_cart(id:int, id_cart:int, session:Session = Depends(get_session)):
     return CartService.get_item_cart(session, id, id_cart)
 

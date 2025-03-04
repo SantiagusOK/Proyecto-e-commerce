@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react"
 import { NavLink, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
+import { useAnProducts } from "../hooks/products_hooks"
 
 const ItemProductSelect = () =>{
+    const{id} = useParams()
+
+    const{data:product, isError, isLoading} = useAnProducts(Number(id))
 
     const [name, setName] = useState<string>("")
     const [categorie, setCategorie] = useState<string>("")
@@ -10,10 +14,8 @@ const ItemProductSelect = () =>{
     
     const [price, setPrice] = useState<number>(0)
     const [total, setTotal] = useState<number>(0)
-    const {id} = useParams()
     const [stock, setStock] = useState<number>(0)
 
-    const[loading,setLoading] = useState<boolean>(false)
     const[loadingData,setLoadingData] = useState<boolean>(false)
 
     const limitAmout = stock
@@ -21,27 +23,19 @@ const ItemProductSelect = () =>{
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
-    const idUser = user.id
+    const id_user = user.id
 
     const navigate = useNavigate()
 
     useEffect(()=>{
-        getAnProduct()
-    },[])
-
-    const getAnProduct=async()=>{
-        setLoading(true)
-        await fetch("http://localhost:8000/products/"+id)
-        .then((value)=>value.json())
-        .then((data)=>{
-            setCategorie(data.category.name)
-            setName(data.name)
-            setPrice(data.price)
-            setTotal(data.price)
-            setStock(data.stock)
-        })
-        setLoading(false)
-    }
+        if(product){
+            setCategorie(product.category.name)
+            setName(product.name)
+            setPrice(product.price)
+            setTotal(product.price)
+            setStock(product.stockCurrent)
+        }
+    },[product])
 
     const ButtonFuncionAdd=()=>{
         if(amount<stock){
@@ -63,20 +57,32 @@ const ItemProductSelect = () =>{
 
     const AddToCart = async () =>{
         setLoadingData(true)
-        const response = await fetch("http://localhost:8000/carrito/setCarrito/" + idUser,{
-            method:"PUT",
-            headers:{"Content-Type" : "application/json"},
-            body: JSON.stringify({id_product : Number(id), total:total, cantidad:amount, id_usuario:idUser})
+
+        console.log(id_user)
+        const id_product = product?.id
+
+        console.log("Id_product: " + id_product)
+
+        const response = await fetch("http://localhost:8000/cart/createCart/" + id_user)
+
+        const creatCartResponse = await fetch("http://localhost:8000/cart/saveItemInCart/" + id_user, {
+            method: "PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                id_product:id_product,
+                quantity:amount,
+                unityPrice:total
+            })
         })
 
-        if(response.status == 200){
+        if(creatCartResponse.ok){
             navigate("/inicioPage/carritoPage")
         }
 
         setLoadingData(false)
     }
 
-    if(loading){
+    if(isLoading){
         return(<Loading/>)
     }
 

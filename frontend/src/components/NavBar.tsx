@@ -26,7 +26,7 @@ export default function MyNavBar(){
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
                 <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
-                {user.isAdmin &&(
+                {user.role_id === 2 &&(
                     <>
                     </>
                     
@@ -38,9 +38,7 @@ export default function MyNavBar(){
                 {/* obtener productos + categoria */}
                 <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
                 {/* obtener y manipular Usuarios */}
-                <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Todos usuarios"}/>
-                {/* Crear categoria */}
-                <MyNavLink router={"/inicioPage/createRolePage"} tittle={"Crear Roles"}/>
+                <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Usuarios"}/>
                 
                 {/* pagina carrito */}
                 <MyNavLink router={"/inicioPage/carritoPage"} tittle={"Carrito"}/>

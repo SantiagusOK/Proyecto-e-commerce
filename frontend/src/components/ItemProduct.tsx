@@ -1,30 +1,28 @@
 import { NavLink } from "react-router-dom"
+import { ProductData } from "../type/productData"
 
-interface productData{
-    id:number,
-    name:string,
-    price:number
-    stock: number
+interface getProduct{
+    product:ProductData
 }
 
-interface product{
-    product:productData
-}
-
-
-const ItemProducts=({product}:product)=>{
+const ItemProducts=({product}:getProduct)=>{
     return(
-        <NavLink to={product.stock<=0 ? "" : "/inicioPage/itemBuy/"+String(product.id)} className="w-215 shadow bg-white border border-neutral-300 flex items-center transition duration-300 hover:bg-blue-300 hover:scale-104  cursor-pointer">
+        <NavLink to={product.stockCurrent<=0 ? "" : "/inicioPage/itemBuy/"+product.id} className="w-215 shadow bg-white border border-neutral-300 flex items-center transition duration-300 hover:bg-blue-200 hover:scale-102  cursor-pointer rounded-2xl">
             <div className="flex items-center justify-between w-full ">
-                <div className="flex items-center space-x-4 p-3">
-                    <div className="bg-neutral-400 rounded-full w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">{product.name[0]}</div>
+                <div className="flex items-center space-x-4 ">
+                    
+                    <div className="bg-blue-400 rounded-l-2xl w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">
+                        <span className="text-white">{product.name[0]}</span>
+                    </div>
+
                     <div className="space-y-3">
                         <h1 className="text-2xl font-normal">{product.name}</h1>
                         <h1 className="text-2xl font-extralight">${product.price}</h1>
                     </div>
+
                 </div>
                
-               {product.stock <= 0 &&(
+               {product.stockCurrent <= 0 &&(
                     <div className="w-100 flex justify-end  pr-5">
                         <span className="bg-red-400 p-5 pt-1 pb-1 text-white font-black rounded-2xl">SIN STOCK</span>
                     </div>

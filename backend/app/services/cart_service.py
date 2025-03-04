@@ -31,6 +31,17 @@ class CartService:
             )
         
         return cart
+
+    def get_cart_active(session:Session, id_user:int):
+        cartItemStatement = (select(Cart)
+                            .join(CartState)
+                            .options(selectinload(Cart.cart_items))
+                            .where(CartState.name == "activo")
+                            .where(Cart.id_user == id_user))
+        anCart = session.exec(cartItemStatement).first()
+        
+        print(f"----------------------{anCart}")
+        return anCart
     
     def create_cart(session:Session, id_user:int):
         # busca si hay un carrito activo
@@ -50,7 +61,7 @@ class CartService:
             date = datetime.now()
             newDate = date.strftime("%d de %B de %Y | a las %H:%M")
             
-            newCart = Cart(id_user=id, createdAt=newDate, state_id=anState.id, state=anState, totalCart=0.0)
+            newCart = Cart(id_user=id_user, createdAt=newDate, state_id=anState.id, state=anState, totalCart=0.0)
             
             session.add(newCart)
             session.commit()
@@ -90,7 +101,7 @@ class CartService:
         for item in cartUser.cart_items:
             newTotalCart += item.unityPrice
         
-        cartUser.totalCart = newTotalCart
+        cartUser.totalCart = round(newTotalCart)
         cartUser.cart_items.append(newCartItem)
         
         session.add(cartUser)
@@ -107,12 +118,6 @@ class CartService:
             .where(CartState.name == "activo"))
 
         cart = session.exec(statement).first()
-
-        if not cart:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No se encontro este carrito"
-            )
 
         return cart
     
@@ -152,7 +157,7 @@ class CartService:
         for item in cart.cart_items:
             newTotalCart += item.unityPrice
             
-        cart.totalCart = newTotalCart
+        cart.totalCart = round(newTotalCart)
         
         session.add_all([product, itemCart, cart])
         session.commit()
@@ -185,7 +190,18 @@ class CartService:
         for item in cart.cart_items:
             newTotalCart += item.unityPrice
         
-        cart.totalCart = newTotalCart
+        cart.totalCart = round(newTotalCart)
+        
+        if len(cart.cart_items) == 0:
+            stateCart = (select(CartState)
+                         .where(CartState.name == "cancelado"))
+            state = session.exec(stateCart).first()
+            
+            cart.state_id = state.id
+            cart.state = state
+        
+        print(len(cart.cart_items))
+        print(f"-----------------------------{cart.state}")
             
         session.add_all([product, cart])
         session.commit()

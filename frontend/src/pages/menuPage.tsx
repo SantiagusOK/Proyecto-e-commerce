@@ -1,83 +1,46 @@
 import { useEffect, useState } from "react"
 import ItemProducts from "../components/ItemProduct"
 import Loading from "../components/loading"
+import { CategoryData } from "../type/categoryData"
+import { ProductData } from "../type/productData"
+import { useQuery } from "@tanstack/react-query"
+import { useProducts } from "../hooks/products_hooks"
+import { useCategory } from "../hooks/category_hooks"
+import { useFetcher } from "react-router-dom"
 
-interface ProductsData{
-    id:number,
-    name:string,
-    price:number
-    stock:number
-}
 
-interface CategorieData{
-    id:number,
-    name:string
-}
+
 
 const MenuPage = () => {
 
-    const[produtsList, setProductsList] = useState<ProductsData[]>([])
-    const[categorieList, setCategorieList] = useState<CategorieData[]>([])
+    const{data:product = [], isLoading, isError} = useProducts()
+    const{data:categories=[]} = useCategory()
+
     const[valueSearch, setValueSearch] = useState<string>("")
-    const[categorie, setCategorie] = useState<number>(0)
-    const[loading,setLoading] = useState<boolean>(false)
+    const[categorieSearch, setCategorieSearch] = useState<string>("")
 
-    const [paginaActual, setPaginaActual] = useState(1);
+    const[nameProduct, setNameProduct] = useState<string>("")
+    const[categoryProduct, setCategoryProduct] = useState<string>("")
 
-    const limiteElementos = 5
+    const productFilter = product.filter((item) => item.name.toLowerCase().includes(valueSearch.toLowerCase()) && item.category.name.toLowerCase().includes(categorieSearch.toLowerCase()))
+    
+    console.log(productFilter)
 
-    const indiceFinal = paginaActual * limiteElementos;
-    const indiceInicial = indiceFinal - limiteElementos;
-    const paginaFinal = Math.ceil(produtsList.length / limiteElementos)
-
-
-    useEffect(()=>{
-        GetAllProducts()
-    },[])
-
-    const GetAllProducts=async()=>{
-        setPaginaActual(1)
-        setLoading(true)
-       await fetch("http://localhost:8000/products/searchByName/",{
-        method:"POST",
-        headers: {"Content-Type" : "application/json"},
-        body: JSON.stringify({name:valueSearch, categorie:categorie})
-       })
-        .then((value)=>value.json())
-        .then((data)=>{
-            setProductsList(data)
-            
-        })
-        GetAllCategories()
+    const searchProduct = () => {
+        setValueSearch(nameProduct)
+        setCategorieSearch(categoryProduct)
+       
+        // console.log({
+        //     "product": valueSearch,
+        //     "category":categorieSearch
+        // })
     }
 
-    const GetAllCategories=async()=>{
-        console.log("categoria seleccionada: " + categorie)
-       await fetch("http://localhost:8000/categories/")
-        .then((value)=>value.json())
-        .then((data)=>setCategorieList(data))
-        setLoading(false)
-    }
-
-    if(loading){
+    if(isLoading){
         return(<Loading/>)
     }
 
-    const selectCategorie=(value:string)=>{
-        setCategorie(Number(value))
-        
-    }
-
-    const cambiarPagina = (expresion:string) => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'instant'
-          });
-        if(expresion=="-"){setPaginaActual((e)=> e - 1)}
-        else if(expresion=="+"){setPaginaActual((e)=> e + 1)}
-      };
-
-
+ 
     return(
         // <div>hola</div>
         <div className="p-2 space-y-2 flex flex-col items-center">
@@ -85,18 +48,18 @@ const MenuPage = () => {
                 {/* BARRA BUSQUEDA  + BOTON BUSCAR*/}
                 <div className="space-y-3">
                     <div>
-                        <input className="bg-white w-80 p-2 rounded-l-2xl border-neutral-500 border-1 outline-none" type="search" value={valueSearch} onChange={(e) => setValueSearch(e.target.value)}/>
+                        <input className="bg-white w-80 p-2 rounded-l-2xl border-neutral-500 border-1 outline-none" type="search" value={nameProduct} onChange={(e) => setNameProduct(e.target.value)}/>
                         {/* BOTON BUSCAR */}
-                        <input className="bg-white p-2 border-1 w-fit text-center border-neutral-500 rounded-r-2xl cursor-pointer hover:hover:bg-blue-400 " type="button" value="BUSCAR" onClick={GetAllProducts}/>
+                        <input className="bg-white p-2 border-1 w-fit text-center border-neutral-500 rounded-r-2xl cursor-pointer hover:hover:bg-blue-400 " type="button" value="BUSCAR" onClick={searchProduct}/>
                     </div>
                     {/* TEXTO  + BOTON CATEGORIA*/}
                     <div className="flex space-x-2 h-fit">
                         <h1>Categoria:</h1>
-                        {categorieList.length>=1&&(
-                            <select className="w-fit" value={categorie} onChange={(event)=>selectCategorie(event.target.value)}  >
-                            <option value={0}>...</option>
-                            {categorieList.map((categorie)=>(
-                                <option value={categorie.id}>{categorie.name.toUpperCase()}</option>
+                        {categories.length>=1&&(
+                            <select className="w-fit" value={categoryProduct} onChange={(e)=>setCategoryProduct(e.target.value)}  >
+                            <option value={""}>...</option>
+                            {categories.map((categorie)=>(
+                                <option value={categorie.name}>{categorie.name.toUpperCase()}</option>
                             ))}
                             </select>
                         )}
@@ -108,24 +71,18 @@ const MenuPage = () => {
 
             {/* RESULTADOS DE PRODUCTOS */}
 
-            {produtsList.length==0 &&(
+            {productFilter.length==0 &&(
                 <div className="flex flex-col w-full text-center text-4xl">
-                    <span>No hay productos en esta categoria :(</span>
+                    <span>No hay productos en esta categoria</span>
                 </div>
             )}
 
-            {produtsList.length>=1 &&(
+            {productFilter.length > 0 &&(
                 <>
                     <div>
-                        {produtsList.slice(indiceInicial, indiceFinal).map((products, index)=>(
+                        {productFilter.map((products, index)=>(
                             <ItemProducts product={products} key={index} />
                         ))}
-                    </div>
-
-                    <div className=" flex justify-center items-center">
-                        {paginaActual > 1&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("-")}>{"<"}</button>)}
-                        {paginaActual != indiceFinal &&(<span className="ml-5 mr-5 pl-2 pr-2 text-2xl bg-blue-600 text-white rounded-[2px]">{paginaActual}</span>)}
-                        {paginaActual < paginaFinal&&(<button className="text-2xl font-bold cursor-pointer" onClick={()=>cambiarPagina("+")}>{">"}</button>)}
                     </div>
                 </>
 

@@ -1,3 +1,4 @@
+import { useQueries, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { Navigate, NavLink, useNavigate } from "react-router-dom"
@@ -18,40 +19,46 @@ const LoginPage = () =>{
 
     const {register,handleSubmit, formState:{errors}} = useForm()
 
+    
     const LoginNow = async ()  => {
         setIsErrorPassword(false)
         setIsErrorUser(false)
         setLoading(true)
         try{
-            const response = await fetch("http://localhost:8000/users/verifyLogin",{
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body:JSON.stringify({username:username, password:password})})
+            const response = await fetch("http://localhost:8000/user/logUser",{
+                method: "POST",
+                headers: {"Content-Type":"application/json"},
+                body:JSON.stringify({username:username, password:password})})
 
-            //ERROR DE USUARIO
-            if(response.status==404){
-                const errorData = await response.json();
-                setIsErrorUser(true)
-                setErrorUser(errorData.detail)
-                setLoading(false)
-            }
-
-            //ERROR DE CONTRASEÑA
-            if(response.status==409){
-                const errorData = await response.json();
-                console.log(errorData.detail)
-                setErrorPassword(errorData.detail)
-                setIsErrorPassword(true)
-                setLoading(false)
+                //ERROR DE USUARIO
+                if(response.status === 404){
+                    console.log("------------------------hola")
+                    const errorData = await response.json();
+                    setIsErrorUser(true)
+                    setErrorUser(errorData.detail)
+                    setLoading(false)
+                    
+                }
+                
+                //ERROR DE CONTRASEÑA
+                if(response.status === 401){
+                    const errorData = await response.json();
+                    console.log(errorData.detail)
+                    setErrorPassword(errorData.detail)
+                    setIsErrorPassword(true)
+                    setLoading(false)
+                    
+                }
+                
+                //USUARIO ENCONTRANDO Y LOGEAR
+                if(response.ok){
+                const data = await response.json()
+                console.log(data)
+                localStorage.setItem("userData", JSON.stringify(data))
+                navigate("/inicioPage")
+                return data
             }
             
-            //USUARIO ENCONTRANDO Y LOGEAR
-            if(response.ok){
-                const data = await response.json()
-                localStorage.setItem("userData", JSON.stringify(data.user))
-                navigate("/inicioPage")
-            }
-
         } catch {
             console.log("ERROR")
             setLoading(false)  
@@ -100,9 +107,6 @@ const LoginPage = () =>{
                     Registrarte ahora
                     </NavLink>
                 </div>
-                
-                
-
             </div>
 
         </div>
