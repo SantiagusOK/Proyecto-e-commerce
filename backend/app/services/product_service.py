@@ -1,29 +1,24 @@
 from sqlalchemy.orm import selectinload
-from sqlmodel import Session, select
+from sqlmodel import Session, func, select
 from fastapi import HTTPException, status
-
 from models.product import Product
 from models.category import Category
-
-from schema.product_category_schema import ProductCategorySchema
-from schema.Product_update_schema import ProductUpdateModelSchema
+from schema.product_schema import ProductCreateSchema
+from schema.product_schema import ProductUpdateSchema
 
 class ProductService:
     @staticmethod
-    
     def get_all_products(session:Session):
         statement = (select(Product)
                  .options(selectinload(Product.category)))
         result = session.exec(statement).all()
 
         if not result:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No hay productos registrados"
-            )
+            return {"message" : {"No hay productos registrados" : result}}
             
         return result
-    
+
+    @staticmethod   
     def get_product(session:Session, id_product:int):
         productStatement = (select(Product)
                         .where(Product.id == id_product))
@@ -34,23 +29,27 @@ class ProductService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Producto no existe, o no encontrado"
             )
-        print(product)
         return product
-    
-    def create_product(session:Session, anNewProduct:ProductCategorySchema):
+
+    @staticmethod  
+    def create_product(session:Session, anNewProduct:ProductCreateSchema):
         
         productStatement = (select(Product)
-                            .where(Product.id == anNewProduct.product.id))
-        categoryStatement = (select(Category)
-                            .where(Category.id == anNewProduct.category.id))
-        
+                            .where(func.lower(Product.name) == anNewProduct.product.name.lower()))
         anProduct = session.exec(productStatement).first()
-        anCategory = session.exec(categoryStatement).first()
-        
         if anProduct:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Este producto ya esta registrado"
+            )
+        
+        categoryStatement = (select(Category)
+                            .where(func.lower(Category.name)== anNewProduct.category.name.lower()))
+        anCategory = session.exec(categoryStatement).first()
+        if not anCategory:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Categoria no encontrada"
             )
         
         newProduct = Product(**anNewProduct.product.model_dump())
@@ -66,8 +65,9 @@ class ProductService:
         session.refresh(newProduct)
         
         return {"message" : "Producto creado con exito"}
-    
-    def update_a_product(session:Session, productModel:ProductUpdateModelSchema):
+
+    @staticmethod
+    def update_a_product(session:Session, productModel:ProductUpdateSchema):
         statement = (select(Product)
                  .where(Product.id == productModel.id))
         product = session.exec(statement).first()

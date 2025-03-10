@@ -11,9 +11,3 @@ class Role(SQLModel, table=True):
     roleName:str
     
     users:Optional[list["User"]] = Relationship(back_populates="role")
-
-class RoleResponse(BaseModel):
-    id:int
-    roleName:str
-    
-    users:list[User]

@@ -1,20 +1,37 @@
 from fastapi import HTTPException, status
-from fastapi.responses import JSONResponse
 from sqlmodel import Session, select, func
 from sqlalchemy.orm import selectinload
-
-from schema.user_address_schema import UsersAddressSchema, UserLoginModelSchema
-
+from schema.user_schema import UserRegisterSchema, UserLoginSchema
 from models.user import User
 from models.address import Address
 from models.role import Role
 
-from schema.user_response import UserResponse
-
 class UserService:
     @staticmethod
+    def set_role(session:Session, id_user:int, id_role:int):
+        userStatement = (select(User).where(User.id == id_user))
+        user = session.exec(userStatement).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro el usuario, o no existe"
+            )
+        
+        roleStatement = (select(Role).where(Role.id == id_role))
+        role = session.exec(roleStatement).first()
+        if not role:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro el rol, o no existe"
+            )
+        
+        session.add(user)
+        session.commit()
+        
+        return {"message" : "Rol del usuario actualizado con exito"}
     
-    def get_all_user(session:Session):
+    @staticmethod
+    def get_all_users(session:Session):
         userStatement = (select(User)
                          .options(selectinload(User.role),
                                   selectinload(User.address),
@@ -29,6 +46,7 @@ class UserService:
             
         return user
     
+    @staticmethod
     def get_a_user(session:Session, id_user:int):
         statement = (select(User)
                     .options(selectinload(User.role),
@@ -45,9 +63,10 @@ class UserService:
         
         return user
     
-    def register_user(session:Session, anNewUser:UsersAddressSchema):
+    @staticmethod
+    def register_user(session:Session, anNewUser:UserRegisterSchema):
         statement = (select(User)
-                    .where(func.lower(User.username) == anNewUser.user.username.lowe()))
+                    .where(func.lower(User.username) == anNewUser.user.username.lower()))
         userExist = session.exec(statement).first()
         
         if userExist:
@@ -55,6 +74,7 @@ class UserService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Nombre de usuario ya esta en uso"
             ) 
+        
         
         newAddress = Address(**anNewUser.address.model_dump())
         newUser = User(**anNewUser.user.model_dump())
@@ -65,8 +85,17 @@ class UserService:
                             .where(Role.roleName == "cliente"))
         roleResult = session.exec(roleStatement).first()
         
+        if not roleResult:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro un rol"
+            ) 
+        
         newUser.role_id = roleResult.id
         newUser.role = roleResult
+        
+        
+        
         
         session.add_all([newUser, newAddress])
         session.commit()
@@ -75,7 +104,8 @@ class UserService:
         
         return {"message" : "Usuario creado con exito"}
     
-    def log_user(session:Session, userLogin:UserLoginModelSchema):
+    @staticmethod
+    def log_user(session:Session, userLogin:UserLoginSchema):
         statement = (select(User)
                     .options(selectinload(User.role),
                             selectinload(User.address))
@@ -93,22 +123,5 @@ class UserService:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="contraseña incorrecta"
             )
-            
-        # return JSONResponse(
-        #     status_code=status.HTTP_200_OK,
-        #     content={"user":{
-        #         "id":user.id,
-        #         "username":user.username,
-        #         "fullname":user.fullname,
-        #         "lastname":user.lastname,
-        #         "adress":{
-        #             "city":user.address.city,
-        #             "state":user.address.state,
-        #             "postal_code":user.address.postal_code,
-        #             "street":user.address.street,
-        #             "country":user.address.country
-        #         }
-        #     }}
-        # )
         
         return user

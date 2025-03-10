@@ -1,13 +1,8 @@
 from fastapi import APIRouter, Depends, status
 from db.connect import get_session
-from sqlmodel import Session, select
-from sqlalchemy.orm import selectinload
-
-from models.role import *
-
+from sqlmodel import Session
+from schema.role_schema import RoleResponse
 from services.role_service import RoleService
-
-
 
 router = APIRouter(tags=["Role"], prefix="/role")
 

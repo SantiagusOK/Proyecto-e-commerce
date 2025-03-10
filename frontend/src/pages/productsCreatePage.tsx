@@ -25,6 +25,8 @@ function ProductsCreatePage() {
   const[messageCreate , setMessageCreate] = useState<string>("")
   const[messageError , setmessageError] = useState<string>("")
 
+  
+
   const saveData=async()=>{
     if(categories.length >= 1){
       
@@ -50,6 +52,8 @@ function ProductsCreatePage() {
       setLoadingData(true)
       setDataSave(false)
       setDataError(false)
+
+      console.log(product_response)
       const response = await fetch("http://localhost:8000/product/create",{
         method: "POST",
         headers: {"Content-Type" : "application/json"},
@@ -91,6 +95,8 @@ function ProductsCreatePage() {
       <Loading/>
     )
   }
+
+  // console.log("Lista de categoria: " + categories)
 
   return (
     <div className='flex justify-center p-2'>
@@ -241,7 +247,7 @@ function ProductsCreatePage() {
             <div className='border-2 border-neutral-400 rounded-2xl p-2 w-full'>
               <textarea {...register("descripcion",{
                 required:"Este campo es requerido"
-              })} className='resize  h-full outline-none w-full' placeholder='Descripcion...' onChange={(e)=>setDescription(e.target.value)} maxLength={200}></textarea>
+              })} className='resize  h-full outline-none w-full' placeholder='Descripcion...' onChange={(e)=>setDescription(e.target.value)} maxLength={200} value={description}></textarea>
             </div>
           </div>
           

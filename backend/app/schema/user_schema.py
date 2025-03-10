@@ -1,10 +1,9 @@
 from pydantic import BaseModel
-from typing import  Optional
-from models.role import Role
-from models.address import Address
-from models.order_state_history import OrderStateHistory
+from typing import Optional
+from schema.address_schema import AddressReponse, AddressSchema
+from schema.role_user_response import BasicRoleResponse
 
-class UserModelSchema(BaseModel):
+class UserSchema(BaseModel):
     id:Optional[int] = None
     fullname:str
     lastname:str
@@ -12,13 +11,6 @@ class UserModelSchema(BaseModel):
     password:str
     email:str
     birthdate:str
-
-class UserLoginModelSchema(BaseModel):
-    username:str
-    password:str
-    
-class UserAdminModelSchema(BaseModel):
-    roleName:str
 
 class UserResponse(BaseModel):
     id:int
@@ -29,6 +21,13 @@ class UserResponse(BaseModel):
     email:str
     birthdate:str
     role_id:int
+    role:Optional["BasicRoleResponse"]
+    address:AddressReponse
     
-    role:Role
-    address:Address
+class UserRegisterSchema(BaseModel):
+    user:UserSchema
+    address:AddressSchema  
+
+class UserLoginSchema(BaseModel):
+    username:str
+    password:str

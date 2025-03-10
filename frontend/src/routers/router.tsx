@@ -10,10 +10,8 @@ import CarritoPage from "../pages/carritoPage";
 import ItemCartEdit from "../pages/ItemCartEdit";
 import PaginaErrorPage from "../pages/paginaErrorPage";
 import CompraRealizadaPage from "../pages/compraRealizadaPage";
-import MisComprasPage from "../pages/comprasPage";
 import MenuPage from "../pages/menuPage";
 import InicioPage from "../pages/InicioPage";
-import UserCreatePage from "../pages/registerPage";
 import LoginPage from "../pages/loginPage";
 import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
@@ -23,6 +21,9 @@ import EditProductPage from "../pages/editProduct";
 import { ComprarProductoPage } from "../pages/comprarProductoPage";
 import ItemProductSelect from "../pages/itemProductSelectPage";
 import { CreateRolePage } from "../pages/createRolePage";
+import { ComprasPage } from "../pages/comprasPage";
+import { OrderInfoPage } from "../components/orderInfoPage";
+import { UserCreatePage } from "../pages/registerPage";
 
 
 const router = createBrowserRouter([
@@ -104,7 +105,17 @@ const router = createBrowserRouter([
                     },
                     {
                         path:"/inicioPage/misComprasPage",
-                        element: <MisComprasPage/>
+                        children:[
+                            {
+                                path:"/inicioPage/misComprasPage",
+                                element:<ComprasPage/>
+                            },
+                            {
+                                path:"/inicioPage/misComprasPage/orderInfo/:id_order",
+                                element:<OrderInfoPage></OrderInfoPage>
+                            },
+
+                        ]
                     },
                     {
                         path:"/inicioPage/allUserPage",

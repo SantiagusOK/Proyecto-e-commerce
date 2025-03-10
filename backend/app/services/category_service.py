@@ -1,18 +1,14 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, func, select
-
-from schema.category_schema import *
-
+from schema.category_schema import CategorySchema
 from models.category import Category
 
 class CategoryService:
     @staticmethod
-    
     def get_all_categories(session:Session):
         
-        statement = (select(Category)
-                        .options(selectinload(Category.products)))
+        statement = (select(Category))
         categories = session.exec(statement).all()
         if not categories:
             raise HTTPException(
@@ -21,11 +17,11 @@ class CategoryService:
 
         return categories
     
+    @staticmethod    
     def create_category(session:Session, anNewCategorie:CategorySchema):
         statement = (select(Category)
                     .where(func.lower(Category.name) == anNewCategorie.name.lower()))
         category = session.exec(statement).first()
-        
         if category:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

@@ -1,23 +1,20 @@
-
 from datetime import datetime
-from fastapi import Depends, HTTPException, status
+from babel.dates import format_datetime
+from email.utils import formatdate
+from fastapi import HTTPException, status
 from sqlmodel import Session, select
-
-from schema.cart_item_update_schema import CartItemUpdateSchema
-
+from schema.cart_item_schema import CartItemUpdateSchema 
 from models.cart import Cart
 from models.cart_state import CartState
 from models.product import Product
 from models.cart_item import CartItem
-
-from schema.cartItem_schema import CartItemSchema
-
+from schema.cart_item_schema import CartItemSchema
 from sqlalchemy.orm import selectinload
+
 
 class CartService:
     @staticmethod
-    
-    def get_all_cart(session:Session):
+    def get_all_carts(session:Session):
         cartStatement = (select(Cart)
                          .options(
                              selectinload(Cart.state),
@@ -31,35 +28,46 @@ class CartService:
             )
         
         return cart
-
+    
+    @staticmethod
     def get_cart_active(session:Session, id_user:int):
         cartItemStatement = (select(Cart)
                             .join(CartState)
                             .options(selectinload(Cart.cart_items))
-                            .where(CartState.name == "activo")
+                            .where(CartState.name == "activado")
                             .where(Cart.id_user == id_user))
         anCart = session.exec(cartItemStatement).first()
+        if not anCart:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="El carrito esta vacio"
+            )
         
-        print(f"----------------------{anCart}")
         return anCart
     
+    @staticmethod
     def create_cart(session:Session, id_user:int):
         # busca si hay un carrito activo
         cartItemStatement = (select(Cart)
                             .join(CartState)
-                            .where(CartState.name == "activo")
+                            .where(CartState.name == "activado")
                             .where(Cart.id_user == id_user))
-        anCart = session.exec(cartItemStatement).all()
+        anCart = session.exec(cartItemStatement).first()
         
         # si no hay un carrito activo, crea un nuevo carrito
         if not anCart:
             
             stateCartItemStatement = (select(CartState)
-                        .where(CartState.name == "activo"))
+                        .where(CartState.name == "activado"))
             anState = session.exec(stateCartItemStatement).first()
+            if not anState:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No se encontro un estado de carro"
+                )
         
             date = datetime.now()
-            newDate = date.strftime("%d de %B de %Y | a las %H:%M")
+            newDate = format_datetime(date, locale='es_ES')
             
             newCart = Cart(id_user=id_user, createdAt=newDate, state_id=anState.id, state=anState, totalCart=0.0)
             
@@ -69,23 +77,30 @@ class CartService:
             
             return {"message" : "Carrito creado con exito"}
         
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Hay un carrito ya activo")
+        return {"message" : "Existe un carrito activado"}
     
+    @staticmethod
     def save_item_in_cart(session:Session, id_user:int, anItem:CartItemSchema):
         cartItemStatement = (select(Cart)
                             .join(CartState)
-                            .where(CartState.name == "activo")
+                            .where(CartState.name == "activado")
                             .where(Cart.id_user == id_user))
-        
         cartUser = session.exec(cartItemStatement).first()
+        if not cartUser:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro un carrito"
+            )
         
         productStatement = (select(Product)
                             .where(Product.id == anItem.id_product))
-        
         productFromItem = session.exec(productStatement).first()
-        
+        if not productFromItem:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro el producto"
+            )
+            
         newCartItem = CartItem(**anItem.model_dump())
         
         newCartItem.id_cart = cartUser.id_user
@@ -101,7 +116,7 @@ class CartService:
         for item in cartUser.cart_items:
             newTotalCart += item.unityPrice
         
-        cartUser.totalCart = round(newTotalCart)
+        cartUser.totalCart = round(newTotalCart,2)
         cartUser.cart_items.append(newCartItem)
         
         session.add(cartUser)
@@ -110,17 +125,18 @@ class CartService:
         
         return {"message" : "Item agregado con exito al carrito"}
     
+    @staticmethod
     def get_cart(session:Session, id:int):
         statement = (select(Cart)
             .join(CartState)
             .options(selectinload(Cart.state), selectinload(Cart.cart_items))
-            .where(Cart.id_user == id)
-            .where(CartState.name == "activo"))
+            .where(Cart.id_user == id))
 
         cart = session.exec(statement).first()
 
         return cart
     
+    @staticmethod
     def get_item_cart(session:Session, id:int, id_cart:int):
         statement = (select(CartItem)
                     .options(selectinload(CartItem.cart), 
@@ -137,6 +153,7 @@ class CartService:
         
         return itemCart
     
+    @staticmethod
     def modify_item_cart(session:Session, id_item:int,itemCartUpdate:CartItemUpdateSchema):
         cartItemStatement = (select(CartItem)
                         .where(CartItem.id == id_item))
@@ -157,7 +174,7 @@ class CartService:
         for item in cart.cart_items:
             newTotalCart += item.unityPrice
             
-        cart.totalCart = round(newTotalCart)
+        cart.totalCart = round(newTotalCart,2)
         
         session.add_all([product, itemCart, cart])
         session.commit()
@@ -165,7 +182,8 @@ class CartService:
         session.refresh(itemCart)
         
         return {"message":"Item del carrito editado con exito"}
-
+    
+    @staticmethod
     def delete_a_item_from_cart(session:Session,id_item:int):
         cartItemStatement = (select(CartItem)
                     .where(CartItem.id == id_item))
@@ -190,7 +208,7 @@ class CartService:
         for item in cart.cart_items:
             newTotalCart += item.unityPrice
         
-        cart.totalCart = round(newTotalCart)
+        cart.totalCart = round(newTotalCart, 2)
         
         if len(cart.cart_items) == 0:
             stateCart = (select(CartState)
@@ -199,9 +217,6 @@ class CartService:
             
             cart.state_id = state.id
             cart.state = state
-        
-        print(len(cart.cart_items))
-        print(f"-----------------------------{cart.state}")
             
         session.add_all([product, cart])
         session.commit()

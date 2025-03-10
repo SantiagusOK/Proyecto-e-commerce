@@ -21,8 +21,8 @@ export default function MyNavBar(){
     }
 
     return(
-        <div className="bg-blue-400  text-white flex justify-between items-center p-2 pr-10 pl-10 h-fit ">
-            <img className="w-50 h-15 transition duration-200 hover:scale-110 cursor-pointer" src={logo} alt="" />
+        <div className="bg-neutral-700  text-white flex justify-between items-center p-2 pr-10 pl-10 h-fit ">
+            <p className="text-2xl">CarritoCompra</p>
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
                 <MyNavLink router={"/inicioPage"} tittle={"Menu"} />

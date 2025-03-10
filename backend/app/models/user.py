@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from models.role import Role
     from models.address import Address
     from models.order_state_history import OrderStateHistory
+    from models.order import Order
 
 class User(SQLModel, table=True):
     id:Optional[int] = Field(default=None, primary_key=True)
@@ -20,3 +21,4 @@ class User(SQLModel, table=True):
     role:Optional["Role"] = Relationship(back_populates="users")
     address:Optional["Address"] = Relationship(back_populates="user")
     orderStateHistory:Optional["OrderStateHistory"] = Relationship(back_populates="user")
+    orders:Optional[list["Order"]] = Relationship(back_populates="user")

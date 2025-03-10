@@ -1,8 +1,9 @@
+import axios from "axios";
 import { ProductData } from "../type/productData";
 
 export const fetchProducts = async (): Promise<ProductData[]> => {
-    const response = await fetch("http://localhost:8000/product")
-    return response.json()
+    const { data } = await axios.get("http://localhost:8000/product")
+    return data
 }
 
 export const fetchAProduct = async (id_product:number): Promise<ProductData> => {

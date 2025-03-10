@@ -1,13 +1,10 @@
-
 from fastapi import HTTPException, status
 from sqlmodel import Session, select
 from sqlalchemy.orm import selectinload
-
 from models.role import Role
 
 class RoleService:
     @staticmethod
-    
     def get_all_role(session:Session):
         roleStatement = (select(Role)
                     .options(selectinload(Role.users)))

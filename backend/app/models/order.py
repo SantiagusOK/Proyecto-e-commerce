@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from models.order_state import OrderState
     from models.order_state_history import OrderStateHistory
     from models.address import Address
+    from models.user import User
 
 class Order(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -19,6 +20,7 @@ class Order(SQLModel, table=True):
     id_state: int = Field(default=None, foreign_key="orderstate.id")
     # id_ordersHistory:Optional[int] = Field(default=None, foreign_key="orderStateHistory.id")
     
+    user: Optional["User"] = Relationship(back_populates="orders")
     state:Optional["OrderState"] = Relationship(back_populates="order")
     items: List["OrderItem"] = Relationship(back_populates="order")
     ordersHistory: List["OrderStateHistory"] = Relationship(back_populates="order")

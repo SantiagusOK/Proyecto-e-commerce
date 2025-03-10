@@ -1,288 +1,289 @@
-import { useEffect, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
-import { Navigate, NavLink, useNavigate } from 'react-router-dom'
+import { useForm,  } from 'react-hook-form'
+import { useMutation } from '@tanstack/react-query'
+import { registerUser } from '../api/userApi'
+import { NavLink } from 'react-router-dom'
+import { userRegisterMutation } from '../api/userRegisterMutation'
 
+export const UserCreatePage = () =>{
 
+  const userMutation = userRegisterMutation()
+  
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: {errors}
+  } =useForm()
 
-const UserCreatePage = () =>{
+  const registerNewUser = async (userData:any)  => {
+    userMutation.mutate(userData)
+  }
 
-  const[name,setName] = useState<string>("")
-  const[lastname,setLastname] = useState<string>("")
-  const[birthdate,setbirthdate] = useState<string>("")
-  const[email,setEmail] = useState<string>("")
-  const[password,setPassword] = useState<string>("")
-  const[passwordSecond,setPasswordSecond] = useState<string>("")
-  const[username,setUsername] = useState<string>("")
-  const[direccion,setDireccion] = useState<string>("")
+  const verifyPassword = (pass:string) => {
+    if(pass === watch("user.password")){
+      return true
+    } else {
+      return "❌La contraseña no coinciden"
+    }
+  }
 
-  const[usernameError, setUsernameError] = useState<boolean>(false)
-  const[usernameErrorText, setUsernameErrorText] = useState<string>("")
-  const[usuarioCreado, setUsuarioCreado] = useState<boolean>(false)
-  const[loading, setLoading] = useState<boolean>(false)
+  const verifyDate = (value:any) => {
+    const dateUser = new Date(value)
+    const dateActual = new Date()
+    const age = dateActual.getFullYear() - dateUser.getFullYear()
 
-  const navigate = useNavigate()
-
-  const {register, handleSubmit, watch,
-    formState: {errors}} = useForm()
-
-  console.log(errors)
-
-  const saveData = async () =>{
-    if(!usuarioCreado){
-      setLoading(true)
-      try{
-        const response = await fetch("http://localhost:8000/users/registerUser",{
-          method: "POST",
-          headers: {"Content-Type" : "application/json"},
-          body: JSON.stringify({fullname:name, lastname:lastname, username:username, birthdate:birthdate, email:email, password:password, direccion:direccion})
-          })
-        
-        if (response.status==401){
-          const data = await response.json()
-          setUsernameError(true)
-          setUsernameErrorText(data.detail)
-        }
-
-        if(response.status==201){
-          setUsuarioCreado(true)
-          // resetAllData()
-        }
-
-        setLoading(false)
-      } catch{
-        console.log("ERROR")
-      }
+    if(age >= 18){
+      return true
+    } else {
+      return "❌Debes ser mayor de edad para crear una cuenta"
     }
 
   }
 
-  const resetAllData=()=>{
-    setName("")
-    setLastname("")
-    setbirthdate("")
-    setEmail("")
-    setPassword("")
-    setUsername("")
-    setDireccion("")
-    setPasswordSecond("")
-  }
+  return(
+    <div className='flex justify-center py-20'>
+      <form className='bg-white w-230 p-10 space-y-5 rounded-2xl shadow' onSubmit={handleSubmit(registerNewUser)}>
 
-  const validarAño=(fecha:any)=>{
-    const year = new Date(fecha).getFullYear()
-    return year <= 2007 || "Debes ser mayor de edad"
-  }
+        <p className='w-full text-center text-4xl'>Registrase</p>
 
-  useEffect(()=>{
-    if(usuarioCreado){
-      const timer = setTimeout(() => {
-        navigate("/")
-      }, 2000);
-    }
-  },[usuarioCreado])
+        <hr />
 
-  return (
-    <div className='flex flex-col items-center justify-center h-screen space-y-10'>
-
-      <div className='bg-white p-10 w-fit rounded-2xl flex flex-col items-center space-y-10 drop-shadow-md'>
-
-        <h1 className='mb-5'>REGISTRASE</h1>
-        
-        <form className='flex flex-col items-center space-y-4' onSubmit={handleSubmit(saveData)} >
-
-          <div className='flex space-x-2'>
-            <div className='flex flex-col'>
-              {/* NOMBRE */}
-              {errors.nombre &&(<span className="text-red-500 font-medium">{errors.nombre.message}</span>)}
-              <input {...register("nombre",{
-                required: "Inserte su nombre",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80 border-2 rounded p-2 outline-none border-neutral-400' maxLength={10} placeholder='Nombre' type="text"  value={name} onChange={(e)=>setName(e.target.value)} />  
-            </div>
-
-            {/* APELLIDO */}
-            <div className='flex flex-col'>
-              {errors.apellido &&(<span className="text-red-500 font-medium">{errors.apellido.message}</span>)}
-              <input {...register("apellido",{
-                required: "Inserte su apellido",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Apellido' type="text" value={lastname} onChange={(e)=>setLastname(e.target.value)}/>
-            </div>            
-          </div>
-
-          <div className='h-0.5 bg-neutral-400 w-full'></div>
-          
-          <div className='flex space-x-2'>
-            {/* USERNAME  */}
-            <div className='flex flex-col'>
-              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
-              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
-              <input {...register("username",{
-                required:"Inserte su nombre de usuario",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
-            </div>
-
-            {/* DIRECCION  */}
-            <div className='flex flex-col'>
-              {errors.direccion &&(<span className="text-red-500 font-medium">{errors.direccion.message}</span>)}
-              <input {...register("direccion",{
-                required:"Inserte su direccion"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Direccion o calle' type="text" value={direccion} onChange={(e)=>setDireccion(e.target.value)}/>
-            </div>
-          </div>
-
-          <div className='h-0.5 bg-neutral-400 w-full'></div>
-
-          <div className='flex space-x-2'>
-            {/* CALLE  */}
-            <div className='flex flex-col'>
-              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
-              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
-              <input {...register("username",{
-                required:"Inserte su nombre de usuario",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
-            </div>
-
-            {/* CIUDAD  */}
-            <div className='flex flex-col'>
-              {errors.direccion &&(<span className="text-red-500 font-medium">{errors.direccion.message}</span>)}
-              <input {...register("direccion",{
-                required:"Inserte su direccion"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Direccion o calle' type="text" value={direccion} onChange={(e)=>setDireccion(e.target.value)}/>
-            </div>
-
-          </div>
-
-          <div className='h-0.5 bg-neutral-400 w-full'></div>
-
-          <div className='flex space-x-2'>
-            {/* ESTADO  */}
-            <div className='flex flex-col'>
-              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
-              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
-              <input {...register("username",{
-                required:"Inserte su nombre de usuario",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
-            </div>
-
-            {/* CODIGO POSTAL  */}
-            <div className='flex flex-col'>
-              {errors.direccion &&(<span className="text-red-500 font-medium">{errors.direccion.message}</span>)}
-              <input {...register("direccion",{
-                required:"Inserte su direccion"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Direccion o calle' type="text" value={direccion} onChange={(e)=>setDireccion(e.target.value)}/>
-            </div>
-
-          </div>
-          <div className='flex space-x-2'>
-            {/* ESTADO  */}
-            <div className='flex flex-col'>
-              {usernameError &&(<span className="text-red-500 font-medium">{usernameErrorText}</span>)}
-              {errors.username &&(<span className="text-red-500 font-medium">{errors.username.message}</span>)}
-              <input {...register("username",{
-                required:"Inserte su nombre de usuario",
-                minLength:{
-                  value:3,
-                  message:"Tiene que haber 3 carateres como minimo"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Nombre de Usuario' type="text" value={username} onChange={(e)=>setUsername(e.target.value)}/>            
-            </div>
-
-          </div>
-
-          <div className='h-0.5 bg-neutral-400 w-full'></div>
-
-          <div className='flex space-x-2'>
-            {/* FECHA DE NACIMIENTO  */}
-            <div className='flex flex-col'>
-              {errors.fecha &&(<span className="text-red-500 font-medium">{errors.fecha.message}</span>)}
-              <input {...register("fecha",{
-                required:"Inserte su fecha de nacimiento",
-                validate:validarAño
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Fecha de nacimiento' type="date" value={birthdate} onChange={(e)=>setbirthdate(e.target.value)}/>
-            </div>
-          
-            
-            {/* Email  */}
-            <div className='flex flex-col'>
-              {errors.email &&(<span className="text-red-500 font-medium">{errors.email.message}</span>)}
-              <input {...register("email",{
-                required:"Inserte su correo electronico",
-                pattern:{
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message:"El correo electronico no es valido"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' placeholder='Correo electronico' type="email" value={email}  onChange={(e)=>setEmail(e.target.value)}  />            
-            </div>
-          </div>
-
-          <div className='h-0.5 bg-neutral-400 w-full'></div>
-
-          <div className='flex space-x-2'>
-            {/* Contraseña  */}
-            <div className='flex flex-col'>
-              {errors.contraseña &&(<span className="text-red-500 font-medium">{errors.contraseña.message}</span>)}
-              <input {...register("contraseña",{
-                required:"Inserte su contraseña",
-                minLength:{
-                  value:7,
-                  message:"Tiene que haber minimo 7 caracteres"
-                }
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Contraseña' type="password" value={password} onChange={(e)=>setPassword(e.target.value)}/>            
-            </div>
-
-            {/* Contraseña 2do */}
-            <div className='flex flex-col'>
-              {errors.contraseña2 &&(<span className="text-red-500 font-medium">{errors.contraseña2.message}</span>)}
-              <input {...register("contraseña2",{
-                required:"inserte su contraseña nueva mente",
-                minLength:{
-                  value:7,
-                  message:"Tiene que haber minimo 7 caracteres"
-                },
-                validate:(value)=>
-                  value==password || "La contraseña no coinciden"
-              })} className='w-80  border-2 rounded p-2 border-neutral-400  outline-none' maxLength={10} placeholder='Confirmar contraseña' type="password" value={passwordSecond} onChange={(e)=>setPasswordSecond(e.target.value)}/>
-            </div>
-          </div>
-
-          <button type="submit" value="Registrarte" className={` w-80 p-2 rounded-[10px] mt-5 cursor-pointer flex justify-center items-center transition  space-x-4 ${usuarioCreado ? "bg-green-500" : "bg-blue-300 hover:bg-blue-500" }`}>
-            {loading&&(
-              <div className='border-t-4 border-t-blue-400 border-transparent rounded-full border-4 h-6 w-6 animate-spin'></div>
-            )}
-            <span className={`text-white ${usuarioCreado ? "transition text-black" : "text-white"}`}>{usuarioCreado ? "Usuario registrado con exito" : "Registrarse"}</span>
-          </button>
-
-        </form>
-        
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="">¿Ya estas registrado?</h1>
-          <NavLink to={"/loginPage"} className={"text-blue-500 underline"}>Inicia sesion ahora</NavLink>
+        <div>
+          <p>Nombre</p>
+          <input {...register("user.fullname",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌El minimo de letras debe de ser de 4"
+            },
+            pattern:{
+              value:/^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$/u,
+              message:"❌Solo se permiten letras, sin espacios ni símbolos"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={15} placeholder='Nombre' type="text" />
+          {errors.fullname && (<p className='text-red-500 font-black'>{String(errors.fullname.message)}</p>)}
         </div>
 
+        <div>
+          <p>Apellido</p>
+          <input {...register("user.lastname",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌El minimo de letras debe de ser de 4"
+            },
+            pattern:{
+              value:/^[A-Za-zÁÉÍÓÚáéíóúÑñ]+$/u,
+              message:"❌Solo se permiten letras, sin espacios ni símbolos"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={15} placeholder='Apellido' type="text" />
+          {errors.lastname && (<p className='text-red-500 font-black'>{String(errors.lastname.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Nombre de usuario</p>
+          <input {...register("user.username",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌El minimo de letras debe de ser de 4"
+            },
+            pattern:{
+              value:/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9]+$/u,
+              message:"❌Solo se permiten letras, sin espacios ni símbolos"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={12} placeholder='Nombre de Usuario' type="text" />
+          {errors.username && (<p className='text-red-500 font-black'>{String(errors.username.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Correo electronico</p>
+          <input {...register("user.email",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌El minimo de letras debe de ser de 4"
+            },
+            pattern:{
+              value:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: "❌El formato del correo electrónico no es válido"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' placeholder='Correo@electronico.com' type="email" />
+          {errors.email && (<p className='text-red-500 font-black'>{String(errors.email.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Contraseña</p>
+          <input {...register("user.password",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌La contraseña tiene que tener un minimo de 4 digitos"
+            },
+            
+
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={20} placeholder='111111' type="password" />
+          {errors.password && (<p className='text-red-500 font-black'>{String(errors.password.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Confirma la contraseña</p>
+          <input {...register("user.passwordSecond",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            minLength:{
+              value:4,
+              message:"❌La contraseña tiene que tener un minimo de 4 digitos"
+            },
+            validate:verifyPassword
+
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={20} placeholder='111111' type="password" />
+          {errors.passwordSecond && (<p className='text-red-500 font-black'>{String(errors.passwordSecond.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Fecha de nacimiento</p>
+          <input {...register("user.birthdate",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            validate:verifyDate
+
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' placeholder='111111' type="date" />
+          {errors.birthdate && (<p className='text-red-500 font-black'>{String(errors.birthdate.message)}</p>)}
+        </div>
+
+
+
+
         
+        <p className='w-full text-center text-4xl'>Direccion</p>
+
+        <hr />
+
+        <div>
+          <p>Calle</p>
+          <input {...register("address.street",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' placeholder='Calle' type="text" />
+          {errors.street && (<p className='text-red-500 font-black'>{String(errors.street.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Ciudad</p>
+          <input {...register("address.city",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            pattern: {
+              value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/,
+              message: "❌Solo se permiten letras y espacios"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={20} placeholder='Ciudad' type="text" />
+          {errors.city && (<p className='text-red-500 font-black'>{String(errors.city.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Estado</p>
+          <input {...register("address.state",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            pattern: {
+              value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/,
+              message: "❌Solo se permiten letras y espacios"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={20} placeholder='Estado' type="text" />
+          {errors.state && (<p className='text-red-500 font-black'>{String(errors.state.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Pais</p>
+          <input {...register("address.country",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            pattern: {
+              value: /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/,
+              message: "❌Solo se permiten letras y espacios"
+            }
+            
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={20} placeholder='Pais' type="text" />
+          {errors.country && (<p className='text-red-500 font-black'>{String(errors.country.message)}</p>)}
+        </div>
+
+        <div>
+          <p>Codigo Postal</p>
+          <input {...register("address.postal_code",{
+            required:{
+              value:true,
+              message:"❌Este campo es obligatorio"
+            },
+            pattern: {
+              value: /^[0-9]+$/,  // Solo números
+              message: "❌Solo se permiten números"
+            }
+          })} className='w-full bg-neutral-500 text-white p-2 rounded' maxLength={5} placeholder='111111' type="text" />
+          {errors.postal_code && (<p className='text-red-500 font-black'>{String(errors.postal_code.message)}</p>)}
+        </div>
+
+
+        <hr />
         
-      </div>
-    
+        {
+          userMutation.isSuccess &&(
+            <p className='w-full text-green-500 font-black text-2xl text-center'>USUARIO REGISTRADO CON EXITO</p>
+          )
+        }
+
+        {/* {
+          userMutation.isError &&(
+            <p className='w-full text-red-500 font-black text-2xl text-center'>{userMutation.con}</p>
+          )
+        } */}
+
+        <button type='submit' className='bg-blue-600 text-white w-full py-3 rounded cursor-pointer transition hover:bg-blue-800 flex justify-center items-center space-x-3'>
+          {userMutation.isPending && (
+            <div className='h-5 w-5 rounded-full border-2 border-r-transparent animate-spin'></div>
+          )}
+          <p className='text-2xl font-bold'>Registrarse</p>
+        </button>
+
+        <NavLink to={'/'} className={'bg-blue-600 text-white w-full py-3 rounded cursor-pointer transition hover:bg-blue-800 flex justify-center items-center'}>
+          
+          <p className='text-2xl font-bold'>Volver</p>
+        </NavLink> 
+
+
+
+      </form>
     </div>
   )
+
+
 }
 
-export default UserCreatePage

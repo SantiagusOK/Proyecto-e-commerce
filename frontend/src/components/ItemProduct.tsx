@@ -7,11 +7,11 @@ interface getProduct{
 
 const ItemProducts=({product}:getProduct)=>{
     return(
-        <NavLink to={product.stockCurrent<=0 ? "" : "/inicioPage/itemBuy/"+product.id} className="w-215 shadow bg-white border border-neutral-300 flex items-center transition duration-300 hover:bg-blue-200 hover:scale-102  cursor-pointer rounded-2xl">
+        <NavLink to={product.stockCurrent<=0 ? "" : "/inicioPage/itemBuy/"+product.id} className="w-215 shadow bg-neutral-700 flex items-center transition duration-300 hover:bg-neutral-900 hover:scale-102  cursor-pointer text-white rounded-2xl">
             <div className="flex items-center justify-between w-full ">
                 <div className="flex items-center space-x-4 ">
                     
-                    <div className="bg-blue-400 rounded-l-2xl w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">
+                    <div className="bg-black rounded-l-2xl w-30 h-30 flex items-center justify-center text-4xl font-extrabold ">
                         <span className="text-white">{product.name[0]}</span>
                     </div>
 

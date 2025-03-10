@@ -23,7 +23,7 @@ const ItemProductSelect = () =>{
 
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
-    const id_user = user.id
+    const id_user = Number(user.id)
 
     const navigate = useNavigate()
 
@@ -56,30 +56,40 @@ const ItemProductSelect = () =>{
     }
 
     const AddToCart = async () =>{
-        setLoadingData(true)
+        try{
 
-        console.log(id_user)
-        const id_product = product?.id
-
-        console.log("Id_product: " + id_product)
-
-        const response = await fetch("http://localhost:8000/cart/createCart/" + id_user)
-
-        const creatCartResponse = await fetch("http://localhost:8000/cart/saveItemInCart/" + id_user, {
-            method: "PUT",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                id_product:id_product,
-                quantity:amount,
-                unityPrice:total
+            setLoadingData(true)
+    
+            console.log(id_user)
+            const id_product = product?.id
+    
+            console.log("Id_product: " + id_product)
+    
+            const createCart = await fetch("http://localhost:8000/cart/createCart/" + id_user)
+    
+            if(!createCart.ok){
+                setLoadingData(false)
+            }
+    
+            const saveItem = await fetch("http://localhost:8000/cart/saveItemInCart/" + id_user, {
+                method: "PUT",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify({
+                    id_product:id_product,
+                    quantity:amount,
+                    unityPrice:total
+                })
             })
-        })
-
-        if(creatCartResponse.ok){
-            navigate("/inicioPage/carritoPage")
+    
+            if(saveItem.ok){
+                navigate("/inicioPage/carritoPage")
+            }
+    
+            
+        } catch(error) {
+            console.log(error)
+            setLoadingData(false)
         }
-
-        setLoadingData(false)
     }
 
     if(isLoading){
