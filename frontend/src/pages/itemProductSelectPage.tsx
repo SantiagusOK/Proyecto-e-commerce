@@ -1,143 +1,116 @@
-import { useEffect, useState } from "react"
-import { NavLink, useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import Loading from "../components/loading"
 import { useAnProducts } from "../hooks/products_hooks"
+import { useForm } from "react-hook-form"
+import { productSelectData } from "../type/productSelectData"
+import { useEffect, useState } from "react"
+import { createCart, saveItem } from "../hooks/cart_hooks"
 
-const ItemProductSelect = () =>{
-    const{id} = useParams()
-
-    const{data:product, isError, isLoading} = useAnProducts(Number(id))
-
-    const [name, setName] = useState<string>("")
-    const [categorie, setCategorie] = useState<string>("")
-    const [amount, setAmount] = useState<number>(1)
+export const  ItemProductSelect = () =>{
     
-    const [price, setPrice] = useState<number>(0)
-    const [total, setTotal] = useState<number>(0)
-    const [stock, setStock] = useState<number>(0)
+    const{register, handleSubmit, formState:{errors}} = useForm<productSelectData>()
+    
 
-    const[loadingData,setLoadingData] = useState<boolean>(false)
+    const local = localStorage.getItem("userData")
+    const user = JSON.parse(local!)
 
-    const limitAmout = stock
-    const minorLimitAmout=1
+    const cartSaveMutation = saveItem()
 
-    const storage = localStorage.getItem("userData")
-    const user = JSON.parse(storage!)
-    const id_user = Number(user.id)
+    const[totalPrice, setTotalPrice] = useState<number>(0)
+    const[quantity, setQuantity] = useState<number>(1)
+    
+    const{id} = useParams()
+    const{data:product, isLoading, } = useAnProducts(Number(id)) 
+    const{data:cart , error, isLoading:cartLoading} = createCart(Number(user.id))
 
-    const navigate = useNavigate()
-
-    useEffect(()=>{
+    useEffect(() => {
         if(product){
-            setCategorie(product.category.name)
-            setName(product.name)
-            setPrice(product.price)
-            setTotal(product.price)
-            setStock(product.stockCurrent)
+            setTotalPrice(product.price)
+            setQuantity(1)
         }
     },[product])
 
-    const ButtonFuncionAdd=()=>{
-        if(amount<stock){
-            setAmount(amount+1)
-            setTotal(prevTotal => parseFloat((prevTotal + price).toFixed(2)));
-        } else if(amount>=limitAmout){
-            setAmount(limitAmout)
-        }
-    }
-
-    const ButtonFuncionDelete=()=>{
-        if(amount>minorLimitAmout){
-            setAmount(amount-1)
-            setTotal(prevTotal => parseFloat((prevTotal - price).toFixed(2)));
-        } else if(amount<=minorLimitAmout){
-            setAmount(minorLimitAmout)
-        }
-    }
-
-    const AddToCart = async () =>{
-        try{
-
-            setLoadingData(true)
-    
-            console.log(id_user)
-            const id_product = product?.id
-    
-            console.log("Id_product: " + id_product)
-    
-            const createCart = await fetch("http://localhost:8000/cart/createCart/" + id_user)
-    
-            if(!createCart.ok){
-                setLoadingData(false)
-            }
-    
-            const saveItem = await fetch("http://localhost:8000/cart/saveItemInCart/" + id_user, {
-                method: "PUT",
-                headers:{"Content-Type":"application/json"},
-                body:JSON.stringify({
-                    id_product:id_product,
-                    quantity:amount,
-                    unityPrice:total
-                })
-            })
-    
-            if(saveItem.ok){
-                navigate("/inicioPage/carritoPage")
-            }
-    
-            
-        } catch(error) {
-            console.log(error)
-            setLoadingData(false)
-        }
-    }
-
-    if(isLoading){
+    if(isLoading || cartLoading){
         return(<Loading/>)
     }
 
-    return(
-        <div className="basis-full flex items-center justify-center">
-            {/* CUADRADO */}
-            <div className=" flex flex-col bg-white h-fit w-200 space-y-20 p-10 rounded-b-3xl ">
+    const save_item = () => {
+        const product_response = {
+            id_product:Number(product!.id),
+            quantity:Number(quantity),
+            unityPrice:totalPrice
+        }
 
-                {/* FOTO */}
-                <div className="flex items-center  justify-evenly">
-                    <div className="w-50 h-50 bg-neutral-700 rounded-full flex items-center justify-center text-6xl text-white">
-                        {name[0]}
+        console.log(product_response)
+        cartSaveMutation.mutate({ id_user: user.id, product: product_response });
+        
+    }
+
+    const updatePrice = (value:any) => {
+        const quantityValue = value.target.value;
+        setQuantity(quantityValue)
+        if(quantityValue != 0){
+            const total = (product!.price * quantityValue).toFixed(2)
+            setTotalPrice(Number(total))
+        }
+        if(quantityValue <= 0){
+            setTotalPrice(Number(product?.price))
+        }
+    }
+   
+    return(
+        <div className="basis-full flex items-center justify-center p-10">
+            <div className="flex space-x-2">
+                
+                <div className="bg-neutral-700 rounded-3xl space-y-2">
+                    <figure className="relative">
+
+                        <p className="absolute top-85 left-5 bg-black text-white px-5 py-2 rounded">{product?.category.name}</p>
+                        <img className="object-cover w-130 h-100 rounded-3xl " src={product?.urlImage} alt="" />
+                    </figure>
+                    <div className="p-2">
+                        <p className="w-full text-center text-white font-mono">Descripcion</p>
+                        <hr />
+                        <p className="p-2 text-white">{product?.description}</p>
                     </div>
-                    <div className="flex flex-col items-center ">
-                        <h1 className="text-4xl font-medium">{name}</h1>
-                        <h1 className="font-black"> {categorie} </h1> 
-                    </div>   
                 </div>
                 
-                {/* BOTONES DE CANTIDAD */}
-                <div className="flex justify-between items-center">
-                    <div className="flex flex-col items-center">
-                        <h1 className="font-mono">CANTIDAD</h1>
-                        <div className="flex justify-center items-center flex-row-reverse">
-                            <input className="text-5xl w-20  rounded-r-2xl border-2 text-center cursor-pointer p-3 border-black active:bg-black active:text-white " type="button" value={"+"} onClick={ButtonFuncionAdd} />
-                            <h1 className="text-5xl w-30 text-center border-y-2 font-bold p-3 ">x{amount}</h1>
-                            <input className="text-5xl w-20  rounded-l-2xl border-2 text-center cursor-pointer p-3 border-black active:bg-black active:text-white" type="button" value={"-"} onClick={ButtonFuncionDelete} />
+
+                <div className="bg-neutral-700 w-150 h-fit p-5 rounded-2xl space-y-2">
+                    <p className="w-full text-white text-2xl ">{product?.name}</p>
+                    <form className="space-y-2" onSubmit={handleSubmit(save_item)}>
+                        <div>
+                            <p className="text-white">Cantidad</p>
+                            <input {...register("quantity",{
+                                required:{
+                                    value:true,
+                                    message:"Este campo es obligatorio"
+                                },
+                                max:{
+                                    value:product!.stockCurrent,
+                                    message:""
+
+                                },
+                                validate:(e) => {
+                                    if(e <= 0){
+                                        return "El valor tiene que ser mayor a 1"
+                                    }
+                                }
+                            })}className="w-full text-white p-2 bg-neutral-800 border-2 border-neutral-500 transition hover:border-neutral-300" type="number" value={quantity} onChange={updatePrice}  />
+                            {errors.quantity&&(<p className="text-red-400">❌{errors.quantity.message}</p>)}
                         </div>
-                    </div>
-                    <h1 className="font-bold text-5xl text-green-700">${total}</h1>
-                </div>
+                        <p className="text-white text-4xl font-bold">${totalPrice}</p>
 
-                {/* BOTON DE CARRITO */}
-                <div className="space-y-4">
-                    <NavLink to={""} className="h-20 rounded-2xl font-medium cursor-pointer flex items-center justify-center bg-blue-300 text-white transition hover:bg-blue-600" onClick={AddToCart} >
-                        {loadingData &&(<div className="h-10 w-10 rounded-full border-4 border-t-blue-400 border-transparent animate-spin mr-3"></div>)}
-                        AGREGAR AL CARRITO
-                    </NavLink>
+                        <button type="submit" className="w-full bg-neutral-600 rounded py-2 transition hover:bg-neutral-500 text-white">Agregar al carrito</button>
+                    </form>
+                    {
+                        cartSaveMutation.isSuccess&&(<p className="w-full text-center">Producto agregado al carrito</p>)
+                    }
+                    {
+                        cartSaveMutation.error&&(<p className="w-full text-center">Error al intentar guardar el item al carrito</p>)
+                    }
                 </div>
-
-            </div>
-            
+            </div>  
         </div>
     )
 }
-
-
-export default ItemProductSelect

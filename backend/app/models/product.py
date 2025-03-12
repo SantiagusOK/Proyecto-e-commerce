@@ -18,6 +18,7 @@ class Product(SQLModel, table=True):
     stockMin:int
     stockMax:int
     stockCurrent:int
+    urlImage: str
     
     category:Optional["Category"] = Relationship(back_populates="products")
     cart_item:Optional[list["CartItem"]] = Relationship(back_populates="product")

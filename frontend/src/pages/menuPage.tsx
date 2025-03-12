@@ -32,7 +32,7 @@ const MenuPage = () => {
                         <div className="space-y-3">
         
                             <div>
-                                <input className="bg-white w-80 p-2 rounded-l border-neutral-500 border-1 outline-none" type="search" value={nameProduct} onChange={(e) => setNameProduct(e.target.value)}/>
+                                <input className="bg-neutral-700 w-80 p-2 rounded-l border-neutral-500 border-1 outline-none text-white" type="search" value={nameProduct} onChange={(e) => setNameProduct(e.target.value)}/>
                                 {/* BOTON BUSCAR */}
                                 <input className="bg-white p-2 border-1 w-fit text-center border-neutral-500 rounded-r cursor-pointer hover:hover:bg-blue-400 " type="button" value="BUSCAR" onClick={searchProduct}/>
                             </div>
@@ -60,7 +60,7 @@ const MenuPage = () => {
                     )}
         
                     {productFilter.length > 0 &&(
-                        <div className="space-y-0.5">
+                        <div className="grid grid-cols-1 w-[60%] gap-x-4 md:grid-cols-2 lg:grid-cols-3">
                             {productFilter.map((products, index)=>(
                                 <ItemProducts product={products} key={index} />
                             ))}
@@ -68,7 +68,7 @@ const MenuPage = () => {
                     )}
                 </>
             ) : (
-                <div className="h-screen flex items-center justify-center space-x-10 ">
+                <div className="h-screen flex items-center justify-center space-x-10 text-white">
                     <p className="text-9xl">:(</p>
                     <p className="text-3xl w-25">No hay productos registrados</p>
                 </div>

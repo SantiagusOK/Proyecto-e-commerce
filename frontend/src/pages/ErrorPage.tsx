@@ -13,9 +13,10 @@ const PaginaErrorPage = () => {
     return(
         <div className=" flex flex-col h-screen items-center justify-center">
 
-            <h1 className="text-2xl">
-                !!OOPS.... Hubo un error al cargar la pagina :)
-            </h1>
+            <p className="text-3xl text-white font-black">
+                !!OOPS.... 
+            </p>
+            <p className="text-3xl text-white font-black">Hubo un error al cargar la pagina :)</p>
             <img src={error} alt="" />
 
             {/* <a href="" onClick={backToPage} className="text-blue-600 underline-offset-1 underline">{"<<"}volver a la pagina anterior</a> */}

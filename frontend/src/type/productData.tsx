@@ -10,4 +10,5 @@ export interface ProductData{
     stockMax:number
     stockCurrent:number
     category:CategoryData
+    urlImage:string,
 }

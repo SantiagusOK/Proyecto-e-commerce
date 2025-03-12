@@ -1,30 +1,42 @@
 import { NavLink } from "react-router-dom"
-import logo from "../assets/img/logo.png"
+import logo from "../assets/img/logov2.png"
 import { useSelector, UseSelector } from "react-redux"
+import { useEffect, useState } from "react"
 
 const InicioPage=()=>{
 
     localStorage.clear()
 
-    
+    const[isLogoVisile, setLogoVisible] = useState<boolean>(false)
+    const[isButtonsVisile, setButtonsVisile] = useState<boolean>(false)
+    const[isTextVisile, setTextVisile] = useState<boolean>(false)
+
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            setLogoVisible(true);
+            setButtonsVisile(true)
+            setTextVisile(true)
+        }, 10);
+
+        return () => clearTimeout(timer);
+    },[])
 
     return(
-        <div className="flex flex-col items-center justify-start h-screen space-y-10">
-            <div className="bg-blue-500 w-full flex justify-end space-x-3 p-2">
-                <NavLink to={"/loginPage"} className={"bg-blue-400 text-white p-5 w-50 h-10  flex items-center justify-center rounded transition hover:bg-blue-700"}>INICIAR SESION</NavLink>
-                <NavLink to={"/registerPage"} className={"bg-blue-400 text-white p-5 w-50 h-10 flex items-center justify-center rounded transition hover:bg-blue-700"}>REGISTRARSE</NavLink>
-            </div>
+        <div className="flex flex-col items-center justify-center h-screen">
+
             
-            <div className="flex items-center justify-center w-full h-full space-x-20 ">
-                <img className="w-170 h-50" src={logo} alt="" />
-                <div className="flex flex-col text-5xl">
-                    <span className="font-bold">Ahorra dinero</span>
-                    <span className="font-bold">Vive mejor.</span>
-                </div>
+            
+            <div className="flex flex-col items-center justify-center w-full h-full space-y-10">
+                <img className={`flextransition duration-500 opacity-0 ${isLogoVisile ? "opacity-100 -translate-y-10" : "opacity-0"}`} src={logo} alt="" />
+                
+                <div className={`flex flex-col justify-center items-center delay-75 transition duration-500 opacity-0 ${isLogoVisile ? "opacity-100 -translate-y-10" : "opacity-0"}`}>
+                    <span className="font-bold text-5xl text-white">Ahorra dinero</span>
+                    <span className="font-bold text-5xl text-white">Vive mejor.</span>
+                </div>              
             </div>
 
-            <footer className="p-5">
-                <span>Copyright©2025, Desing by Agustin Zapata</span>
+            <footer className="p-5 w-full">
+                <span className="text-white">Copyright©2025, Desing by Agustin Zapata</span>
             </footer>
 
         </div>

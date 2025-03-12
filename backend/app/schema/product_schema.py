@@ -11,6 +11,7 @@ class ProductSchema(BaseModel):
     stockMin:int
     stockMax:int
     stockCurrent:int
+    urlImage:str
 
 class ProductResponse(BaseModel):
     id:int
@@ -21,6 +22,7 @@ class ProductResponse(BaseModel):
     stockMin:int
     stockMax:int
     stockCurrent:int
+    urlImage:str
     
     category:CategoryResponse
 

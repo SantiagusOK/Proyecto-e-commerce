@@ -1,116 +1,87 @@
-import { useQueries, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { Navigate, NavLink, useNavigate } from "react-router-dom"
-import { Hooks } from "react-table"
-const LoginPage = () =>{
+import { NavLink, useNavigate } from "react-router-dom"
+import { userLoginData } from "../type/userLoginData"
+import { userLoginMutation } from "../api/userMutation"
 
-    const[username,setUsername] = useState<string>("")
-    const[password,setPassword] = useState<string>("")
-    const[loading, setLoading] = useState<boolean>(false)
+export const LoginUserPage = () =>{
 
-    const[isErrorUser, setIsErrorUser] = useState<boolean>(false)
-    const[errorUser, setErrorUser] = useState<string>("")
+    const navigate = useNavigate()
+    const {register,handleSubmit, formState:{errors}} = useForm<userLoginData>()
+    const[pageVisible, setPageVisible] = useState<boolean>(false)
 
-    const[isErrorPassword, setIsErrorPassword] = useState<boolean>(false)
-    const[errorPassword, setErrorPassword] = useState<string>("")
+    const useMutation = userLoginMutation()
 
-    const navigate = useNavigate();
-
-    const {register,handleSubmit, formState:{errors}} = useForm()
-
-    
-    const LoginNow = async ()  => {
-        setIsErrorPassword(false)
-        setIsErrorUser(false)
-        setLoading(true)
-        try{
-            const response = await fetch("http://localhost:8000/user/logUser",{
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body:JSON.stringify({username:username, password:password})})
-
-                //ERROR DE USUARIO
-                if(response.status === 404){
-                    console.log("------------------------hola")
-                    const errorData = await response.json();
-                    setIsErrorUser(true)
-                    setErrorUser(errorData.detail)
-                    setLoading(false)
-                    
-                }
-                
-                //ERROR DE CONTRASEÑA
-                if(response.status === 401){
-                    const errorData = await response.json();
-                    console.log(errorData.detail)
-                    setErrorPassword(errorData.detail)
-                    setIsErrorPassword(true)
-                    setLoading(false)
-                    
-                }
-                
-                //USUARIO ENCONTRANDO Y LOGEAR
-                if(response.ok){
-                const data = await response.json()
-                console.log(data)
-                localStorage.setItem("userData", JSON.stringify(data))
-                navigate("/inicioPage")
-                return data
-            }
-            
-        } catch {
-            console.log("ERROR")
-            setLoading(false)  
-        }
+    const login_user = (userData:userLoginData) => {
+        console.log(userData)
+        useMutation.mutate(userData)
         
     }
 
+    useEffect(()=>{
+        const timer = setTimeout(() => {
+            setPageVisible(true);
+        }, 10);
+
+        return () => clearTimeout(timer);
+    },[])
+
+    if(useMutation.isSuccess){
+        localStorage.setItem("userData", JSON.stringify(useMutation.data))
+        navigate("/welcomePage")
+    }
+
     return(
-        <div className="h-screen flex items-center justify-center">
+        <div className={`h-screen flex flex-col items-center justify-center space-y-10 duration-500`}>
+            
+            <p className={`text-white text-4xl font-mono transition duration-500 ${pageVisible ? "opacity-100 -translate-y-10" : "opacity-0"}`}>Iniciar Session</p>
 
-            <div className="bg-white flex flex-col items-center justify-center p-5 space-y-10 rounded-2xl shadow w-100">
-                <h1>INICIAR SESION</h1>
-                <form onSubmit={handleSubmit(LoginNow)} className="flex flex-col items-center justify-center space-y-10">
-                    <div className="flex flex-col space-y-4">
+            <form className={`bg-neutral-700 p-5 w-150 flex flex-col space-y-5 rounded transition duration-500 delay-100 ${pageVisible ? "opacity-100 -translate-y-10" : "opacity-0"}`} onSubmit={handleSubmit(login_user)}>
 
-                        {/* INPUT USERNAME */}
-                        <div className="flex flex-col items-center">
-                            {isErrorUser && <span className="text-red-500 font-medium">{errorUser}</span>}
-                            {errors.username && <span className="text-red-500 font-medium">{errors.username.message}</span>}
-                            <input {...register("username",{
-                                required: "Intente escribir su nombre de usuario"
-                            })} className="rounded-2xl border p-3 w-70 border-neutral-400 outline-none" type="text" maxLength={10} placeholder="Nombre de usuario" value={username} onChange={(e)=>setUsername(e.target.value)}/>
-                        </div>
-                        
-                        {/* INPUT PASSWORD */}
-                        <div className="flex flex-col items-center">
-                            {isErrorPassword && <span className="text-red-500 font-medium">{errorPassword}</span>}
-                            {errors.password && <span className="text-red-500 font-medium">{errors.password.message}</span>}
-                            <input {...register("password",{
-                                required: "Intente escribir su contraseña"
-                            })} className="rounded-2xl border p-3 w-70 border-neutral-400 outline-none" type="password" maxLength={10} placeholder="Contraseña" value={password} onChange={(e)=>setPassword(e.target.value)}/> 
-                        </div>  
+                <div className="space-y-5">
+                    <div>
+                        <p className="text-white">Nombre de usuario</p>
+                        <input {...register("username",{
+                            required:{
+                                value:true,
+                                message:"❌Este campo es obligatorio"
+                            }
+                        })} className="w-full text-white p-2 bg-neutral-800 border-2 border-neutral-500 transition hover:border-neutral-300" placeholder="Nombre de usuario" type="text" maxLength={12}/>
+                        {errors.username&&(<p className="text-red-300 font-mono">{errors.username.message}</p>)}
+                    </div>
 
-                    </div> 
-                    <button className="bg-blue-300 text-2xl p-2 pr-10 pl-10  rounded-2xl text-white cursor-pointer transition   hover:bg-blue-500 flex justify-center items-center space-x-10" type="submit" onClick={()=>{
-                        setIsErrorPassword(false), setIsErrorUser(false)
-                    }}>
-                        {loading && <div className="w-5 h-5 bg-transparent border-b-2 rounded-full mr-5 animate-spin"></div>}
-                        INICIAR SESION
-                    </button>                    
-                </form>
-                
-                <div className="flex flex-col items-center justify-center">
-                    <h1 className="">¿No tienes una cuenta todavia?</h1>
-                    <NavLink to={"/registerPage"} className={"text-blue-500 underline"}>
-                    Registrarte ahora
-                    </NavLink>
+                    <div>
+                        <p className="text-white">Contraseña</p>
+                        <input {...register("password",{
+                            required:{
+                                value:true,
+                                message:"❌Este campo es obligatorio"
+                            }
+                        })} className="w-full text-white p-2 bg-neutral-800 border-2 border-neutral-500 transition hover:border-neutral-300" placeholder="Contraseña" type="password" maxLength={20}/>
+                        {errors.password&&(<p className="text-red-300 font-mono">{errors.password.message}</p>)}
+                    </div>
+                    
                 </div>
-            </div>
+                
+                <div className="w-full flex flex-col justify-center items-center space-y-2">
+                    <button className="bg-neutral-400 py-2 w-[50%] cursor-pointer transition hover:bg-neutral-500 flex items-center justify-center space-x-2" type="submit">
+                        {
+                            useMutation.isPending&&(<div className="rounded-full h-5 w-5 border-2 border-l-transparent border-white animate-spin "></div>)
+                        }
+                        <p>Iniciar Sesion</p>
+                    </button>
+                </div>
+
+                <hr />
+
+                <div className="w-full flex items-center justify-center flex-col">
+                    <p className="text-white text-xl">¿No tienes una cuenta?</p>
+                    <NavLink to={"/registerPage"} className={"text-neutral-200 underline"}>Registrate aca</NavLink>
+                </div>
+
+
+            </form>
 
         </div>
     )
 }
-
-export default LoginPage

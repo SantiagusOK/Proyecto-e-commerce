@@ -1,6 +1,4 @@
 import { NavLink } from "react-router-dom"
-import logo from "../assets/img/logo.png"
-import { useSelector, UseSelector } from "react-redux"
 
 interface NavLinkdata{
     router:string,
@@ -26,15 +24,10 @@ export default function MyNavBar(){
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
                 <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
-                {user.role_id === 2 &&(
-                    <>
-                    </>
-                    
-                )}
                 {/* //crear productos */}
-                <MyNavLink router={"/inicioPage/productsCreatePage"} tittle={"Agregar Productos"}/>
+                <MyNavLink router={"/inicioPage/registerProductPage"} tittle={"Registrar Productos"}/>
                 {/* //crear categorias */}
-                <MyNavLink router={"/inicioPage/categorieCreatePage"} tittle={"Agregar Categorias"}/>
+                <MyNavLink router={"/inicioPage/registerCategoryPage"} tittle={"Registrar Categorias"}/>
                 {/* obtener productos + categoria */}
                 <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
                 {/* obtener y manipular Usuarios */}

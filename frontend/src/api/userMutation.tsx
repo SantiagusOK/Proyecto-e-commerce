@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { registerUser } from './userApi'
+import { loginUser, registerUser } from './userApi'
 
 export const userRegisterMutation = () => {
   return useMutation({
@@ -10,5 +10,11 @@ export const userRegisterMutation = () => {
             throw new Error(error.response.data.detail);
         }
     }
+  })
+}
+
+export const userLoginMutation = () => {
+  return useMutation({
+    mutationFn: loginUser
   })
 }
