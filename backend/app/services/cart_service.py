@@ -107,6 +107,11 @@ class CartService:
         newCartItem.cart = cartUser
         newCartItem.product = productFromItem
         
+        productFromItem.stockCurrent -= newCartItem.quantity
+        
+        session.add(productFromItem)
+        session.commit()
+        
         session.add(newCartItem)
         session.commit()
         session.refresh(newCartItem)
@@ -192,7 +197,11 @@ class CartService:
         cart = cartItem.cart
 
         product = cartItem.product
-        product.stockCurrent += cartItem.quantity
+        ## si el stock concurrent no supera al stockMax, se sumara, 
+        if not (product.stockCurrent + cartItem.quantity > product.stockMax):
+            product.stockCurrent += cartItem.quantity
+        else:
+            product.stockCurrent = product.stockMax
         
         index = 0
         

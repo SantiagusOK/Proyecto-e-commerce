@@ -20,7 +20,6 @@ async def get_a_user(id_user:int, session:Session = Depends(get_session)):
 async def register_user(newUser:UserRegisterSchema,session:Session = Depends(get_session)):
     return UserService.register_user(session, newUser)
 
-        
 @router.post("/loginUser",response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def log_user(userLogin:UserLoginSchema, session:Session = Depends(get_session)):    
     return UserService.log_user(session, userLogin)

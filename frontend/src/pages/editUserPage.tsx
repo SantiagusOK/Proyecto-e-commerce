@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import Loading from "../components/loading";
-import { useAnUser } from "../hooks/user_hooks";
+import { useRoleUser,useUser } from "../hooks/user_hooks";
 import { useRoles } from "../hooks/role_hooks";
 
 export const EditUserPage = () =>{
     const{id}=useParams()
 
-    const{data:user, isLoading:loadingUser} = useAnUser(Number(id))
+    const{data:user, isLoading:loadingUser} = useUser(Number(id))
     const{data:roles, isLoading:loadingRoles} = useRoles()
 
-    const[loadingData,setLoadingData] = useState<boolean>(false)
+    const roleUserMutation = useRoleUser()
     const[id_role, setIdRole] = useState<number>(1)
-    const[shotMessage, setShowMessage] = useState<boolean>(false)
-    const[oldAdminState, setOldAdminState] = useState<number>(0)
+    const[notChange, setNotChange] = useState<boolean>(false)
 
-    useEffect(()=>{
-        if(user){
-            setIdRole(user?.role.id)
-            setOldAdminState(user?.role.id)
+    useEffect(() => {
+        if(user||roles){
+            setIdRole(user!.role.id)
         }
     },[user])
 
@@ -26,29 +24,24 @@ export const EditUserPage = () =>{
         return(<Loading/>)
     }
 
-    // const save_data = async () => {
-    //     setShowMessage(false)
-    //     if(oldAdminState != id_role){
-    //         setLoadingData(true)
-    //         const response = await fetch("http://localhost:8000/users/setAdmin/"+id,{
-    //             method: "PUT",
-    //             headers: {"Content-Type":"application/json"},
-    //             body: JSON.stringify({isAdmin:userIsAdmin})
-    //         })
+    const saveChanged = () => {
+        console.log(id_role + " = " + user!.role.id)
+        if(id_role == user!.role.id){
+            setNotChange(true)
+        } else {
+            setNotChange(false)
+            roleUserMutation.mutate({id_user:Number(id), id_role:id_role})
+        }
+    }
 
-    //         if(response){
-    //             setOldAdminState(userIsAdmin)
-    //             setShowMessage(true)
-    //             setLoadingData(false)
-    //         }  
-    //     }
-        
-    // }
+    if(roleUserMutation.isSuccess){
+        window.location.reload();
+    }
 
     return(
-        <div className="flex justify-center ">
+        <div className="flex justify-center p-10">
 
-            <div className="bg-white flex flex-col items-star p-5 w-120 space-y-5">
+            <div className="bg-neutral-600 flex flex-col items-star p-5 w-120 space-y-5 rounded">
 
                 <div className="flex items-center justify-between space-x-3">
 
@@ -56,7 +49,7 @@ export const EditUserPage = () =>{
                         {user?.fullname[0]}
                     </div>
 
-                    <div className="flex flex-col items-star">
+                    <div className="flex flex-col items-star text-white">
                         <h1>{user?.fullname} {user?.lastname}</h1>
                         <span>@{user?.username}</span>
                     </div>
@@ -65,9 +58,9 @@ export const EditUserPage = () =>{
 
                 <hr />
 
-                <div>
-                    <span>Direccion</span>
-                    <div className="flex justify-between">
+                <div className="text-white">
+                    <span className="text-white">Direccion</span>
+                    <div className="flex justify-between ">
                         <p>Calle</p>
                         <p>{user?.address.street}</p>
                     </div>
@@ -91,7 +84,7 @@ export const EditUserPage = () =>{
                 </div>
 
                 <hr />
-                <div>
+                <div className="text-white">
 
                     <div className="flex justify-between">
                         <span>Fecha de nacimiento</span>
@@ -105,9 +98,9 @@ export const EditUserPage = () =>{
 
                     <div className="flex justify-between">
                         <span>Rol</span>
-                        <select className="border-2 border-neutral-400" onChange={(e) => setIdRole(Number(e.target.value))} value={id_role}>
+                        <select className="border-2 border-neutral-400 text-black bg-white" onChange={(e) => setIdRole(Number(e.target.value))} value={id_role}>
                             {roles?.map((role) => (
-                                <option value={role.id}>{role.roleName}</option>
+                                <option value={role.id}>{role.roleName.toUpperCase()}</option>
                             ))}
                             
                         </select>
@@ -115,19 +108,23 @@ export const EditUserPage = () =>{
                 </div>
 
 
-                <button className="p-2 pl-5 pr-5 bg-blue-400 rounded-[5px] text-white cursor-pointer transition hover:bg-blue-500 flex items-center justify-center space-x-2" type="button" value={"Guardar cambios"}>
-                    {loadingData &&(
-                        <div className=" h-5 w-5 border-b-4 border-blue-700 rounded-full animate-spin"></div>
+                <button className="p-2 pl-5 pr-5 bg-neutral-500 rounded-[5px] text-white cursor-pointer transition hover:bg-neutral-700 flex items-center justify-center space-x-2" type="button" value={"Guardar cambios"} onClick={saveChanged}>
+                    {roleUserMutation.isPending &&(
+                        <div className=" h-5 w-5 border-2 border-t-transparent border-l-transparent border-white rounded-full animate-spin"></div>
                     )}
                     <span>
                         Guardar Cambios
                     </span>
                 </button>
-                <div className="flex justify-center">
-                  {shotMessage &&(
-                    <span className="text-green-500 font-bold">Datos guardados</span>
-                    )}  
-                </div>
+                {/* {
+                    roleUserMutation.isSuccess&&(<span className="text-green-500 font-bold w-full text-center">Datos guardados</span>)
+                } */}
+                {
+                    roleUserMutation.isError&&(<span className="text-red-300 font-bold w-full text-center">Error al intentar guardar los datos</span>)
+                }
+                {
+                    notChange&&(<span className="text-red-300 font-bold w-full text-center">Hay cambios para guardar</span>)
+                }
                 
 
             </div>
@@ -136,3 +133,4 @@ export const EditUserPage = () =>{
     )
 
 }
+

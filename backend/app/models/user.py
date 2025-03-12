@@ -20,5 +20,5 @@ class User(SQLModel, table=True):
     
     role:Optional["Role"] = Relationship(back_populates="users")
     address:Optional["Address"] = Relationship(back_populates="user")
-    orderStateHistory:Optional["OrderStateHistory"] = Relationship(back_populates="user")
+    orderStateHistory:Optional[list["OrderStateHistory"]] = Relationship(back_populates="user")
     orders:Optional[list["Order"]] = Relationship(back_populates="user")

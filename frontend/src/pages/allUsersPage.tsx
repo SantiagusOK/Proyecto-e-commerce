@@ -1,9 +1,9 @@
 import Loading from "../components/loading"
 import { UserCard } from "../components/itemUsers"
-import { useUsersListBasic } from "../hooks/user_hooks"
+import { useUsers } from "../hooks/user_hooks"
 
 export const AllUsersPage = ()=>{
-    const{data:user, isLoading} = useUsersListBasic()
+    const{data:user, isLoading} = useUsers()
 
     if(isLoading){
         return(<Loading/>)

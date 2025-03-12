@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { NavLink, useNavigate } from "react-router-dom"
 import { userLoginData } from "../type/userLoginData"
-import { userLoginMutation } from "../api/userMutation"
+import { useLoginUser } from "../hooks/user_hooks"
 
 export const LoginUserPage = () =>{
 
@@ -10,7 +10,7 @@ export const LoginUserPage = () =>{
     const {register,handleSubmit, formState:{errors}} = useForm<userLoginData>()
     const[pageVisible, setPageVisible] = useState<boolean>(false)
 
-    const useMutation = userLoginMutation()
+    const useMutation = useLoginUser()
 
     const login_user = (userData:userLoginData) => {
         console.log(userData)

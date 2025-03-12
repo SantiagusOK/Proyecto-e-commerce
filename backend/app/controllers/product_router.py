@@ -18,8 +18,10 @@ async def get_all_products(id_product:int ,session:Session = Depends(get_session
 
 @router.post("/create",status_code=status.HTTP_201_CREATED)
 async def create_product(anNewProduct:ProductCreateSchema, session:Session = Depends(get_session)):
+    
     return ProductService.create_product(session,anNewProduct)
        
 @router.put("/updateProduct",status_code=status.HTTP_200_OK)
-async def update_a_product(productModel:ProductCreateSchema, session:Session=Depends(get_session)):
+async def update_a_product(productModel:ProductUpdateSchema, session:Session=Depends(get_session)):
+    print(f"--------------------{productModel}")
     return ProductService.update_a_product(session, productModel)

@@ -1,6 +1,4 @@
-import { NavLink } from "react-router-dom"
 import logo from "../assets/img/logov2.png"
-import { useSelector, UseSelector } from "react-redux"
 import { useEffect, useState } from "react"
 
 const InicioPage=()=>{

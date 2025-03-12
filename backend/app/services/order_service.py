@@ -100,7 +100,6 @@ class OrderServices:
         
         return {"message" : "Estado de la orden actualizada con exito"}
         
-
     @staticmethod
     def cancel_order(session:Session, id_order:int):
         orderStateStatement = (select(OrderState)
@@ -258,11 +257,13 @@ class OrderServices:
             user=user
         )
         
+        session.add(newOrdeStateHistory)
+        session.commit()
+        session.refresh(newOrdeStateHistory)
+        
         orderState.order.append(newOrden)
         orderState.stateList.append(newOrdeStateHistory)
         
-        session.add(newOrdeStateHistory)
-        session.commit()
         
         return {"message" : "orden creada con exito"}
             

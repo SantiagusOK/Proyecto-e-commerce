@@ -1,27 +1,26 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
-import { useAnProducts } from "../hooks/products_hooks"
+import { useProduct } from "../hooks/products_hooks"
 import { useForm } from "react-hook-form"
 import { productSelectData } from "../type/productSelectData"
 import { useEffect, useState } from "react"
-import { createCart, saveItem } from "../hooks/cart_hooks"
+import { useCreateCart, useSaveItem } from "../hooks/cart_hooks"
 
 export const  ItemProductSelect = () =>{
     
-    const{register, handleSubmit, formState:{errors}} = useForm<productSelectData>()
-    
-
+    const{register, handleSubmit, setValue, formState:{errors}} = useForm<productSelectData>()
+    const navigate = useNavigate()
     const local = localStorage.getItem("userData")
     const user = JSON.parse(local!)
 
-    const cartSaveMutation = saveItem()
+    const cartSaveMutation = useSaveItem()
 
     const[totalPrice, setTotalPrice] = useState<number>(0)
     const[quantity, setQuantity] = useState<number>(1)
     
     const{id} = useParams()
-    const{data:product, isLoading, } = useAnProducts(Number(id)) 
-    const{data:cart , error, isLoading:cartLoading} = createCart(Number(user.id))
+    const{data:product, isLoading, } = useProduct(Number(id)) 
+    const{data:cart , error, isLoading:cartLoading} = useCreateCart(Number(user.id))
 
     useEffect(() => {
         if(product){
@@ -34,6 +33,10 @@ export const  ItemProductSelect = () =>{
         return(<Loading/>)
     }
 
+    if(cartSaveMutation.isSuccess){
+        navigate("/inicioPage/carritoPage")
+    }
+
     const save_item = () => {
         const product_response = {
             id_product:Number(product!.id),
@@ -43,11 +46,11 @@ export const  ItemProductSelect = () =>{
 
         console.log(product_response)
         cartSaveMutation.mutate({ id_user: user.id, product: product_response });
-        
     }
 
     const updatePrice = (value:any) => {
-        const quantityValue = value.target.value;
+        const quantityValue = Number(value.target.value)
+        setValue("quantity", quantityValue, { shouldValidate: true });
         setQuantity(quantityValue)
         if(quantityValue != 0){
             const total = (product!.price * quantityValue).toFixed(2)
@@ -57,12 +60,12 @@ export const  ItemProductSelect = () =>{
             setTotalPrice(Number(product?.price))
         }
     }
-   
+
     return(
         <div className="basis-full flex items-center justify-center p-10">
             <div className="flex space-x-2">
                 
-                <div className="bg-neutral-700 rounded-3xl space-y-2">
+                <div className="bg-neutral-700 rounded-3xl space-y-2 w-130 h-160">
                     <figure className="relative">
 
                         <p className="absolute top-85 left-5 bg-black text-white px-5 py-2 rounded">{product?.category.name}</p>
@@ -71,7 +74,7 @@ export const  ItemProductSelect = () =>{
                     <div className="p-2">
                         <p className="w-full text-center text-white font-mono">Descripcion</p>
                         <hr />
-                        <p className="p-2 text-white">{product?.description}</p>
+                        <p className="p-2 text-white h-47 overflow-y-auto overflow-x-visible">{product?.description}</p>
                     </div>
                 </div>
                 
@@ -86,15 +89,16 @@ export const  ItemProductSelect = () =>{
                                     value:true,
                                     message:"Este campo es obligatorio"
                                 },
-                                max:{
-                                    value:product!.stockCurrent,
-                                    message:"No puedes comprar mas de esta cantidad"
-
-                                },
                                 validate:(e) => {
                                     if(e <= 0){
                                         return "El valor tiene que ser mayor a 1"
                                     }
+
+                                    if(product!.stockCurrent - e < product!.stockMin){
+                                        return "No puedes pedir esta catidad por ahora"
+                                    }
+
+                                    return true
                                 }
                             })}className="w-full text-white p-2 bg-neutral-800 border-2 border-neutral-500 transition hover:border-neutral-300" type="number" value={quantity} onChange={updatePrice}  />
                             {errors.quantity&&(<p className="text-red-400">❌{errors.quantity.message}</p>)}
@@ -103,9 +107,6 @@ export const  ItemProductSelect = () =>{
 
                         <button type="submit" className="w-full bg-neutral-600 rounded py-2 transition hover:bg-neutral-500 text-white">Agregar al carrito</button>
                     </form>
-                    {
-                        cartSaveMutation.isSuccess&&(<p className="w-full text-center">Producto agregado al carrito</p>)
-                    }
                     {
                         cartSaveMutation.error&&(<p className="w-full text-center">Error al intentar guardar el item al carrito</p>)
                     }

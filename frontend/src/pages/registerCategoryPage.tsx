@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { categoryRegisterData } from '../type/categoryRegister'
-import { categoryRegister } from '../hooks/category_hooks'
+import { useRegisterCategory } from '../hooks/category_hooks'
 export const RegisterCategoryPage = () => {
 
-  const categoryMutation = categoryRegister()
+  const categoryMutation = useRegisterCategory()
 
   const {
       register,

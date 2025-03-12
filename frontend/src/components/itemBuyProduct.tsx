@@ -1,4 +1,3 @@
-
 export const ItemBuyProduct = ({product, user}:any) => {
     return(
         <div className="w-120 p-4 bg-white flex flex-col items-center justify-center rounded-2xl">

@@ -1,15 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-import CarritoPage from "../pages/carritoPage";
-import ItemCartEdit from "../pages/ItemCartEdit";
-import PaginaErrorPage from "../pages/ErrorPage";
 import CompraRealizadaPage from "../pages/compraRealizadaPage";
 import MenuPage from "../pages/menuPage";
 import InicioPage from "../pages/InicioPage"
 import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
-import AllProductsPage from "../pages/allProductsPage";
-import EditProductPage from "../pages/editProduct";
 import { ComprarProductoPage } from "../pages/comprarProductoPage";
 import { ComprasPage } from "../pages/comprasPage";
 import { OrderInfoPage } from "../components/orderInfoPage";
@@ -20,6 +15,11 @@ import { RegisterProductPage } from "../pages/registerProductPage";
 import { RegisterCategoryPage } from "../pages/registerCategoryPage";
 import { LoginUserPage } from "../pages/loginPage";
 import { ItemProductSelect } from "../pages/itemProductSelectPage";
+import { EditProductPage } from "../pages/editProduct";
+import { CarritoPage } from "../pages/carritoPage";
+import { PaginaErrorPage } from "../pages/ErrorPage";
+import { AllProductsPage } from "../pages/allProductsPage";
+import { ItemCartEdit } from "../pages/ItemCartEdit";
 
 
 
@@ -129,10 +129,7 @@ const router = createBrowserRouter([
                 path:"/inicioPage/editUserPage/:id",
                 element: <EditUserPage/>
             },
-            {
-                path:"/inicioPage/editProduct/:id_product",
-                element: <EditProductPage/>
-            }
+            
         ]
         
     },

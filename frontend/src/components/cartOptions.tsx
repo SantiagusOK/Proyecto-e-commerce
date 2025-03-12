@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { CartData } from "../type/cartData";
+import { userCreateOrder } from "../hooks/order_hooks";
 
 interface CartInterface{
     cart:CartData
@@ -9,22 +10,23 @@ export const CartOptions = ({cart}:CartInterface)=> {
 
     const totalOrdern = cart.cart_items.length
     const navigate = useNavigate()
+    const orderMutation = userCreateOrder()
+
 
     const local = localStorage.getItem("userData")
     const user = JSON.parse(local!)
     const id_user = Number(user.id)
 
     const realize_buy = async () => {
-        const response = await fetch("http://localhost:8000/order/createOrder/" + id_user,{
-            method:"POST"
-        })
-        if(response.ok){
-            navigate("/inicioPage/misComprasPage")
-        }
+        orderMutation.mutate(id_user)
+    }
+
+    if(orderMutation.isSuccess){
+        navigate("/inicioPage/compraRealizadaPage")
     }
 
     return (
-        <div className="bg-white w-130 h-fit p-8 space-y-5 rounded-[10px]">
+        <div className="bg-neutral-600 w-130 h-fit p-5 space-y-5 rounded-[10px] text-white">
             <div>
                 <div className="flex justify-between">
                     <p>Fecha de creacion</p>
@@ -75,9 +77,14 @@ export const CartOptions = ({cart}:CartInterface)=> {
                 <p>${cart.totalCart}</p>
             </div>
 
-            <button className="bg-blue-400 p-2 w-full cursor-pointer rounded-[10px] transition hover:bg-blue-600" onClick={realize_buy}>
-                <span className="text-white font-bold">Realizar Comprar</span>
-            </button>
+            <div>
+                {
+                    orderMutation.isError&&(<p className="text-red-400 w-full text-center">Hubo un error al intentar realizar la compra</p>)
+                }
+                <button className="bg-neutral-500 p-2 w-full cursor-pointer rounded transition hover:bg-neutral-400" onClick={realize_buy}>
+                    <span className="text-white font-bold">Realizar Comprar</span>
+                </button>
+            </div>
         </div>
     )
 }

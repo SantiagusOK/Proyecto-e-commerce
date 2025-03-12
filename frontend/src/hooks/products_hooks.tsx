@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { ProductData } from "../type/productData"
-import { fetchAProduct, fetchProducts, registerProduct } from "../api/productsAPi"
+import { createProduct, fetchProduct, fetchProducts,updateProduct } from "../api/productsAPi"
 
 
 export const useProducts = () => {
@@ -12,15 +12,21 @@ export const useProducts = () => {
     })
 }
 
-export const useAnProducts = (id_product:number) => {
+export const useProduct = (id_product:number) => {
     return useQuery<ProductData, Error>({
         queryKey:["product", id_product],
-        queryFn: () => fetchAProduct(id_product),
+        queryFn: () => fetchProduct(id_product),
     })
 }
 
-export const registerAProduct = () => {
+export const useRegisterProduct = () => {
     return useMutation({
-        mutationFn: registerProduct
+        mutationFn: createProduct
+    })
+}
+
+export const useProductUpdate = () => {
+    return useMutation({
+        mutationFn: updateProduct
     })
 }

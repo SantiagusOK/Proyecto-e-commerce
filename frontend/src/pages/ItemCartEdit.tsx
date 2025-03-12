@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { data, Navigate, NavLink, useNavigate, useParams } from "react-router-dom"
+import {NavLink, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
-import { set } from "react-hook-form"
 
-const ItemCartEdit = () =>{
+
+export const ItemCartEdit = () =>{
 
     const [name, setName] = useState<string>("")
     const [amount, setAmount] = useState<number>(1)
@@ -140,5 +140,3 @@ const ItemCartEdit = () =>{
         </div>
     )
 }
-
-export default ItemCartEdit

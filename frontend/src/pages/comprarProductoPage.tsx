@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ItemBuyProduct } from "../components/itemBuyProduct";
 
 export const ComprarProductoPage = () => {

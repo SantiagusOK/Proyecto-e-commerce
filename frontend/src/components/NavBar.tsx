@@ -6,9 +6,6 @@ interface NavLinkdata{
 }
 
 export default function MyNavBar(){
-
-    // const users = useSelector((state) => state.users.idUser)
-
     const storage = localStorage.getItem("userData")
     const user = JSON.parse(storage!)
 

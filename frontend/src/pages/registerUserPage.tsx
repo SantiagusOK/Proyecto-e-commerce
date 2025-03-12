@@ -1,12 +1,12 @@
 import { useForm,  } from 'react-hook-form'
 import { NavLink } from 'react-router-dom'
-import { userRegisterMutation } from '../api/userMutation'
 import { useFormData } from '../type/useFormData'
 import { useEffect, useState } from 'react'
+import { useRegisterUser } from '../hooks/user_hooks'
 
 export const RegisterUserPage = () =>{
 
-  const userMutation = userRegisterMutation()
+  const userMutation = useRegisterUser()
   const[pageVisible, setPageVisible] = useState<boolean>(false)
   
   const {

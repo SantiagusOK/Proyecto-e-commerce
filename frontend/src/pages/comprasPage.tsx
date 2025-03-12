@@ -18,7 +18,7 @@ export const ComprasPage = () =>{
     console.log(orders)
 
     return(
-        <div className="flex flex-col space-y-10 items-center justify-center p-10 ">
+        <div className="flex flex-col space-y-2 items-center justify-center p-10 ">
             {orders.length===0 ? (
                 <p className="text-4xl">No tienes compras realizadas :)</p>
             ) : (

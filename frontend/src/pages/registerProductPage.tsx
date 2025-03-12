@@ -1,18 +1,18 @@
 import { useForm } from "react-hook-form"
-import { useCategory } from "../hooks/category_hooks"
+import { useCategories } from "../hooks/category_hooks"
 import Loading from "../components/loading"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { productRegisterData } from "../type/productRegisterData"
-import { registerAProduct } from "../hooks/products_hooks"
+import {  useRegisterProduct } from "../hooks/products_hooks"
 
 export const RegisterProductPage = () => {
 
-    const{data:categories = [], error, isLoading, isError} = useCategory()
+    const{data:categories = [], error, isLoading, isError} = useCategories()
     const[id_category, setIdCategory] = useState<number>(0)
     const[urlImage, loadUrlImage] = useState<string>("")
     const[url, setUrlImage] = useState<string>("")
 
-    const productMutation = registerAProduct()
+    const productMutation = useRegisterProduct()
 
     if(isError){
         return(

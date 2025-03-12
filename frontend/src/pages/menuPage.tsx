@@ -2,12 +2,12 @@ import { useState } from "react"
 import ItemProducts from "../components/ItemProduct"
 import Loading from "../components/loading"
 import { useProducts } from "../hooks/products_hooks"
-import { useCategory } from "../hooks/category_hooks"
+import { useCategories } from "../hooks/category_hooks"
 
 const MenuPage = () => {
 
     const{data:product = [], isLoading, isError} = useProducts()
-    const{data:categories=[], isLoading:loadingCartegory} = useCategory()
+    const{data:categories=[], isLoading:loadingCartegory} = useCategories()
     const[valueSearch, setValueSearch] = useState<string>("")
     const[categorieSearch, setCategorieSearch] = useState<string>("")
     const[nameProduct, setNameProduct] = useState<string>("")
@@ -25,7 +25,7 @@ const MenuPage = () => {
     }
 
     return(
-        <div className="p-2 space-y-2 flex flex-col items-center">
+        <div className="p-10 space-y-2 flex flex-col items-center">
             {product.length >= 1 ? (
                 <>
                     <div className="w-full justify-between flex items-center 0">
@@ -41,7 +41,7 @@ const MenuPage = () => {
                                 <h1 className="text-white font-bold">Categoria:</h1>
                                 {categories.length>=1&&(
                                     <select className="w-fit  bg-white" value={categoryProduct} onChange={(e)=>setCategoryProduct(e.target.value)}  >
-                                    <option value={""}>...</option>
+                                    <option value={""}>TODOS</option>
                                     {categories.map((categorie)=>(
                                         <option value={categorie.name}>{categorie.name.toUpperCase()}</option>
                                     ))}
@@ -54,13 +54,13 @@ const MenuPage = () => {
                     </div>
         
                     {productFilter.length===0 &&(
-                        <div className="flex flex-col w-full text-center text-4xl">
-                            <span>No hay productos en esta categoria</span>
+                        <div className="flex flex-col w-full text-center text-4xl text-white" >
+                            <span>No hay productos en esta categoria :(</span>
                         </div>
                     )}
         
                     {productFilter.length > 0 &&(
-                        <div className="grid grid-cols-1 w-[60%] gap-x-4 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 w-[60%] gap-x-4 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
                             {productFilter.map((products, index)=>(
                                 <ItemProducts product={products} key={index} />
                             ))}

@@ -52,13 +52,10 @@ export const OrderInfoPage=()=>{
         )
     }
 
-    console.log("Rol del usuario: " + user.role.roleName)
-    console.log("Estado de la orden: " + order.state.name)
-
     return(
         <div className="p-10 flex justify-center space-x-4">
-            <div className="flex w-215 h-fit justify-center space-x-20 bg-white p-2">
-                <div className="space-y-2  flex-1">
+            <div className="flex w-215 h-fit justify-center space-x-20 bg-neutral-600 rounded p-5">
+                <div className="space-y-2  flex-1 min-h-20 max-h-125 overflow-y-auto overflow-x-hidden px-3">
                     {
                         order.items.map( item => (
                             <ItemOrderInfoCard itemOrder={item} ></ItemOrderInfoCard>
@@ -67,11 +64,11 @@ export const OrderInfoPage=()=>{
                 </div>
             </div>
 
-            <div className="bg-white p-5 space-y-2 w-150 h-fit">
-                <div className="flex items-center justify-between">
+            <div className="bg-neutral-600 p-5 space-y-2 w-150 h-fit">
+                <div className="flex items-center justify-between ">
                     <div>
-                        <p>Fecha de compra</p>
-                        <p className="font-bold">{order.date}</p>
+                        <p className="text-white">Fecha de compra</p>
+                        <p className="font-bold text-white">{order.date}</p>
                     </div>
                     <p className={`${order.state.name==="pendiente" ? "bg-amber-300" : order.state.name==="finalizado" ? "bg-green-300" : "bg-red-300"} px-7 py-2 rounded font-bold`}>{order.state.name.toUpperCase()}</p>
                 </div>
@@ -79,51 +76,51 @@ export const OrderInfoPage=()=>{
                 <hr />
 
                 <div className="flex flex-col w-full">
-                    <p className="w-full text-center">Datos del comprador</p>
+                    <p className="w-full text-center text-white">Datos del comprador</p>
                     <div className="flex justify-between">
-                        <p>Nombre y Apellido</p>
-                        <p>{order.user.fullname} {order.user.lastname}</p>
+                        <p className="text-white">Nombre y Apellido</p>
+                        <p className="text-white">{order.user.fullname} {order.user.lastname}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Nombre de usuario</p>
-                        <p>@{order.user.username}</p>
+                        <p className="text-white">Nombre de usuario</p>
+                        <p className="text-white">@{order.user.username}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Email</p>
-                        <p>{order.user.email}</p>
+                        <p className="text-white">Email</p>
+                        <p className="text-white">{order.user.email}</p>
                     </div>
                 </div>
 
                 <hr />
 
                 <div className="flex flex-col w-full">
-                    <p className="w-full text-center">Direccion</p>
+                    <p className="w-full text-center text-white">Direccion</p>
                     <div className="flex justify-between">
-                        <p>Pais</p>
-                        <p>{order.address.country}</p>
+                        <p className="text-white">Pais</p>
+                        <p className="text-white">{order.address.country}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Estado</p>
-                        <p>{order.address.state}</p>
+                        <p className="text-white">Estado</p>
+                        <p className="text-white">{order.address.state}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Ciudad</p>
-                        <p>{order.address.city}</p>
+                        <p className="text-white">Ciudad</p>
+                        <p className="text-white">{order.address.city}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Calle</p>
-                        <p>{order.address.street}</p>
+                        <p className="text-white">Calle</p>
+                        <p className="text-white">{order.address.street}</p>
                     </div>
                     <div className="flex justify-between">
-                        <p>Codigo Postal</p>
-                        <p>{order.address.postal_code}</p>
+                        <p className="text-white">Codigo Postal</p>
+                        <p className="text-white">{order.address.postal_code}</p>
                     </div>
                 </div>
 
                 <div className="w-full space-y-2">
                     {
                         order.state.name === "pendiente" && user.role.roleName === "administrador" &&(
-                            <button className="px-5 py-2 bg-blue-500 w-full rounded transition hover:bg-blue-800 cursor-pointer text-white flex items-center justify-center space-x-5" onClick={setNewState}>
+                            <button className="px-5 py-2 bg-neutral-400 w-full rounded transition hover:bg-neutral-500 cursor-pointer text-white flex items-center justify-center space-x-5" onClick={setNewState}>
                                 {
                                     loadingRealize &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
                                 }
@@ -136,7 +133,7 @@ export const OrderInfoPage=()=>{
 
                     {
                         order.state.name !== "cancelado" &&(
-                            <button className="px-5 py-2 bg-blue-500 w-full rounded transition hover:bg-blue-800 cursor-pointer text-white flex items-center justify-center space-x-3" onClick={cancelOrder}>
+                            <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white flex items-center justify-center space-x-3" onClick={cancelOrder}>
                                 {
                                     loadingCancel &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
                                 }
@@ -145,7 +142,7 @@ export const OrderInfoPage=()=>{
                         )
                     }
 
-                    <button className="px-5 py-2 bg-blue-500 w-full rounded transition hover:bg-blue-800 cursor-pointer text-white" onClick={()=>{navigate("/inicioPage/misComprasPage")}}>volver</button>
+                    <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white" onClick={()=>{navigate("/inicioPage/misComprasPage")}}>volver</button>
                     
                 </div>
                 

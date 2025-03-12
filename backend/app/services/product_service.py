@@ -32,7 +32,7 @@ class ProductService:
         return product
 
     @staticmethod  
-    def create_product(session:Session, anNewProduct:ProductCreateSchema):
+    def create_product(session:Session, anNewProduct:ProductUpdateSchema):
         
         productStatement = (select(Product)
                             .where(func.lower(Product.name) == anNewProduct.product.name.lower()))

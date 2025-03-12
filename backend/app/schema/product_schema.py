@@ -37,4 +37,10 @@ class ProductCreateSchema(BaseModel):
     product:ProductSchema
     category:CategorySchema
     
-
+class ProductUpdateSchema(BaseModel):
+    id:int
+    price:float
+    stockMin:int
+    stockMax:int
+    stockCurrent:int
+    description:str

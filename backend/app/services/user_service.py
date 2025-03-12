@@ -25,6 +25,9 @@ class UserService:
                 detail="No se encontro el rol, o no existe"
             )
         
+        user.role = role
+        user.role_id = role.id
+        
         session.add(user)
         session.commit()
         

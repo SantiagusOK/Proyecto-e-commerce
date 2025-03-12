@@ -6,6 +6,5 @@ export const useRoles = () =>{
     return useQuery<RoleData[], Error>({
         queryKey:["roles"],
         queryFn: fetchRoles,
-
     })
 }

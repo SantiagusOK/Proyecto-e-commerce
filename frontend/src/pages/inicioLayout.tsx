@@ -1,4 +1,3 @@
-import React from 'react'
 import { InicioNavbar } from '../components/inicioNavbar'
 import { Outlet } from 'react-router-dom'
 

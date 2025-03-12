@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { fetchCategories, registerCategory } from "../api/categoryApi"
+import { createCategory, fetchCategories } from "../api/categoryApi"
 import { CategoryData } from "../type/categoryData"
 
-export const useCategory = () => {
+export const useCategories = () => {
     return useQuery<CategoryData[], Error>({
         select: (data) => (Array.isArray(data) ? data : []),
         queryKey:["categories"],
@@ -10,8 +10,8 @@ export const useCategory = () => {
     })
 }
 
-export const categoryRegister = () => {
+export const useRegisterCategory = () => {
     return useMutation({
-        mutationFn: registerCategory
+        mutationFn: createCategory
     })
 }

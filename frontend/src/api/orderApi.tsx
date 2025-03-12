@@ -1,16 +1,19 @@
 import axios from "axios"
 import { OrderData } from "../type/orderData"
 
-export const fetchOrdersUser = async (id_user:number) : Promise<OrderData[]> => {
-    const response = await fetch("http://localhost:8000/order/getOrdersUser/" + id_user)
-    if(!response.ok){
-        const data = await response.json()
-        throw new Error(data.detail)
-    }
-    return response.json()
+export const fetchOrders = async (id_user:number) : Promise<OrderData[]> => {
+    const {data} = await axios.get("http://localhost:8000/order/getOrdersUser/" + id_user)
+    return data
 }
 
-export const fetchAnOrder = async (id_product:number) : Promise<OrderData> => {
-    const order  = await fetch("http://localhost:8000/order/" + id_product)
-    return order.json()
+export const fetchOrder = async (id_order:number) : Promise<OrderData> => {
+    const { data }  = await axios.get("http://localhost:8000/order/" + id_order)
+    return data
 } 
+
+export const createOrderUser = async (id_user:number) => {
+    const { data } =  await axios.post("http://localhost:8000/order/createOrder/" + id_user, null ,{
+        headers:{"Content-Type":"application/json"}
+    })
+    return data
+}
