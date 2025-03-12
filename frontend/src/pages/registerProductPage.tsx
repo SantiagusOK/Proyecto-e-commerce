@@ -151,7 +151,7 @@ export const RegisterProductPage = () => {
                     </div>
                 </div>
 
-                <form className="bg-neutral-600 p-5 rounded space-y-5 w-[30%]" onSubmit={handleSubmit(registerProduct)}>
+                <form className="bg-neutral-600 p-5 rounded space-y-5 w-[50%]" onSubmit={handleSubmit(registerProduct)}>
                     {/* NOMBRE Y CATEGORIA */}
                     <div className="w-full flex space-x-5  items-start justify-center">
                         {/* NOMBRE */}

@@ -88,7 +88,7 @@ export const  ItemProductSelect = () =>{
                                 },
                                 max:{
                                     value:product!.stockCurrent,
-                                    message:""
+                                    message:"No puedes comprar mas de esta cantidad"
 
                                 },
                                 validate:(e) => {
