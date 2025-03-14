@@ -31,9 +31,8 @@ export const ItemCartCad = ({item} : CartInterface) => {
                 <p className="text-1xl text-white">Total: ${item.unityPrice}</p>
             </div>
             
-
             <div className="space-x-7 p-2 flex items-end">
-                <NavLink to={""} className={"font-medium text-white"}>EDITAR</NavLink>
+                <NavLink to={"/inicioPage/carritoPage/itemCartEdit/" + item.id} className={"font-medium text-white"}>EDITAR</NavLink>
                 <button className={"font-medium cursor-pointer text-white"} onClick={delete_a_item}>ELIMINAR</button>
             </div>
         </div>

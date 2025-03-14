@@ -64,7 +64,7 @@ export const OrderInfoPage=()=>{
                 </div>
             </div>
 
-            <div className="bg-neutral-600 p-5 space-y-2 w-150 h-fit">
+            <div className="bg-neutral-600 p-10 space-y-2 w-150 h-fit rounded-2xl">
                 <div className="flex items-center justify-between ">
                     <div>
                         <p className="text-white">Fecha de compra</p>

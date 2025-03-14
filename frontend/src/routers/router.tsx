@@ -6,7 +6,7 @@ import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
 import { ComprarProductoPage } from "../pages/comprarProductoPage";
-import { ComprasPage } from "../pages/comprasPage";
+import { MisComprasPage } from "../pages/comprasPage";
 import { OrderInfoPage } from "../components/orderInfoPage";
 import { InicioLayout } from "../pages/inicioLayout";
 import { WelcomePage } from "../pages/welcomePage";
@@ -19,7 +19,7 @@ import { EditProductPage } from "../pages/editProduct";
 import { CarritoPage } from "../pages/carritoPage";
 import { PaginaErrorPage } from "../pages/ErrorPage";
 import { AllProductsPage } from "../pages/allProductsPage";
-import { ItemCartEdit } from "../pages/ItemCartEdit";
+import { EditItemProductSelect } from "../pages/editItemProductSelectPage";
 
 
 
@@ -93,8 +93,8 @@ const router = createBrowserRouter([
                         element: <CarritoPage/>,
                     },
                     {
-                        path:"/inicioPage/carritoPage/itemCartEdit/:idItem",
-                        element: <ItemCartEdit/>
+                        path:"/inicioPage/carritoPage/itemCartEdit/:id_item",
+                        element: <EditItemProductSelect/>
                     },
                 ]
 
@@ -112,7 +112,7 @@ const router = createBrowserRouter([
                 children:[
                     {
                         path:"/inicioPage/misComprasPage",
-                        element:<ComprasPage/>
+                        element:<MisComprasPage/>
                     },
                     {
                         path:"/inicioPage/misComprasPage/orderInfo/:id_order",

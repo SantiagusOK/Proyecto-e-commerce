@@ -148,7 +148,7 @@ class OrderServices:
         order.state = orderState
 
         order.ordersHistory.append(newOrdeStateHistory)
-        user.orderStateHistory = newOrdeStateHistory
+        user.orderStateHistory.append(newOrdeStateHistory)
         orderState.stateList.append(newOrdeStateHistory)
 
         session.add_all([user,order,orderState])

@@ -87,10 +87,23 @@ class CartService:
                             .where(Cart.id_user == id_user))
         cartUser = session.exec(cartItemStatement).first()
         if not cartUser:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No se encontro un carrito"
-            )
+            stateCartItemStatement = (select(CartState)
+                        .where(CartState.name == "activado"))
+            anState = session.exec(stateCartItemStatement).first()
+            if not anState:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No se encontro un estado de carro"
+                )
+        
+            date = datetime.now()
+            newDate = format_datetime(date, locale='es_ES')
+            
+            cartUser = Cart(id_user=id_user, createdAt=newDate, state_id=anState.id, state=anState, totalCart=0.0)
+            
+            session.add(cartUser)
+            session.commit()
+            session.refresh(cartUser)
         
         productStatement = (select(Product)
                             .where(Product.id == anItem.id_product))
@@ -142,12 +155,10 @@ class CartService:
         return cart
     
     @staticmethod
-    def get_item_cart(session:Session, id:int, id_cart:int):
+    def get_item_cart(session:Session, id_item:int):
         statement = (select(CartItem)
-                    .options(selectinload(CartItem.cart), 
-                            selectinload(CartItem.product))
-                    .where(Cart.id == id_cart)
-                    .where(Cart.id_user == id))
+                    .options(selectinload(CartItem.product))
+                    .where(CartItem.id == id_item))
         itemCart = session.exec(statement).first() 
         
         if not itemCart:
@@ -160,30 +171,42 @@ class CartService:
     
     @staticmethod
     def modify_item_cart(session:Session, id_item:int,itemCartUpdate:CartItemUpdateSchema):
+        
+        print(f"-----------------{itemCartUpdate.model_dump()}")
+        
+        
         cartItemStatement = (select(CartItem)
                         .where(CartItem.id == id_item))
         
         itemCart = session.exec(cartItemStatement).first()
         
+        cart = itemCart.cart
+        product = itemCart.product
+        
+        if itemCartUpdate.quantity > itemCart.quantity :
+            product.stockCurrent -= itemCartUpdate.quantity
+
+        elif itemCartUpdate.quantity < itemCart.quantity:
+            product.stockCurrent += itemCart.quantity - itemCartUpdate.quantity
+
+        
+        session.add(product)
+        session.commit()
+        session.refresh(product)
+        
         #actualiza el el precio total del item, y la cantidad de un item
         itemCart.unityPrice = itemCartUpdate.unityPrice
         itemCart.quantity = itemCartUpdate.quantity
         
-        #actualiza el stockCurrent de un producto
-        product = itemCart.product
-        product.stockCurrent = itemCartUpdate.stockCurrent
-        
         newTotalCart = 0.0
-        cart = itemCart.cart
         
         for item in cart.cart_items:
             newTotalCart += item.unityPrice
             
         cart.totalCart = round(newTotalCart,2)
         
-        session.add_all([product, itemCart, cart])
+        session.add_all([itemCart, cart])
         session.commit()
-        session.refresh(product)
         session.refresh(itemCart)
         
         return {"message":"Item del carrito editado con exito"}

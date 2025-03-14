@@ -44,9 +44,9 @@ export const OrderCard = ({item}:OrderSchema) => {
                 }
 
                 <div className="flex w-full justify-end space-x-3">
-                    <p className={`${item.state.name==="pendiente" ? "bg-amber-300" : item.state.name==="finalizado" ? "bg-green-300" : "bg-red-300"} px-7 py-2 rounded font-bold flex items-center justify-center`}>{item.state.name.toUpperCase()}</p>
+                    <p className={`${item.state.name==="pendiente" ? "bg-amber-300" : item.state.name==="finalizado" ? "bg-green-300" : "bg-red-300"} px-5 py-1 rounded font-bold flex items-center justify-center`}>{item.state.name.toUpperCase()}</p>
 
-                    <NavLink  className="bg-neutral-500 h-full text-2xl p-3 px-5 rounded-[5px] font-mono cursor-pointer transition hover:bg-neutral-400 text-white" to={"/inicioPage/misComprasPage/orderInfo/" + item.id}>
+                    <NavLink  className="bg-neutral-500 h-full text-xl py-1 px-5 rounded-[5px] font-mono cursor-pointer transition hover:bg-neutral-400 text-white" to={"/inicioPage/misComprasPage/orderInfo/" + item.id}>
                         Ver detalles
                     </NavLink>
                 </div>

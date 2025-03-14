@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom"
+import  logov3  from "../assets/img/logov3.png"
 
 interface NavLinkdata{
     router:string,
@@ -17,19 +18,23 @@ export default function MyNavBar(){
 
     return(
         <div className="bg-neutral-700  text-white flex justify-between items-center p-2 pr-10 pl-10 h-fit ">
-            <p className="text-2xl">CarritoCompra</p>
+            <img className="w-50" src={logov3} alt="" />
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
                 <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
-                {/* //crear productos */}
-                <MyNavLink router={"/inicioPage/registerProductPage"} tittle={"Registrar Productos"}/>
-                {/* //crear categorias */}
-                <MyNavLink router={"/inicioPage/registerCategoryPage"} tittle={"Registrar Categorias"}/>
-                {/* obtener productos + categoria */}
-                <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
-                {/* obtener y manipular Usuarios */}
-                <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Usuarios"}/>
-                
+                {user.role.roleName === "administrador" &&(
+                    <>
+                        {/* //crear productos */}
+                        <MyNavLink router={"/inicioPage/registerProductPage"} tittle={"Registrar Productos"}/>
+                        {/* //crear categorias */}
+                        <MyNavLink router={"/inicioPage/registerCategoryPage"} tittle={"Registrar Categorias"}/>
+                        {/* obtener productos + categoria */}
+                        <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
+                        {/* obtener y manipular Usuarios */}
+                        <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Usuarios"}/>
+
+                    </>
+                )}
                 {/* pagina carrito */}
                 <MyNavLink router={"/inicioPage/carritoPage"} tittle={"Carrito"}/>
                 {/* pagina mis compras */}

@@ -1,12 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/loading"
-import { useProduct } from "../hooks/products_hooks"
 import { useForm } from "react-hook-form"
 import { productSelectData } from "../type/productSelectData"
 import { useEffect, useState } from "react"
-import { useCreateCart, useSaveItem } from "../hooks/cart_hooks"
+import { useItemCart, useUpdateItemCart } from "../hooks/cart_hooks"
 
-export const  ItemProductSelect = () =>{
+export const  EditItemProductSelect = () =>{
     
     const{register, handleSubmit, setValue, formState:{errors}} = useForm<productSelectData>()
     const navigate = useNavigate()
@@ -16,17 +15,18 @@ export const  ItemProductSelect = () =>{
     const[totalPrice, setTotalPrice] = useState<number>(0)
     const[quantity, setQuantity] = useState<number>(1)
     
-    const{id} = useParams()
-    const cartSaveMutation = useSaveItem()
-    const{data:product, isLoading, } = useProduct(Number(id)) 
-    
+    const{id_item} = useParams()
+    console.log("ID_ITEM => " + id_item)
+    const cartUpdateItem = useUpdateItemCart()
 
+    const{data:itemProduct, isLoading, } = useItemCart(Number(id_item)) 
+    
     useEffect(() => {
-        if(product){
-            setTotalPrice(product.price)
-            setQuantity(1)
+        if(itemProduct){
+            setTotalPrice(itemProduct.unityPrice)
+            setQuantity(itemProduct.quantity)
         }
-    },[product])
+    },[itemProduct])
 
     if(isLoading){
         return(
@@ -34,20 +34,19 @@ export const  ItemProductSelect = () =>{
         )
     }
 
-    if(cartSaveMutation.isSuccess){
+    if(cartUpdateItem.isSuccess){
         navigate("/inicioPage/carritoPage")
     }
 
-    const save_item = () => {
+    const save_item = (data:any) => {
 
         const product_response = {
-            id_product:Number(product!.id),
             quantity:Number(quantity),
             unityPrice:totalPrice
         }
 
-        console.log(product_response)
-        cartSaveMutation.mutate({ id_user: user.id, product: product_response });
+        console.log(data)
+        cartUpdateItem.mutate({ id_item: Number(id_item), itemUpdate: product_response });
     }
 
     const updatePrice = (value:any) => {
@@ -55,11 +54,11 @@ export const  ItemProductSelect = () =>{
         setValue("quantity", quantityValue, { shouldValidate: true });
         setQuantity(quantityValue)
         if(quantityValue != 0){
-            const total = (product!.price * quantityValue).toFixed(2)
+            const total = (itemProduct!.product.price * quantityValue).toFixed(2)
             setTotalPrice(Number(total))
         }
         if(quantityValue <= 0){
-            setTotalPrice(Number(product?.price))
+            setTotalPrice(Number(itemProduct!.product.price))
         }
     }
 
@@ -70,19 +69,19 @@ export const  ItemProductSelect = () =>{
                 <div className="bg-neutral-700 rounded-3xl space-y-2 w-130 h-160">
                     <figure className="relative">
 
-                        <p className="absolute top-85 left-5 bg-black text-white px-5 py-2 rounded">{product?.category.name}</p>
-                        <img className="object-cover w-130 h-100 rounded-3xl " src={product?.urlImage} alt="" />
+                        <p className="absolute top-85 left-5 bg-black text-white px-5 py-2 rounded">{itemProduct!.product.category.name}</p>
+                        <img className="object-cover w-130 h-100 rounded-3xl " src={itemProduct!.product.urlImage} alt="" />
                     </figure>
                     <div className="p-2">
                         <p className="w-full text-center text-white font-mono">Descripcion</p>
                         <hr />
-                        <p className="p-2 text-white h-47 overflow-y-auto overflow-x-visible">{product?.description}</p>
+                        <p className="p-2 text-white h-47 overflow-y-auto overflow-x-visible">{itemProduct!.product.description}</p>
                     </div>
                 </div>
                 
 
                 <div className="bg-neutral-700 w-150 h-fit p-5 rounded-2xl space-y-2">
-                    <p className="w-full text-white text-2xl ">{product?.name}</p>
+                    <p className="w-full text-white text-2xl ">{itemProduct!.product.name}</p>
                     <form className="space-y-2" onSubmit={handleSubmit(save_item)}>
                         <div>
                             <p className="text-white">Cantidad</p>
@@ -96,7 +95,7 @@ export const  ItemProductSelect = () =>{
                                         return "El valor tiene que ser mayor a 1"
                                     }
 
-                                    if(product!.stockCurrent - e < product!.stockMin){
+                                    if(itemProduct!.product.stockCurrent - e < itemProduct!.product.stockMin){
                                         return "No puedes pedir esta catidad por ahora"
                                     }
 
@@ -109,13 +108,13 @@ export const  ItemProductSelect = () =>{
 
                         <button type="submit" className="w-full bg-neutral-600 rounded py-2 transition hover:bg-neutral-500 text-white flex items-center justify-center space-x-3 cursor-pointer">
                             {
-                                cartSaveMutation.isPending&&(<div className="w-5 h-5 border-2 border-t-transparent border-l-transparent rounded-full animate-spin"></div>)
+                                cartUpdateItem.isPending&&(<div className="w-5 h-5 border-2 border-t-transparent border-l-transparent rounded-full animate-spin"></div>)
                             }
-                            <p>Agregar al carrito</p>
+                            <p>Guardar cambios</p>
                         </button>
                     </form>
                     {
-                        cartSaveMutation.error&&(<p className="w-full text-center">Error al intentar guardar el item al carrito</p>)
+                        cartUpdateItem.error&&(<p className="w-full text-center">Error al intentar guardar el item al carrito</p>)
                     }
                 </div>
             </div>  

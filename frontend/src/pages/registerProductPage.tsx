@@ -14,13 +14,13 @@ export const RegisterProductPage = () => {
 
     const productMutation = useRegisterProduct()
 
-    if(isError){
-        return(
-            <div>
-                hola
-            </div>
-        )
-    }
+    // if(isError){
+    //     return(
+    //         <div>
+    //             hola
+    //         </div>
+    //     )
+    // }
 
     const {
         register,
@@ -83,7 +83,7 @@ export const RegisterProductPage = () => {
         } 
         
         if(value == stockMax){
-            return "❌El stock maximo no tiene que ser igual al minimo"
+            return "❌El stock minimo no tiene que ser igual al minimo"
         } 
 
         if(value > stockMax){

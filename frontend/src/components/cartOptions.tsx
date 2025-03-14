@@ -81,8 +81,13 @@ export const CartOptions = ({cart}:CartInterface)=> {
                 {
                     orderMutation.isError&&(<p className="text-red-400 w-full text-center">Hubo un error al intentar realizar la compra</p>)
                 }
-                <button className="bg-neutral-500 p-2 w-full cursor-pointer rounded transition hover:bg-neutral-400" onClick={realize_buy}>
-                    <span className="text-white font-bold">Realizar Comprar</span>
+                <button className="bg-neutral-500 p-2 w-full cursor-pointer rounded transition hover:bg-neutral-400 flex items-center justify-center space-x-3" onClick={realize_buy}>
+                    {   
+                        orderMutation.isPending&&(<div className="w-5 h-5 border-2 border-t-transparent border-l-transparent rounded-full animate-spin"></div>)
+                    }
+                    <span className="text-white font-bold">
+                        Realizar Comprar
+                    </span>
                 </button>
             </div>
         </div>

@@ -27,7 +27,6 @@ class CartItemResponse(BaseModel):
     product:ProductResponse
     
 class CartItemUpdateSchema(BaseModel):
-    stockCurrent:int
     quantity:int
     unityPrice:float
 

@@ -12,8 +12,34 @@ const MenuPage = () => {
     const[categorieSearch, setCategorieSearch] = useState<string>("")
     const[nameProduct, setNameProduct] = useState<string>("")
     const[categoryProduct, setCategoryProduct] = useState<string>("")
+    const [positionPage, setPosition] = useState<number>(1)
+    const [limitInitial, setLimitInitial] = useState<number>(0)
+    const [limitFinal, setLimitFinal] = useState<number>(6)
 
+    const limitToShow = 6
+    
+    
     const productFilter = product.filter((item) => item.name.toLowerCase().includes(valueSearch.toLowerCase()) && item.category.name.toLowerCase().includes(categorieSearch.toLowerCase()))
+
+    const limitPage = productFilter.length / limitToShow
+    
+    const changePosition = (type:string) => {
+        switch(type){
+            case "+":
+                setLimitInitial( e => e + limitToShow)
+                setLimitFinal( e => e + limitToShow)
+                setPosition( e => e + 1)
+                return window.scrollTo({ top: 0, behavior: "smooth" });
+            
+            case "-":
+                if(positionPage > 1){
+                    setLimitInitial( e => e - limitToShow)
+                    setLimitFinal( e => e - limitToShow)
+                    setPosition( e => e - 1)
+                    return window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+        }
+    }
       
     const searchProduct = () => {
         setValueSearch(nameProduct)
@@ -25,10 +51,10 @@ const MenuPage = () => {
     }
 
     return(
-        <div className="p-10 space-y-2 flex flex-col items-center">
+        <div className="p-10 space-y-5 flex flex-col items-center">
             {product.length >= 1 ? (
                 <>
-                    <div className="w-full justify-between flex items-center 0">
+                    <div className="w-full justify-between flex items-center ">
                         <div className="space-y-3">
         
                             <div>
@@ -61,11 +87,17 @@ const MenuPage = () => {
         
                     {productFilter.length > 0 &&(
                         <div className="grid grid-cols-1 w-[60%] gap-x-4 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
-                            {productFilter.map((products, index)=>(
+                            {productFilter.slice(limitInitial, limitFinal).map((products, index)=>(
                                 <ItemProducts product={products} key={index} />
                             ))}
                         </div>
                     )}
+
+                    <div className="flex space-x-2">
+                        <button  onClick={() => changePosition("-")} className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${positionPage == 1 ? "invisible" : "visible"}`}> {"<"} </button>
+                        <p className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${productFilter.length < limitToShow ? "invisible" : "visible"}`}>{positionPage}</p>
+                        <button  disabled={positionPage == Math.ceil(limitPage)} onClick={() => changePosition("+")} className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${positionPage == Math.ceil(limitPage) ? "invisible" : "visible"}`}> {">"} </button>
+                    </div>
                 </>
             ) : (
                 <div className="h-screen flex items-center justify-center space-x-10 text-white">

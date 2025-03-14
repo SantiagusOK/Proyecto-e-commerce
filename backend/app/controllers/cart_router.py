@@ -27,9 +27,9 @@ async def get_cart(id:int, session:Session = Depends(get_session)):
 async def get_cart(id:int, session:Session = Depends(get_session)):
     return CartService.get_cart(session, id)
     
-@router.get("/getItemCart/{id}/{id_cart}", response_model=CartItemResponse, status_code=status.HTTP_200_OK)
-async def get_item_cart(id:int, id_cart:int, session:Session = Depends(get_session)):
-    return CartService.get_item_cart(session, id, id_cart)
+@router.get("/getItemCart/{id_item}", response_model=CartItemResponse, status_code=status.HTTP_200_OK)
+async def get_item_cart(id_item:int, session:Session = Depends(get_session)):
+    return CartService.get_item_cart(session, id_item)
 
 @router.put("/modifyAnItemCart/{id_item}", status_code=status.HTTP_200_OK)
 async def modify_item_cart(id_item:int,itemCartUpdate:CartItemUpdateSchema ,session:Session = Depends(get_session)):

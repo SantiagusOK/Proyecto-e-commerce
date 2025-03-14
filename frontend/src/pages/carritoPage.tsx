@@ -14,6 +14,8 @@ export const CarritoPage = () => {
         return <Loading />;
     }
 
+    console.log(error)
+
     if (!cart || !cart.cart_items) {
         return (
             <div className="flex justify-center items-center p-10">
@@ -27,11 +29,11 @@ export const CarritoPage = () => {
     return (
         <div className="flex justify-center space-x-10 p-10">
             <div className="flex flex-col space-y-2 h-150 overflow-y-auto px-2 overflow-x-hidden">
-                {cart.cart_items.map((cartItem) => (
+                {cart!.cart_items.map((cartItem) => (
                     <ItemCartCad key={cartItem.id} item={cartItem} />
                 ))}
             </div>
-            <CartOptions cart={cart} />
+            <CartOptions cart={cart!} />
         </div>
     );
 };
