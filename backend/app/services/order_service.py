@@ -39,7 +39,7 @@ class OrderServices:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No hay ordenes de compra disponibles")
             
-        return allOrders
+        return list(reversed(allOrders))
 
     @staticmethod    
     def finish_order(session:Session, id_order:int):
@@ -267,6 +267,61 @@ class OrderServices:
         
         return {"message" : "orden creada con exito"}
             
-                
+    @staticmethod
+    def update_state(session:Session, id_order:int, id_state):
+        orderStateStatement = (select(OrderState)
+                                .where(OrderState.id == id_state))
+        orderState = session.exec(orderStateStatement).first()
+        if not orderState:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro el orderState, o no existe"
+            )
+        
+        orderStatement = (select(Order).where(Order.id == id_order))
+        order = session.exec(orderStatement).first()
+        if not order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro la orden, o no existe"
+            )
+
+        userStatement = (select(User).where(User.id == order.id_user))
+        user = session.exec(userStatement).first()
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No se encontro el usuario, o no existe"
+            )
+        
+        date = datetime.now()
+        newDate = format_datetime(date, locale='es_ES')
+        
+        newOrdeStateHistory = OrderStateHistory(
+            id_user=user.id,
+            id_order=order.id,
+            id_orderState=orderState.id,
+            changeAt=newDate,
+            order= order,
+            state=orderState,
+            user=user
+        )
+        
+        session.add(newOrdeStateHistory)
+        session.commit()
+        session.refresh(newOrdeStateHistory)
+        
+        order.id_state = orderState.id
+        order.state = orderState
+        
+        order.ordersHistory.append(newOrdeStateHistory)
+        user.orderStateHistory.append(newOrdeStateHistory)
+        orderState.stateList.append(newOrdeStateHistory)
+        
+        session.add_all([user,order,orderState])
+        session.commit()
+        
+        return {"message" : "Estado de la orden actualizada con exito"}
+              
         
     

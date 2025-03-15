@@ -9,8 +9,8 @@ export const InicioNavbar = () => {
           <img className='h-5' src={logov2} alt="" />
       </NavLink>
       <div className='space-x-5'>
-          <NavLink to={'/loginUserPage'} className={"text-white font-medium"}>Iniciar sessión</NavLink>
-          <NavLink to={'/registerUserPage'} className={"text-white font-medium"}>Registrarse</NavLink>
+          <NavLink to={"/login-user"} className={"text-white font-medium"}>Iniciar sessión</NavLink>
+          <NavLink to={"/register-user"} className={"text-white font-medium"}>Registrarse</NavLink>
       </div>
 
       

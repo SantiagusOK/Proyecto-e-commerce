@@ -35,7 +35,7 @@ export const  ItemProductSelect = () =>{
     }
 
     if(cartSaveMutation.isSuccess){
-        navigate("/inicioPage/carritoPage")
+        navigate("/menu/cart")
     }
 
     const save_item = () => {
@@ -64,14 +64,14 @@ export const  ItemProductSelect = () =>{
     }
 
     return(
-        <div className="basis-full flex items-center justify-center p-10">
+        <div className="flex items-center justify-center p-10">
             <div className="flex space-x-2">
                 
-                <div className="bg-neutral-700 rounded-3xl space-y-2 w-130 h-160">
+                <div className="bg-neutral-700 rounded space-y-2 w-130 h-160">
                     <figure className="relative">
 
                         <p className="absolute top-85 left-5 bg-black text-white px-5 py-2 rounded">{product?.category.name}</p>
-                        <img className="object-cover w-130 h-100 rounded-3xl " src={product?.urlImage} alt="" />
+                        <img className="object-cover w-130 h-100 rounded-t " src={product?.urlImage} alt="" />
                     </figure>
                     <div className="p-2">
                         <p className="w-full text-center text-white font-mono">Descripcion</p>
@@ -81,7 +81,7 @@ export const  ItemProductSelect = () =>{
                 </div>
                 
 
-                <div className="bg-neutral-700 w-150 h-fit p-5 rounded-2xl space-y-2">
+                <div className="bg-neutral-700 w-150 h-fit p-5 rounded space-y-2">
                     <p className="w-full text-white text-2xl ">{product?.name}</p>
                     <form className="space-y-2" onSubmit={handleSubmit(save_item)}>
                         <div>

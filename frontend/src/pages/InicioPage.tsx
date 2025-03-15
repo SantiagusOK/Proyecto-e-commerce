@@ -6,14 +6,10 @@ const InicioPage=()=>{
     localStorage.clear()
 
     const[isLogoVisile, setLogoVisible] = useState<boolean>(false)
-    const[isButtonsVisile, setButtonsVisile] = useState<boolean>(false)
-    const[isTextVisile, setTextVisile] = useState<boolean>(false)
 
     useEffect(()=>{
         const timer = setTimeout(() => {
             setLogoVisible(true);
-            setButtonsVisile(true)
-            setTextVisile(true)
         }, 10);
 
         return () => clearTimeout(timer);

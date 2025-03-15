@@ -1,15 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import CompraRealizadaPage from "../pages/compraRealizadaPage";
 import MenuPage from "../pages/menuPage";
-import InicioPage from "../pages/InicioPage"
 import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
-import { ComprarProductoPage } from "../pages/comprarProductoPage";
-import { MisComprasPage } from "../pages/comprasPage";
 import { OrderInfoPage } from "../components/orderInfoPage";
 import { InicioLayout } from "../pages/inicioLayout";
-import { WelcomePage } from "../pages/welcomePage";
 import { RegisterUserPage } from "../pages/registerUserPage";
 import { RegisterProductPage } from "../pages/registerProductPage";
 import { RegisterCategoryPage } from "../pages/registerCategoryPage";
@@ -20,119 +16,46 @@ import { CarritoPage } from "../pages/carritoPage";
 import { PaginaErrorPage } from "../pages/ErrorPage";
 import { AllProductsPage } from "../pages/allProductsPage";
 import { EditItemProductSelect } from "../pages/editItemProductSelectPage";
-
-
+import InicioPage from "../pages/InicioPage";
+import { AllOrders } from "../pages/allOrders";
 
 const router = createBrowserRouter([
-    {
-        path: "/",
+    {path: "/",
         errorElement: <PaginaErrorPage/>,
         element: <InicioLayout></InicioLayout>,
         children:[
-            {
-                path:"/",
-                element: <InicioPage/>
-                
-            },
-            {
-                path:"/registerUserPage",
-                element: <RegisterUserPage/>
-            },
-            {
-                path:"/loginUserPage",
-                element: <LoginUserPage/>
-                
-            },      
-        ]
-    },
-    {
-        path:"/welcomePage",
-        element: <WelcomePage></WelcomePage>,
-    },
-    {
-        path:"/inicioPage",
+            {path:"/",element: <InicioPage></InicioPage>},
+            {path:"/register-user",element: <RegisterUserPage/>},
+            {path:"/login-user", element: <LoginUserPage/>},      
+        ]},
+
+    {path:"/menu",
         errorElement: <PaginaErrorPage/>,
         element: <Layout/>,
         children:[
-            {
-                path:"/inicioPage",
-                element: <MenuPage/>
-                
-            },
-            {
-                path:"/inicioPage/registerProductPage",
-                element: <RegisterProductPage/>
-            },
-            {
-                path:"/inicioPage/registerCategoryPage",
-                element: <RegisterCategoryPage/>
-            },
+            {path:"/menu", element: <MenuPage/>},
+            {path:"/menu/register-product", element: <RegisterProductPage/>},
+            {path:"/menu/register-category", element: <RegisterCategoryPage/>},
+            {path:"/menu/products",children:[
+                {path:"/menu/products", element: <AllProductsPage/>},
+                {path:"/menu/products/edit-product/:id", element: <EditProductPage/>},
+                ]},
 
-            {
-                path:"/inicioPage/allProductsPage",
-                children:[
-                    {
-                        path:"/inicioPage/allProductsPage",
-                        element: <AllProductsPage/>,
-                    },
-                    {
-                        path:"/inicioPage/allProductsPage/editProduct/:id",
-                        element: <EditProductPage/>
-                    }
-                ]
-            },
-            {
-                path:"/inicioPage/itemBuy/:id",
-                element: <ItemProductSelect/>
-            },
-            {
-                path:"/inicioPage/carritoPage",
-                children:[
-                    {
-                        path:"/inicioPage/carritoPage",
-                        element: <CarritoPage/>,
-                    },
-                    {
-                        path:"/inicioPage/carritoPage/itemCartEdit/:id_item",
-                        element: <EditItemProductSelect/>
-                    },
-                ]
+            {path:"/menu/product/:id", element: <ItemProductSelect/>},
+            {path:"/menu/cart", children:[
+                {path:"/menu/cart", element: <CarritoPage/>},
+                {path:"/menu/cart/edit-item-cart/:id_item", element: <EditItemProductSelect/>}
+                ]},
 
-            },
-            {
-                path:"/inicioPage/ComprarProducto",
-                element: <ComprarProductoPage/>
-            },
-            {
-                path:"/inicioPage/compraRealizadaPage",
-                element: <CompraRealizadaPage/>
-            },
-            {
-                path:"/inicioPage/misComprasPage",
-                children:[
-                    {
-                        path:"/inicioPage/misComprasPage",
-                        element:<MisComprasPage/>
-                    },
-                    {
-                        path:"/inicioPage/misComprasPage/orderInfo/:id_order",
-                        element:<OrderInfoPage></OrderInfoPage>
-                    },
+            {path:"/menu/buy-realize", element: <CompraRealizadaPage/>},
 
-                ]
-            },
-            {
-                path:"/inicioPage/allUserPage",
-                element: <AllUsersPage/>
-            },
-            {
-                path:"/inicioPage/editUserPage/:id",
-                element: <EditUserPage/>
-            },
+            {path:"/menu/all-orders",children:[
+                {path:"/menu/all-orders",element:<AllOrders></AllOrders>},
+                {path:"/menu/all-orders/order-info/:id_order",element:<OrderInfoPage></OrderInfoPage>},
+                ]},
             
-        ]
-        
-    },
+            {path:"/menu/users", element: <AllUsersPage/>},
+            {path:"/menu/edit-user/:id",element: <EditUserPage/>}]},
 ])
 
 export default router

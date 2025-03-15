@@ -276,7 +276,7 @@ export const RegisterUserPage = () =>{
 
         <div className="w-full flex items-center justify-center flex-col">
             <p className="text-white text-xl">¿Tienes una cuenta?</p>
-            <NavLink to={"/LoginPage"} className={"text-neutral-200 underline"}>Inicia sesión aca</NavLink>
+            <NavLink to={"/login-user"} className={"text-neutral-200 underline"}>Inicia sesión aca</NavLink>
         </div>
 
       </form>

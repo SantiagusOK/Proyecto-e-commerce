@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
-import { createCartUser, createItemInCart, fetchActiveCart, fetchItemCart, UpdateItemCart} from "../api/cartApi"
+import { createCartUser, createItemInCart, deleteItemCart, fetchActiveCart, fetchItemCart, UpdateItemCart} from "../api/cartApi"
 import { CartData } from "../type/cartData"
 import { itemCartResponse } from "../type/itemCartResponse"
 import { updateRoleuser } from "../api/userApi"
@@ -34,5 +34,11 @@ export const useItemCart = (id_item:number) => {
 export const useUpdateItemCart = () => {
     return useMutation({
         mutationFn: (data: { id_item: number, itemUpdate: any }) => UpdateItemCart(data.id_item, data.itemUpdate)
+    })
+}
+
+export const useDeleteItemCart = () => {
+    return useMutation({
+        mutationFn: deleteItemCart
     })
 }

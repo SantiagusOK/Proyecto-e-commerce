@@ -5,10 +5,8 @@ interface ItemOrderSchema{
 }
 export const ItemOrderInfoCard = ({itemOrder}:ItemOrderSchema) => {
     return (
-        <div className=" rounded flex w-full text-white">
-            <div className="bg-neutral-200 h-40 w-40 rounded-2xl flex justify-center items-center">
-                <img className="w-full h-full object-cover rounded-2xl" src={itemOrder.product.urlImage} alt="" />
-            </div>
+        <div className=" rounded flex w-200 text-white px-5 ">
+            <img className="w-30 h-30 object-cover rounded-2xl" src={itemOrder.product.urlImage} alt="" />
             <div className="flex-2 w-full px-2">
                 <div className="flex flex-col w-full ">
                     <div className="flex justify-between w-full">

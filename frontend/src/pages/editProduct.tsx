@@ -173,7 +173,7 @@ export const  EditProductPage = () =>{
                             <p>Guardar cambios</p>
                         </button>
                     </div>
-                    <NavLink className="w-full py-2 bg-neutral-700 rounded transition hover:bg-neutral-800 text-white flex justify-center" type="submit" to={"/inicioPage/allProductsPage"}>Volver</NavLink>
+                    <NavLink className="w-full py-2 bg-neutral-700 rounded transition hover:bg-neutral-800 text-white flex justify-center" type="submit" to={"/menu/products"}>Volver</NavLink>
                 </div>
 
             </form>

@@ -1,7 +1,7 @@
 const Loading = () =>{
     return(
-        <div className="flex items-center justify-center h-lvh ">
-            <div className="w-30 h-30 border-t-8 border-t-blue-400 border-transparent animate-spin rounded-full border-4"></div>
+        <div className="flex items-start p-2 justify-center h-lvh ">
+            <div className="w-10 h-10 border-4 border-t-transparent border-white rounded-full animate-spin"></div>
         </div>
     )
 }

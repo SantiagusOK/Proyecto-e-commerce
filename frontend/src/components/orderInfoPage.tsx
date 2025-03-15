@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { useOrder } from "../hooks/order_hooks"
+import { useOrder, useUpdateOrderState } from "../hooks/order_hooks"
 import Loading from "./loading"
 import { ItemOrderInfoCard } from "./itemOrderInfoCard"
 import { useState } from "react"
@@ -8,34 +8,29 @@ export const OrderInfoPage=()=>{
     const{id_order}=useParams()
     const navigate = useNavigate()
     const{data:order, isLoading} = useOrder(Number(id_order))
-    const[loadingRealize, setLoadingRealize] = useState<boolean>(false)
-    const[loadingCancel, setLoadingCancel] = useState<boolean>(false)
-
     const locale =  localStorage.getItem("userData")
     const user = JSON.parse(locale!)
+    const orderMutation = useUpdateOrderState()
+    const [typeLoading, setTypeLoading] = useState<string>("")
 
-    const setNewState = async() => {
-        const id_order = order!.id
-        setLoadingRealize(true)
-        const response = await fetch("http://localhost:8000/order/finishOrder/" + id_order,{
-            method:"PUT"
-        })
-        if(response.ok){
-            window.location.reload();
+    const setNewState = async(state:number) => {
+        orderMutation.mutate({id_order:order!.id, id_state:state})
+        switch(state){
+            case 2:
+                return setTypeLoading("cancel")
+            case 3:
+                return setTypeLoading("realize")
+            default:
+                setTypeLoading("")
         }
-        setLoadingRealize(false)
     }
 
-    const cancelOrder = async() => {
-        const id_order = order!.id
-        setLoadingCancel(true)
-        const response = await fetch("http://localhost:8000/order/cancelOrder/" + id_order,{
-            method:"PUT"
-        })
-        if(response.ok){
-            window.location.reload();
-        }
-        setLoadingCancel(false)
+    if(orderMutation.isSuccess){
+        window.location.reload()
+    } 
+
+    if(orderMutation.error){
+        setTypeLoading("")
     }
 
     if(isLoading){
@@ -53,9 +48,9 @@ export const OrderInfoPage=()=>{
     }
 
     return(
-        <div className="p-10 flex justify-center space-x-4">
-            <div className="flex w-215 h-fit justify-center space-x-20 bg-neutral-600 rounded p-5">
-                <div className="space-y-2  flex-1 min-h-20 max-h-125 overflow-y-auto overflow-x-hidden px-3">
+        <div className="p-10 flex justify-center space-x-4 ">
+            <div className="flex h-fit justify-center space-x-20 bg-neutral-600 rounded p-2">
+                <div className="space-y-2  flex-1 min-h-20 max-h-100 overflow-y-auto overflow-x-hidden px-3">
                     {
                         order.items.map( item => (
                             <ItemOrderInfoCard itemOrder={item} ></ItemOrderInfoCard>
@@ -64,7 +59,7 @@ export const OrderInfoPage=()=>{
                 </div>
             </div>
 
-            <div className="bg-neutral-600 p-10 space-y-2 w-150 h-fit rounded-2xl">
+            <div className="bg-neutral-600 p-10 space-y-2 w-150 h-fit rounded">
                 <div className="flex items-center justify-between ">
                     <div>
                         <p className="text-white">Fecha de compra</p>
@@ -120,30 +115,34 @@ export const OrderInfoPage=()=>{
                 <div className="w-full space-y-2">
                     {
                         order.state.name === "pendiente" && user.role.roleName === "administrador" &&(
-                            <button className="px-5 py-2 bg-neutral-400 w-full rounded transition hover:bg-neutral-500 cursor-pointer text-white flex items-center justify-center space-x-5" onClick={setNewState}>
+                            <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white flex items-center justify-center space-x-5" onClick={() => setNewState(3)}>
                                 {
-                                    loadingRealize &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
+                                    typeLoading==="realize" &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
                                 }
-                            <span>Confirmar compra realizada</span>
+                                <span>Confirmar compra realizada</span>
                             </button>
                             
                         )
                     }
 
-
                     {
-                        order.state.name !== "cancelado" &&(
-                            <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white flex items-center justify-center space-x-3" onClick={cancelOrder}>
+                        order.state.name !== "cancelado" && order.state.name !== "finalizado" &&(
+                            <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white flex items-center justify-center space-x-3" onClick={() => setNewState(2)}>
                                 {
-                                    loadingCancel &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
+                                    typeLoading==="cancel" &&(<div className="h-5 w-5 border-2 border-r-transparent rounded-full animate-spin"></div>)
                                 }
                                 <span>Cancelar compra</span>
                             </button>
                         )
                     }
 
-                    <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white" onClick={()=>{navigate("/inicioPage/misComprasPage")}}>volver</button>
+                    <button className="px-5 py-2 bg-neutral-500 w-full rounded transition hover:bg-neutral-400 cursor-pointer text-white" onClick={()=>{navigate("/menu/all-orders")}}>volver</button>
                     
+                    {
+                        orderMutation.error&&(
+                            <p className="w-full text-center text-red-300">Hubo un error al intentar realizar esta accion</p>
+                        )
+                    }
                 </div>
                 
             </div>

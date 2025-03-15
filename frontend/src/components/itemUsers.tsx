@@ -7,7 +7,7 @@ interface userSchema{
 
 export const UserCard =({ user }:userSchema)=>{
     return(
-        <NavLink to={"/inicioPage/editUserPage/"+user.id} className="bg-neutral-600 flex w-200 p-5 items-center justify-between transition hover:bg-neutral-500 rounded">
+        <NavLink to={"/menu/edit-user/" + user.id} className="bg-neutral-600 flex w-200 p-5 items-center justify-between transition hover:bg-neutral-500 rounded">
             <div className="flex flex-1">
                 <div className="bg-yellow-400 rounded-full w-20 h-20 flex items-center justify-center text-2xl">
                     {user.fullname[0]}

@@ -35,11 +35,10 @@ export const  EditItemProductSelect = () =>{
     }
 
     if(cartUpdateItem.isSuccess){
-        navigate("/inicioPage/carritoPage")
+        navigate("/menu/cart")
     }
 
     const save_item = (data:any) => {
-
         const product_response = {
             quantity:Number(quantity),
             unityPrice:totalPrice

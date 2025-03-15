@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { CartItemData } from "../type/cartItemData";
+import { useDeleteItemCart } from "../hooks/cart_hooks";
 
 interface CartInterface{
     item : CartItemData
@@ -7,12 +8,13 @@ interface CartInterface{
 
 export const ItemCartCad = ({item} : CartInterface) => {
 
+    const useItemCart = useDeleteItemCart()
+
     const delete_a_item = async () => {
-        const response = await fetch("http://localhost:8000/cart/deleteItemCart/" + item.id,{
-            method:"PUT",
-            headers:{"Content-Type" : "application/json"},
-            body: JSON.stringify({})
-        })
+        useItemCart.mutate(item.id)
+    }
+
+    if(useItemCart.isPending){
         window.location.reload();
     }
     
@@ -32,7 +34,7 @@ export const ItemCartCad = ({item} : CartInterface) => {
             </div>
             
             <div className="space-x-7 p-2 flex items-end">
-                <NavLink to={"/inicioPage/carritoPage/itemCartEdit/" + item.id} className={"font-medium text-white"}>EDITAR</NavLink>
+                <NavLink to={"/menu/cart/edit-item-cart/" + item.id} className={"font-medium text-white"}>EDITAR</NavLink>
                 <button className={"font-medium cursor-pointer text-white"} onClick={delete_a_item}>ELIMINAR</button>
             </div>
         </div>

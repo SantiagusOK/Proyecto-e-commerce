@@ -21,24 +21,28 @@ export default function MyNavBar(){
             <img className="w-50" src={logov3} alt="" />
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
-                <MyNavLink router={"/inicioPage"} tittle={"Menu"} />
+                <MyNavLink router={"/menu"} tittle={"Menu"} />
                 {user.role.roleName === "administrador" &&(
                     <>
                         {/* //crear productos */}
-                        <MyNavLink router={"/inicioPage/registerProductPage"} tittle={"Registrar Productos"}/>
+                        <MyNavLink router={"/menu/register-product"} tittle={"Registrar Productos"}/>
                         {/* //crear categorias */}
-                        <MyNavLink router={"/inicioPage/registerCategoryPage"} tittle={"Registrar Categorias"}/>
+                        <MyNavLink router={"/menu/register-category"} tittle={"Registrar Categorias"}/>
                         {/* obtener productos + categoria */}
-                        <MyNavLink router={"/inicioPage/allProductsPage"} tittle={"Obtener Lista Productos"}/>
+                        <MyNavLink router={"/menu/products"} tittle={"Obtener Lista Productos"}/>
                         {/* obtener y manipular Usuarios */}
-                        <MyNavLink router={"/inicioPage/allUserPage"} tittle={"Usuarios"}/>
+                        <MyNavLink router={"/menu/users"} tittle={"Usuarios"}/>
+                        
 
                     </>
                 )}
-                {/* pagina carrito */}
-                <MyNavLink router={"/inicioPage/carritoPage"} tittle={"Carrito"}/>
+
                 {/* pagina mis compras */}
-                <MyNavLink router={"/inicioPage/misComprasPage"} tittle={"Mis Compras"}/>
+                <MyNavLink router={"/menu/all-orders"} tittle={"Ordenes"}/>
+
+                {/* pagina carrito */}
+                <MyNavLink router={"/menu/cart"} tittle={"Carrito"}/>
+                
                 {/* pagina mis compras */}
                 <MyNavLink router={"/"} tittle={"Cerrar sesion"}/>
 

@@ -7,7 +7,7 @@ interface productResponse {
 
 export const ProductEditCard = ({product} : productResponse) => {
   return (
-    <NavLink  className="bg-neutral-600 flex w-200 rounded transition hover:scale-102" to={"/inicioPage/allProductsPage/editProduct/" + product.id}>
+    <NavLink  className="bg-neutral-600 flex w-200 rounded transition hover:scale-102" to={"/menu/products/edit-product/" + product.id}>
 
         <div className="w-50 h-50 p-2 flex">
             <figure className="relative">

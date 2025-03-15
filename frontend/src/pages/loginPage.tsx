@@ -28,7 +28,7 @@ export const LoginUserPage = () =>{
 
     if(useMutation.isSuccess){
         localStorage.setItem("userData", JSON.stringify(useMutation.data))
-        navigate("/welcomePage")
+        navigate("/menu")
     }
 
     return(
@@ -76,7 +76,7 @@ export const LoginUserPage = () =>{
 
                 <div className="w-full flex items-center justify-center flex-col">
                     <p className="text-white text-xl">¿No tienes una cuenta?</p>
-                    <NavLink to={"/registerPage"} className={"text-neutral-200 underline"}>Registrate aca</NavLink>
+                    <NavLink to={"/register-user"} className={"text-neutral-200 underline"}>Registrate aca</NavLink>
                 </div>
 
 

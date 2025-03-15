@@ -32,3 +32,10 @@ export const UpdateItemCart = async (id_item:number, productUpdate:any) => {
     })
     return data
 }
+
+export const deleteItemCart = async (id_item:number) => {
+    const { data } = await axios.put("http://localhost:8000/cart/deleteItemCart/" + id_item , null , {
+        headers: {"Content-Type" : "application/json"}
+    })
+    return data
+}
