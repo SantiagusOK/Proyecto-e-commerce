@@ -29,7 +29,7 @@ const InicioPage=()=>{
                 </div>              
             </div>
 
-            <footer className="p-5 w-full">
+            <footer className="p-5 w-full fixed bottom-0">
                 <span className="text-white">Copyright©2025, Desing by Agustin Zapata</span>
             </footer>
 

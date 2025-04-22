@@ -2,6 +2,7 @@ import Loading from "../components/loading"
 import { useProducts } from "../hooks/products_hooks"
 import { ProductEditCard } from "../components/productEditCard"
 import { useState } from "react"
+import { ArrowBigLeft, ArrowBigRight } from "lucide-react"
 
 export const AllProductsPage= () =>{
     const [positionPage, setPosition] = useState<number>(1)
@@ -45,9 +46,9 @@ export const AllProductsPage= () =>{
                     <ProductEditCard product={product}></ProductEditCard>
                 ))}
                 <div className="flex space-x-2">
-                    <button  onClick={() => changePosition("-")} className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${positionPage == 1 ? "invisible" : "visible"}`}> {"<"} </button>
-                    <p className="text-2xl text-white bg-neutral-600 py-1 px-5">{positionPage}</p>
-                    <button  disabled={positionPage == Math.ceil(limitPage)} onClick={() => changePosition("+")} className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${positionPage == Math.ceil(limitPage) ? "invisible" : "visible"}`}> {">"} </button>
+                    <ArrowBigLeft  onClick={() => changePosition("-")} className={`text-2xl text-white bg-neutral-600 h-10 w-10 p-2 ${positionPage == 1 ? "invisible" : "visible"}`}></ArrowBigLeft>
+                    <p className={`text-2xl text-white bg-neutral-600 py-1 px-5 ${product.length < limitToShow ? "invisible" : "visible"}`}>{positionPage}</p>
+                    <ArrowBigRight onClick={() => changePosition("+")} className={`text-2xl text-white bg-neutral-600 h-10 w-10 p-2 ${positionPage == Math.ceil(limitPage) ? "invisible" : "visible"}`}></ArrowBigRight>
                 </div>
 
             </div>

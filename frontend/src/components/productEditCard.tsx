@@ -11,7 +11,7 @@ export const ProductEditCard = ({product} : productResponse) => {
 
         <div className="w-50 h-50 p-2 flex">
             <figure className="relative">
-                <p className="absolute top-40 left-0 bg-black text-white px-2 rounded-bl">{product.category.name}</p>
+                <p className="absolute top-40 left-0 bg-black text-white px-2 rounded-bl rounded-tr">{product.category.name}</p>
             </figure>
             <img className="object-cover w-full h-full rounded" src={product.urlImage} alt="" />
         </div>
