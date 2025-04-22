@@ -24,8 +24,8 @@ const InicioPage=()=>{
                 <img className={`flextransition duration-500 opacity-0 ${isLogoVisile ? "opacity-100 -translate-y-10" : "opacity-0"}`} src={logo} alt="" />
                 
                 <div className={`flex flex-col justify-center items-center delay-75 transition duration-500 opacity-0 ${isLogoVisile ? "opacity-100 -translate-y-10" : "opacity-0"}`}>
-                    <span className="font-bold text-5xl text-white">Ahorra dinero</span>
-                    <span className="font-bold text-5xl text-white">Vive mejor.</span>
+                    <span className="font-bold text-5xl text-white">Todo lo que necesitás, en un solo lugar.</span>
+                    <span className="font-bold text-5xl text-white">Cargá el changuito de felicidad.</span>
                 </div>              
             </div>
 
