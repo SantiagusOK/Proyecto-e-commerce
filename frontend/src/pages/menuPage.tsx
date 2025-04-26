@@ -6,7 +6,8 @@ import { useCategories } from "../hooks/category_hooks"
 import {Search} from "lucide-react"
 import {ArrowBigRight } from "lucide-react"
 import {ArrowBigLeft} from "lucide-react"
-const MenuPage = () => {
+
+export const MenuPage = () => {
 
     const{data:product = [], isLoading, isError} = useProducts()
     const{data:categories=[], isLoading:loadingCartegory} = useCategories()
@@ -19,8 +20,7 @@ const MenuPage = () => {
     const [limitFinal, setLimitFinal] = useState<number>(6)
 
     const limitToShow = 6
-    
-    
+        
     const productFilter = product.filter((item) => item.name.toLowerCase().includes(valueSearch.toLowerCase()) && item.category.name.toLowerCase().includes(categorieSearch.toLowerCase()))
 
     const limitPage = productFilter.length / limitToShow
@@ -118,12 +118,9 @@ const MenuPage = () => {
                 </>
             ) : (
                 <div className="h-screen flex items-center justify-center space-x-10 text-white">
-                    <p className="text-9xl">:(</p>
                     <p className="text-3xl w-25">No hay productos registrados</p>
                 </div>
             )}
         </div>
     )
 }
-
-export default MenuPage

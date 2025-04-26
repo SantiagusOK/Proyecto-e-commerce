@@ -18,7 +18,7 @@ export const AllOrders = () =>{
 
     var ordersFilter = orders
 
-    if(user.role.roleName === "cliente"){
+    if(user.role.roleName == "cliente"){
         ordersFilter = orders.filter(order => order.id_user == Number(user.id))
     }
 

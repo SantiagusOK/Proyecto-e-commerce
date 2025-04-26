@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import CompraRealizadaPage from "../pages/compraRealizadaPage";
-import MenuPage from "../pages/menuPage";
 import Layout from "../pages/layout";
 import { AllUsersPage } from "../pages/allUsersPage";
 import { EditUserPage } from "../pages/editUserPage";
@@ -18,6 +17,7 @@ import { AllProductsPage } from "../pages/allProductsPage";
 import { EditItemProductSelect } from "../pages/editItemProductSelectPage";
 import InicioPage from "../pages/InicioPage";
 import { AllOrders } from "../pages/allOrders";
+import { MenuPage } from "../pages/menuPage";
 
 const router = createBrowserRouter([
     {path: "/",

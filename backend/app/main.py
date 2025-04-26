@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from controllers import cart_router, category_router, product_router, user_router, role_router, order_router
 from db.connect import conn
-
 from fastapi.middleware.cors import CORSMiddleware
 
 import uvicorn
