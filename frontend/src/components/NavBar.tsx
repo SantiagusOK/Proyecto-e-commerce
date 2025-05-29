@@ -17,12 +17,12 @@ export default function MyNavBar(){
     }
 
     return(
-        <div className="bg-neutral-700  text-white flex justify-between items-center p-2 pr-10 pl-10 h-fit ">
+        <div className="bg-neutral-700  text-white flex justify-around items-center p-2 pr-10 pl-10 h-fit ">
             <img className="w-50" src={logov3} alt="" />
             <nav className="space-x-6 flex items-center justify-center">
                 {/* pagina inicio */}
                 <MyNavLink router={"/menu"} tittle={"Menu"} />
-                {user.role.roleName === "administrador" &&(
+                {user.role.roleName == "administrador" &&(
                     <>
                         {/* //crear productos */}
                         <MyNavLink router={"/menu/register-product"} tittle={"Registrar Productos"}/>
@@ -33,7 +33,6 @@ export default function MyNavBar(){
                         {/* obtener y manipular Usuarios */}
                         <MyNavLink router={"/menu/users"} tittle={"Usuarios"}/>
                         
-
                     </>
                 )}
 

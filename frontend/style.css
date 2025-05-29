@@ -1,0 +1,5 @@
+@import "tailwindcss/base";
+
+@theme{
+    --text-chocolate: #7B3F00;
+}

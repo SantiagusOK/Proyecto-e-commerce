@@ -18,6 +18,7 @@ async def get_a_user(id_user:int, session:Session = Depends(get_session)):
     
 @router.post("/registerUser",status_code=status.HTTP_201_CREATED)
 async def register_user(newUser:UserRegisterSchema,session:Session = Depends(get_session)):
+    print(newUser)
     return UserService.register_user(session, newUser)
 
 @router.post("/loginUser",response_model=UserResponse, status_code=status.HTTP_200_OK)

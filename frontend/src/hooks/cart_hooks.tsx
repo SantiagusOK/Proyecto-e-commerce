@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { createCartUser, createItemInCart, deleteItemCart, fetchActiveCart, fetchItemCart, UpdateItemCart} from "../api/cartApi"
 import { CartData } from "../type/cartData"
 import { itemCartResponse } from "../type/itemCartResponse"
-import { updateRoleuser } from "../api/userApi"
 
 export const useActiveCart = (id_user:number) => {
     return useQuery<CartData, Error>({

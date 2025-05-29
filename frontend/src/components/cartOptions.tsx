@@ -22,7 +22,7 @@ export const CartOptions = ({cart}:CartInterface)=> {
     }
 
     if(orderMutation.isSuccess){
-        navigate("/inicioPage/compraRealizadaPage")
+        navigate("/menu/buy-realize")
     }
 
     return (

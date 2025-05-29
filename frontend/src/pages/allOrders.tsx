@@ -48,7 +48,7 @@ export const AllOrders = () =>{
 
     return(
         <div className="flex flex-col space-y-2 items-center justify-center p-10 ">
-            {ordersFilter.length===0 ? (
+            {ordersFilter.length == 0 ? (
                 <p className="text-4xl text-white">No tienes compras realizadas :)</p>
             ) : (
                 <>

@@ -17,6 +17,7 @@ export const RegisterUserPage = () =>{
   } =useForm<useFormData>()
 
   const registerNewUser = async (userData:any)  => {
+    console.log(userData)
     userMutation.mutate(userData)
   }
 
